@@ -1,0 +1,65 @@
+{
+  "id": "EIMd1sceXVJ6kHeJ",
+  "name": "no filter telegram",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e886b430-c0f7-47fd-b264-296164804de6",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "hello",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "bb121eca-1ebc-4900-961f-6031a8565902",
+      "name": "Send a text message",
+      "webhookId": "c2c226c3-9744-4687-82ce-45bd877edd86",
+      "credentials": {
+        "telegramApi": {
+          "id": "ARKtqItEVR9N1gaY",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "triggerCount": 0,
+  "versionId": "6be14790-0ebb-4d0a-91db-bcbffa52c921",
+  "owner": {
+    "type": "personal",
+    "projectId": "Zp6TRlq4gxhqUmDN",
+    "projectName": "mmd hey <m.h.heidari1384@gmail.com>",
+    "personalEmail": "m.h.heidari1384@gmail.com"
+  },
+  "parentFolderId": null,
+  "isArchived": false
+}

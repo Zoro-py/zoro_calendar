@@ -1,0 +1,155 @@
+{
+  "id": "xtwLYdZ55ENktJca",
+  "name": "random_user_agent",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "random_user_agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "51e9ba73-9407-4961-a48f-7a80f73cd737",
+      "name": "Webhook",
+      "webhookId": "4cb469ed-75d5-4d04-9922-206fd1b662c0"
+    },
+    {
+      "parameters": {
+        "jsCode": "// یک لیست از User-Agent های رایج\nreturn [\n  {\n    json: {\n      userAgents: [\n        \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/115.0\",\n        \"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 Safari/605.1.15\",\n        \"Mozilla/5.0 (X11; Linux x86_64) Gecko/20100101 Firefox/116.0\",\n        \"Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148\",\n        \"Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 Chrome/115.0 Mobile\"\n      ]\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "f4b14b7d-f0c1-40ab-a263-1365837e6453",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "jsCode": "// گرفتن لیست userAgents از نود قبلی\nconst agents = $json[\"userAgents\"];\n\n// انتخاب رندوم\nconst randomAgent = agents[Math.floor(Math.random() * agents.length)];\n\n// خروجی\nreturn [\n  {\n    json: {\n      userAgent: randomAgent\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "15aee290-45fa-449b-b395-37cb41830a47",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        656,
+        0
+      ],
+      "id": "bf55330a-6f5b-4c61-99ff-f4171c35ee29",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        144,
+        144
+      ],
+      "id": "a374a621-8bc8-4f09-a6f4-a5098c93c318",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "❌random_user_agent has error❌",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        352,
+        144
+      ],
+      "id": "47eb6a66-5375-4f74-9d47-668f57646a8d",
+      "name": "Send a text message",
+      "webhookId": "370b2ba6-fa65-4667-a1d5-f6910589b382",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "triggerCount": 1,
+  "versionId": "cb0cede0-8859-4fea-92d0-87a967281722",
+  "owner": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  },
+  "parentFolderId": null,
+  "isArchived": false
+}

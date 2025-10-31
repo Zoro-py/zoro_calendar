@@ -1,0 +1,578 @@
+{
+  "id": "BbHS6rf4zSzDalCI",
+  "name": "get-appointment-bot",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 12
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        -16
+      ],
+      "id": "ad02e8a4-6eba-4472-8035-b1c87229d8f5",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n    COUNT(*) AS total_requests_last_24h\nFROM\n    get_appointments_history\nWHERE\n    (date AT TIME ZONE 'Asia/Tehran') >= (NOW() - INTERVAL '1 day');",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        864,
+        -112
+      ],
+      "id": "a1b686bc-9ecf-43c5-8270-0b8861233ede",
+      "name": "Execute a SQL query",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "={{ new Date(Date.now() - 24*60*60*1000).toLocaleDateString(\"sv-SE\", { timeZone: \"Asia/Tehran\" }) }}\n\nتعداد دفعات کال شدن دیروز برابر  {{ $json.total_requests_last_24h }}  است\n\nو تعداد درخواست ها به تفکیک:\n{{ $('Code in JavaScript').item.json.textMessage }}\n",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1088,
+        -112
+      ],
+      "id": "f66186d3-cd28-4268-8230-2f9f8e69d34b",
+      "name": "Send a text message",
+      "webhookId": "370b2ba6-fa65-4667-a1d5-f6910589b382",
+      "executeOnce": true,
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "oSZ0fo1NolfEmqVt",
+          "name": "calendar report bot"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        208
+      ],
+      "id": "634bc342-cd05-4f00-beb8-c8e982e91ffe",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "❌report-bot has error❌",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        208
+      ],
+      "id": "bff5d5e4-dbc5-4fb1-ac1c-7b8000e3a636",
+      "name": "Send a text message1",
+      "webhookId": "370b2ba6-fa65-4667-a1d5-f6910589b382",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -32,
+        432
+      ],
+      "id": "4b284eb2-2e79-4a30-a332-6750c0741b08",
+      "name": "Schedule Trigger1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM get_appointments_history WHERE (date AT TIME ZONE 'Asia/Tehran') >= NOW() - INTERVAL '5 minutes';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        192,
+        624
+      ],
+      "id": "a68c538a-7604-4e3e-aa18-f538c8eafbcb",
+      "name": "Execute a SQL query1",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        624
+      ],
+      "id": "973716fd-5d5a-4cbc-96d2-fc4109d953f5",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "field": "id"
+            }
+          ]
+        },
+        "fieldsToSplitBy": "doctor_id",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        624
+      ],
+      "id": "7d0ecb7c-3e6a-450d-8008-48172c1d3f9b",
+      "name": "Summarize"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "doctor_id",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        640,
+        624
+      ],
+      "id": "ef623142-94da-4e84-86e5-0816a5d922f6",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctors",
+          "mode": "list",
+          "cachedResultName": "doctors"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $json.doctor_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1088,
+        624
+      ],
+      "id": "2de1393b-c0ac-45bc-adce-dc06a29c527e",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ecec4fc8-7d4e-453b-8f75-ef972ca6e5a4",
+              "leftValue": "={{ $json.count_id }}",
+              "rightValue": 10,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        864,
+        624
+      ],
+      "id": "6f0610ce-28b4-4cd9-8de2-7308a69f0b74",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "={{ $json.full_name  }} بیش از 10 درخواست در 5 دقیقه گذشته داشته",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1312,
+        624
+      ],
+      "id": "119d523d-7761-462a-a6ed-b93e71af9d16",
+      "name": "Send a text message2",
+      "webhookId": "b7fd57ca-0f57-43a6-959c-ad39bf1fcf50",
+      "credentials": {
+        "telegramApi": {
+          "id": "oSZ0fo1NolfEmqVt",
+          "name": "calendar report bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -32,
+        816
+      ],
+      "id": "55a0dfef-4d45-45ff-b837-f6b09c461ca7",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n    doctor_id,\n    doctor_name,\n    COUNT(*) AS total_requests\nFROM\n    get_appointments_history\nWHERE\n    (date AT TIME ZONE 'Asia/Tehran') >= (NOW() - INTERVAL '1 day')\nGROUP BY\n    doctor_id,\n    doctor_name\nORDER BY\n    total_requests DESC;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        416,
+        -112
+      ],
+      "id": "ae1d67c3-6081-4e3a-86a0-2aea207e052c",
+      "name": "Execute a SQL query2",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. یک آرایه خالی برای نگهداری خطوط متن می‌سازیم\nconst messageLines = [];\n\n// 2. روی تمام آیتم‌های ورودی حلقه می‌زنیم\n// (items یک متغیر جادویی در n8n است که حاوی تمام ورودی‌هاست)\nfor (const item of items) {\n  \n  // 3. نام دکتر و تعداد را از هر آیتم می‌خوانیم\n  const doctorName = item.json.doctor_name;\n  const requestCount = item.json.total_requests;\n  \n  // 4. خط مورد نظر را با فرمت دلخواه می‌سازیم\n  const line = `${doctorName} : ${requestCount}`;\n  \n  // 5. خط ساخته شده را به آرایه اضافه می‌کنیم\n  messageLines.push(line);\n}\n\n// 6. تمام خطوط را با کاراکتر \"خط جدید\" (newline) به هم می‌چسبانیم\nconst finalMessage = messageLines.join('\\n');\n\n// 7. یک آیتم *جدید و واحد* را برمی‌گردانیم\n// که حاوی پیام نهایی ماست\nreturn [\n  {\n    json: {\n      textMessage: finalMessage\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        640,
+        -112
+      ],
+      "id": "7fa36d25-42fb-4f82-b1d4-c735c532c3ac",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -32,
+        -208
+      ],
+      "id": "02df33f6-66c3-443d-862b-96934b442323",
+      "name": "Telegram Trigger",
+      "webhookId": "7f8e3259-1e7e-4541-ae16-2a90932238e5",
+      "credentials": {
+        "telegramApi": {
+          "id": "oSZ0fo1NolfEmqVt",
+          "name": "calendar report bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "68218e38-8a5d-44d7-9a6b-6c1386ea5c37",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "/report",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        192,
+        -208
+      ],
+      "id": "b4a321dc-0760-470b-8e85-fa0625427da7",
+      "name": "If1"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query1": {
+      "main": [
+        [
+          {
+            "node": "Summarize",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarize": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "triggerCount": 2,
+  "versionId": "fb20e9bc-fa2b-41e3-bfef-dcecac4703f8",
+  "owner": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  },
+  "parentFolderId": null,
+  "isArchived": false
+}

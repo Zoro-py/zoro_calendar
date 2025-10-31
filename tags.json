@@ -1,0 +1,62 @@
+{
+  "tags": [
+    {
+      "id": "RWDYnGAMf6hDTHry",
+      "name": "drdr"
+    },
+    {
+      "id": "SyzWYY9ZOoG2K5si",
+      "name": "dreto"
+    }
+  ],
+  "mappings": [
+    {
+      "workflowId": "kjk9fSEDK3uL7DUy",
+      "tagId": "RWDYnGAMf6hDTHry"
+    },
+    {
+      "workflowId": "kjk9fSEDK3uL7DUy",
+      "tagId": "SyzWYY9ZOoG2K5si"
+    },
+    {
+      "workflowId": "7NQONi0Z0jQ3qaT8",
+      "tagId": "RWDYnGAMf6hDTHry"
+    },
+    {
+      "workflowId": "l2NxMTK4F6KKXYnm",
+      "tagId": "SyzWYY9ZOoG2K5si"
+    },
+    {
+      "workflowId": "S703MyDrFU4Fhje6",
+      "tagId": "RWDYnGAMf6hDTHry"
+    },
+    {
+      "workflowId": "jWEIGqopcbWeF1uR",
+      "tagId": "RWDYnGAMf6hDTHry"
+    },
+    {
+      "workflowId": "1BU7GX6nFf4lbTre",
+      "tagId": "SyzWYY9ZOoG2K5si"
+    },
+    {
+      "workflowId": "rOwaLXKTkPgqMiwT",
+      "tagId": "RWDYnGAMf6hDTHry"
+    },
+    {
+      "workflowId": "3VY3InOewTCLgnFX",
+      "tagId": "RWDYnGAMf6hDTHry"
+    },
+    {
+      "workflowId": "3VY3InOewTCLgnFX",
+      "tagId": "SyzWYY9ZOoG2K5si"
+    },
+    {
+      "workflowId": "jbaYybageufD8td6",
+      "tagId": "SyzWYY9ZOoG2K5si"
+    },
+    {
+      "workflowId": "FHCXq45x0mpjSElK",
+      "tagId": "RWDYnGAMf6hDTHry"
+    }
+  ]
+}

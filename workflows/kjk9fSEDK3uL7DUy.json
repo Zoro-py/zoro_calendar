@@ -1,0 +1,1370 @@
+{
+  "id": "kjk9fSEDK3uL7DUy",
+  "name": "calendar",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "// input: items[0].json.rows from Google Sheets ReadRows (depends on node output shape)\n// If Google Sheets ReadRows returns as [{A: 'key', B: 'value'}, ...] adjust accordingly.\n// We'll support two common shapes.\nconst rows = items[0].json; // if GoogleSheets returns a single object with array, adjust below\n// Try to find rows array in known n8n output shapes:\nlet dataRows = [];\nif (Array.isArray(items)) {\n  // If single item with property 'value' containing rows\n  if (items[0].json && items[0].json.rows) {\n    dataRows = items[0].json.rows;\n  } else if (items[0].json && items[0].json.A) {\n    // weird shape: fallback to reading all items -> but n8n typically gives rows as items\n    dataRows = items.map(it => ({A: it.json.A, B: it.json.B})).filter(r => r.A);\n  } else {\n    // maybe google sheets returned multiple items each row\n    dataRows = items.map(it => it.json);\n  }\n}\nconst out = {};\nfor (const r of dataRows) {\n  // keys may be in columns A and B or properties 'key' and 'value'\n  const key = r.A || r.key || r['Key'] || r['a'] || r['A1'];\n  const value = r.B || r.value || r['Value'] || r['b'] || r['B1'];\n  if (key) out[String(key).trim()] = value;\n}\nreturn [{ json: out }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5216,
+        -1024
+      ],
+      "id": "256bd61f-c342-4bfd-9e28-27078ccee3f1",
+      "name": "normalize tokens into json",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = items[0].json;\nconst now = new Date();\n\n// گرفتن تاریخ درست\nlet expiresAt = data.expires_at ? new Date(data.expires_at) : null;\n\n// مارجین ۵ دقیقه قبل از انقضا\nconst marginMs = 5 * 60 * 1000; // 5 minutes\n// تعریف یک روز\nconst oneDayMs = 24 * 60 * 60 * 1000;\n\nlet needRefresh = false;\n\nif (!data.access_token || !expiresAt) {\n  // اگر توکن یا تاریخ انقضا وجود نداشت\n  needRefresh = true;\n} else {\n  const diff = expiresAt.getTime() - now.getTime();\n  // اگر کمتر از مارجین مونده یا کمتر از یک روز مونده\n  if (diff <= marginMs || diff <= oneDayMs) {\n    needRefresh = true;\n  }\n}\n\nreturn [{\n  json: { needRefresh, ...data }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4976,
+        -1024
+      ],
+      "id": "cdee717f-a9cb-42dc-97f1-250489e4622a",
+      "name": "shouldRefresh",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "b288286c-9186-43dd-aee7-e57483a38d68",
+              "leftValue": "={{ $json.needRefresh }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4688,
+        -1104
+      ],
+      "id": "ff400e5a-6c48-4641-bf8d-a5b37fbffc34",
+      "name": "needRefresh",
+      "alwaysOutputData": false,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://drdr.ir/api/v3/oauth/token",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "grant_type",
+              "value": "refresh_token"
+            },
+            {
+              "name": "client_id",
+              "value": "={{ $json.client_id }}"
+            },
+            {
+              "name": "client_secret",
+              "value": "={{ $json.client_secret }}"
+            },
+            {
+              "name": "refresh_token",
+              "value": "={{ $json.refresh_token }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4080,
+        -1056
+      ],
+      "id": "fa556045-c184-4920-91ae-d6fa0f91a28c",
+      "name": "Refresh token",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const res = items[0].json; // response from token endpoint\n// Adjust path based on actual response shape. From HAR, response: { ok:true, result: { token: { access_token, refresh_token, expires_in } } }\nconst tokenObj = (res.result && res.result.token) ? res.result.token : (res.token || res);\nconst accessToken = tokenObj.access_token;\nconst refreshToken = tokenObj.refresh_token || items[0].json.refresh_token;\nconst expiresIn = tokenObj.expires_in ? Number(tokenObj.expires_in) : null;\nlet expiresAt = null;\nif (expiresIn) {\n  const dt = new Date();\n  dt.setSeconds(dt.getSeconds() + expiresIn);\n  expiresAt = dt.toISOString();\n}\nreturn [{ json: { access_token: accessToken, refresh_token: refreshToken, access_expires_at: expiresAt } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3360,
+        -1040
+      ],
+      "id": "388c4c6c-587d-4049-8b64-c62e77c33165",
+      "name": "process refresh response"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1eDODgd8W2TrbAIyvDeYvEq0YMVso7S8ME5QuaX923Xs",
+          "mode": "list",
+          "cachedResultName": "calendar",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eDODgd8W2TrbAIyvDeYvEq0YMVso7S8ME5QuaX923Xs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "tokens",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eDODgd8W2TrbAIyvDeYvEq0YMVso7S8ME5QuaX923Xs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "key": "expires_at ",
+            "value": "={{ $json.access_expires_at }}"
+          },
+          "matchingColumns": [
+            "key"
+          ],
+          "schema": [
+            {
+              "id": "key",
+              "displayName": "key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "value",
+              "displayName": "value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -3056,
+        -864
+      ],
+      "id": "b2cc7764-a504-4a27-92c2-ca4ce0fec222",
+      "name": "Update tokens2",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://panel.drdr.ir/api/v3/appointments/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json;charset=UTF-8"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$json.access_token}}"
+            },
+            {
+              "name": "client-id",
+              "value": "={{$json.client_id}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"doctor_id\": {{ $json.platform_doctor_id }},\n  \"page\": 1,\n  \"scheduled_date\": \"{{ $('Edit Fields1').first().json.date }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4400,
+        -864
+      ],
+      "id": "ed8099fe-4a6d-4b2f-96f1-182b8edf1ac2",
+      "name": "appointments/search",
+      "retryOnFail": true,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "jsCode": "const j = items[0].json;\nconst result = j.result || j;\nconst appts = result.appointments || [];\nconst pagination = result.pagination || {};\n// return one item containing appts array and pagination info\nreturn [{ json: { appointments: appts, pagination } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3840,
+        -432
+      ],
+      "id": "b738e1d1-a2ab-4765-9346-47fd9932b06f",
+      "name": "extract appointments & pagination"
+    },
+    {
+      "parameters": {
+        "jsCode": "const pagination = items[0].json.pagination || {};\nconst last = pagination.last_page || 1;\nconst pages = [];\nfor (let p=1; p<=last; p++) {\n  pages.push({ page: p });\n}\nreturn pages.map(p=>({json:p}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3424,
+        -432
+      ],
+      "id": "b29f8496-10a7-4211-b82f-2337038a42ed",
+      "name": "buildPages",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -3216,
+        -432
+      ],
+      "id": "eeff72eb-ff8b-4885-8d23-b22eebadecfd",
+      "name": "Loop Over Items",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3024,
+        -416
+      ],
+      "id": "7dfbc28f-1a99-49f6-8c42-b38548f2c356",
+      "name": "HTTP Request",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "i did not build this part\n",
+        "height": 400,
+        "width": 720
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3712,
+        -592
+      ],
+      "typeVersion": 1,
+      "id": "69a148b5-5598-45cc-a2de-eb1fb4029e2a",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "const runAt = new Date().toISOString();\nconst defaultDoctorId = items[0]?.json?.doctor_id || \"12061\";\n\nreturn items.map(it => {\n  const a = it.json;\n  return {\n    json: {\n      run_at: runAt,\n      scheduled_date: a.scheduled_from ? a.scheduled_from.split(' ')[0] : '',\n      appointment_id: a.id || '',\n      user_patient_id: a.user_patient_id || '',\n      firstname: a.firstname || a.first_name || '',\n      lastname: a.lastname || a.last_name || '',\n      mobile: a.mobile || '',\n      national_code: a.national_code || '',\n      scheduled_from: a.scheduled_from || '',\n      scheduled_to: a.scheduled_to || '',\n      doctor_id: a.doctor_id || defaultDoctorId,\n      source_page: a._source_page || '',\n      raw_json: JSON.stringify(a),\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3440,
+        -112
+      ],
+      "id": "2b09bf7c-9a6e-4ad4-8661-1929253be3e2",
+      "name": "transform appointments to rows for Google Sheets"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1eDODgd8W2TrbAIyvDeYvEq0YMVso7S8ME5QuaX923Xs",
+          "mode": "list",
+          "cachedResultName": "calendar",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eDODgd8W2TrbAIyvDeYvEq0YMVso7S8ME5QuaX923Xs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 555307722,
+          "mode": "list",
+          "cachedResultName": "appointments_log",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eDODgd8W2TrbAIyvDeYvEq0YMVso7S8ME5QuaX923Xs/edit#gid=555307722"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "raw_json": "={{ $json.raw_json }}",
+            "source_page": "={{ $json.source_page }}",
+            "doctor_id": "={{ $json.doctor_id }}",
+            "scheduled_to": "={{ $json.scheduled_to }}",
+            "scheduled_from": "={{ $json.scheduled_from }}",
+            "national_code": "={{ $json.national_code }}",
+            "mobile": "={{ $json.mobile }}",
+            "lastname": "={{ $json.lastname }}",
+            "firstname": "={{ $json.firstname }}",
+            "user_patient_id": "={{ $json.user_patient_id }}",
+            "appointment_id": "={{ $json.appointment_id }}",
+            "scheduled_date": "={{ $json.scheduled_date }}",
+            "run_at": "={{ $json.run_at }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "run_at",
+              "displayName": "run_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "scheduled_date",
+              "displayName": "scheduled_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "appointment_id",
+              "displayName": "appointment_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "user_patient_id",
+              "displayName": "user_patient_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "firstname",
+              "displayName": "firstname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lastname",
+              "displayName": "lastname",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "mobile",
+              "displayName": "mobile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "national_code",
+              "displayName": "national_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "scheduled_from",
+              "displayName": "scheduled_from",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "scheduled_to",
+              "displayName": "scheduled_to",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "doctor_id",
+              "displayName": "doctor_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source_page",
+              "displayName": "source_page",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "raw_json",
+              "displayName": "raw_json",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -3104,
+        -112
+      ],
+      "id": "dbbcf881-afa0-47b3-ae92-b1bcc31520c9",
+      "name": "Append row in sheet"
+    },
+    {
+      "parameters": {
+        "jsCode": "const appts = items.map(it => it.json);\nconst count = appts.length;\n\nlet text = 'DrDr \\n\\n';\ntext += `📋 لیست بیماران برای ${appts[0] ? appts[0].scheduled_date : \"امروز\"} — تعداد: ${count}\\n\\n`;\nfor (const a of appts.slice(0,20)) { // محدود کردن پیام به 20 اول\n  text += `${a.firstname} ${a.lastname} — ${a.mobile || '-'} — ${a.scheduled_from}\\n`;\n}\nif (count > 20) text += `\\n... و ${count - 20} مورد دیگر.`;\nreturn [{ json: { message: text } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2832,
+        -112
+      ],
+      "id": "dadf7037-3520-4997-9b3b-9e3f59e2cca5",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "appointments",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -3696,
+        -112
+      ],
+      "id": "7d614d97-585a-4c1f-94fc-946e6ac1f140",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "={{ $('Code').item.json.message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2240,
+        -112
+      ],
+      "id": "af0054b6-cf59-43fe-87f6-d8d4a3eab455",
+      "name": "Send a text message",
+      "webhookId": "669f02a6-d615-46e3-88e6-a02e2696c763"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1eDODgd8W2TrbAIyvDeYvEq0YMVso7S8ME5QuaX923Xs",
+          "mode": "list",
+          "cachedResultName": "calendar",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eDODgd8W2TrbAIyvDeYvEq0YMVso7S8ME5QuaX923Xs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "tokens",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eDODgd8W2TrbAIyvDeYvEq0YMVso7S8ME5QuaX923Xs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "key": "access_token ",
+            "value": "={{ $json.access_token }}"
+          },
+          "matchingColumns": [
+            "key"
+          ],
+          "schema": [
+            {
+              "id": "key",
+              "displayName": "key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "value",
+              "displayName": "value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -3056,
+        -1216
+      ],
+      "id": "52ec2290-7bde-4add-9950-49d0b923e8f3",
+      "name": "Update tokens4",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1eDODgd8W2TrbAIyvDeYvEq0YMVso7S8ME5QuaX923Xs",
+          "mode": "list",
+          "cachedResultName": "calendar",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eDODgd8W2TrbAIyvDeYvEq0YMVso7S8ME5QuaX923Xs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "tokens",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1eDODgd8W2TrbAIyvDeYvEq0YMVso7S8ME5QuaX923Xs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "key": "refresh_token ",
+            "value": "={{ $json.refresh_token }}"
+          },
+          "matchingColumns": [
+            "key"
+          ],
+          "schema": [
+            {
+              "id": "key",
+              "displayName": "key",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "value",
+              "displayName": "value",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -3056,
+        -1040
+      ],
+      "id": "82b216cc-50b5-4798-8498-08252e4aea9d",
+      "name": "Update tokens5",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "url": "https://panel.drdr.ir/api/v3/clinics/12061/doctors",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "page",
+              "value": "1"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "authorization",
+              "value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJjMTlmOWM3Ny0yMzRmLTRhZjYtYTE0ZS03OGY3NjU5MWYwYjEiLCJqdGkiOiI5NTE4MDY0YWMzZmU2NjY5MWYzZDc1MWVhYjhkNTI5MWUxNjI5MDk4ZGNlMjgyZTA3NGMxNGY1NDk0NThkNTgwYmNiMDZjMTk1YTZlZjU3MiIsImlhdCI6MTc1NDkzNTM5MC43NDY3NjgsIm5iZiI6MTc1NDkzNTM5MC43NDY3NywiZXhwIjoxNzYyODg0MTkwLjczMTE5OCwic3ViIjoiMTIwNjEiLCJzY29wZXMiOltdfQ.H3La7Fq0fjMioKlD1iXFp4-_2QOwkw4C3cvk4-CwBbnGdE5v4Z8zHhufOKu2Jk1YRNVPS1dLBhRN4NlLTx4-P3iitncZyIo_tgxQNGmJ7Chy1ggLoPyfS3_ECiSgOT_jfxxqNd_i-CfY3hBv-F9bQDJ7f7PVDRS2THMz8rmuL7Se05TvhNAWGxHLoqk3ArMRUNj1JaURDnpxVyXRQDbHEJWg8Nut9qrr9oGfjdVXpyhq2ujIKRmM8AfQZQBW6oXieiRLXjTrG_6crhAcn5O5LTNGGZoTyh3v0OlpzIGq2A-CP7aYyiW4f9tM6mvDRG6Fxb-4C2eNmVFc6mF120haTEC32zdtSUPA0Ac0RjZfPc2c4r5ump8NBGIZfeD1T_je3LX-9vyPJlxzQHSPRHn40zlDbzdW-TDn0d7SW9TSFxsGjLrvHzraouOz-S3OrTehr4KGmYFpEGZNLxtNMJfQ0LrchJyROb01N62N2gXPJiik6NszhKPQATXOw8SBaOdjgxQAfsYrCzFFW4v9rtMLWLuVsiepbTN-eEYXZskX8Qlq6jK6vx6eIU-nixuycw1lCNVctsLBF8lOmUwB4LqLOdBBXnfZxBkflGSbVW8A4KLIXgfVltqDiJPZZA02bGLg49grZ8zTXnoiTDLthVGj6smAD56wj9YTpcAkoU_22Hs"
+            },
+            {
+              "name": "client-id",
+              "value": "c19f9c77-234f-4af6-a14e-78f76591f0b1"
+            },
+            {
+              "name": "priority",
+              "value": "u=1, i"
+            },
+            {
+              "name": "referer",
+              "value": "https://panel.drdr.ir/doctors"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?1"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Android\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "empty"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "cors"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36"
+            },
+            {
+              "name": "user-role",
+              "value": "clinic"
+            },
+            {
+              "name": "user-role-id",
+              "value": "12061"
+            },
+            {
+              "name": "Cookie",
+              "value": "_gcl_au=1.1.1066516944.1754203264; analytics_campaign={%22source%22:%22google%22%2C%22medium%22:%22organic%22}; _clck=lunxo8%7C2%7Cfy8%7C0%7C2041; _ga_0Y8NF1G4YD=GS2.1.s1754843755$o9$g1$t1754843789$j26$l0$h0; _ga=GA1.1.833285822.1754203265; _ga_FFET8W66JW=GS2.1.s1754935161$o8$g1$t1754935452$j2$l0$h0"
+            },
+            {
+              "name": "cookie",
+              "value": "_gcl_au=1.1.1066516944.1754203264;analytics_campaign={%22source%22:%22google%22%2C%22medium%22:%22organic%22};_clck=lunxo8%7C2%7Cfy8%7C0%7C2041;_ga_0Y8NF1G4YD=GS2.1.s1754843755$o9$g1$t1754843789$j26$l0$h0;_ga=GA1.1.833285822.1754203265;_ga_FFET8W66JW=GS2.1.s1754935161$o8$g1$t1754935452$j2$l0$h0;"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -6096,
+        144
+      ],
+      "id": "3bba82d9-c4dd-4232-b035-c959d15d0b59",
+      "name": "HTTP Request1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "=https://api.doctoreto.com/api/web/doctor/v1/orders/turn-date/{{ $json.date }}?search=[(type+!%3D+4)]&page=1 ",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "app-device",
+              "value": "dboJfdAxWU"
+            },
+            {
+              "name": "app-version",
+              "value": "2.1.1"
+            },
+            {
+              "name": "origin",
+              "value": "https://doctorpanel.doctoreto.com"
+            },
+            {
+              "name": "priority",
+              "value": "u=1, i"
+            },
+            {
+              "name": "referer",
+              "value": "https://doctorpanel.doctoreto.com/"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?1"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Android\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "empty"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "cors"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-site"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36"
+            },
+            {
+              "name": "cookie",
+              "value": "_gcl_au=1.1.498441742.1752003342;analytics_campaign={%22source%22:%22google%22%2C%22medium%22:%22organic%22};_gid=GA1.2.647465753.1754995560;_clck=1u4a78c%7C2%7Cfye%7C0%7C2015;_ga=GA1.2.1884793141.1752003344;auth_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vYXBpLmRvY3RvcmV0by5jb20vYXBpL3dlYi9wYXRpZW50L3YxL2FjY291bnRzL2xvZ2luIiwiaWF0IjoxNzU1MDE2MzEyLCJleHAiOjE3NTUxMDI3MTcsIm5iZiI6MTc1NTAxNjMxNywianRpIjoiVnZ0Q2Z3M3dwS0JhREYzZiIsInN1YiI6Ijk3NzM2MCIsInBydiI6IjA4MWIwY2RjMjA4M2NkY2MxYTgzNGIwZmZhNWNkMWQ0ZDQ2ZGNlMDEifQ.oHx4EQ3j2w-qD5V0LqzrY3wB6KypmyYb4GvdjZ_gtm0;_ga_WYWKZ71LLD=GS2.1.s1755015944$o11$g1$t1755016319$j12$l0$h0;_clsk=s0ffav%7C1755016322208%7C5%7C0%7Cs.clarity.ms%2Fcollect;chat_auth_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiNjFhMDJlNzk5YjQzMzUwNTJhZjMyMWIwIiwiaWF0IjoxNzU1MDE2MzIwLCJleHAiOjE3NTUxMDI3MjAsImlzcyI6Imh0dHBzOi8vZG9jdG9yZXRvLmNvbSJ9.NPGhfjBfhGIb5R7Qm7jMV429VJVyxT9QPayZNi6osyg;"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -5664,
+        -304
+      ],
+      "id": "62ee585e-cb69-4a14-9b3e-699bd7cb0b2a",
+      "name": "list ",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9cab9db5-04fc-47ad-8665-48088162c53d",
+              "name": "patient",
+              "value": "={{ $json.items }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -5904,
+        400
+      ],
+      "id": "e673204b-ffad-40da-8d8b-8a22a15eb3d8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const runAt = new Date().toISOString();\nconst defaultDoctorId = \"12061\";\n\nconst patients = items[0]?.json?.items || [];\n\nreturn patients.map(a => {\n  const scheduledDate = a.context?.shamsi_turn_date || '';\n  const scheduledTime = a.context?.shamsi_turn_time || '';\n\n  // تعیین نام بیمار\n  let firstname = a.patient?.first_name || '';\n  let lastname = a.patient?.last_name || '';\n\n  if (a.customer?.full_name && a.customer.full_name !== a.patient?.full_name) {\n    // اگر اسم customer با patient متفاوت بود، از customer استفاده کن\n    const parts = a.customer.full_name.trim().split(' ');\n    firstname = parts[0] || firstname;\n    lastname = parts.slice(1).join(' ') || lastname;\n  }\n\n  return {\n    json: {\n      run_at: runAt,\n      scheduled_date: scheduledDate.split(' ')[0] || '',\n      scheduled_time: scheduledTime || '',\n      appointment_id: a.id || '',\n      user_patient_id: a.patient?.id || '',\n      firstname,\n      lastname,\n      mobile: a.patient?.user?.mobile?.toString() \n              || a.customer?.mobile?.toString() \n              || '',\n      national_code: a.customer?.national_code \n                     || a.patient?.national_code \n                     || '',\n      scheduled_from: scheduledDate \n                      ? `${scheduledDate} ${scheduledTime}` \n                      : '',\n      scheduled_to: '',\n      doctor_id: a.context?.doctor?.id || defaultDoctorId,\n      source_page: '',\n      raw_json: JSON.stringify(a),\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -6544,
+        384
+      ],
+      "id": "a22543ae-8b4e-481d-b4b9-19c7aa7fc992",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -5440,
+        96
+      ],
+      "id": "977b26bd-94ad-4cd0-b2f7-8093e990b5de",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const runAt = new Date().toISOString();\nconst defaultDoctorId = \"12061\";\n\nreturn items.map(it => {\n  const a = it.json;\n\n  // گرفتن تاریخ و ساعت\n  const scheduledDate = a.context?.shamsi_turn_date || '';\n  const scheduledTime = a.context?.shamsi_turn_time || '';\n\n  // تعیین نام بیمار (بر اساس منطق مهرسام / نیکرخ)\n  let firstname = a.patient?.first_name || '';\n  let lastname = a.patient?.last_name || '';\n  if (a.customer?.full_name && a.customer.full_name !== a.patient?.full_name) {\n    const parts = a.customer.full_name.trim().split(' ');\n    firstname = parts[0] || firstname;\n    lastname = parts.slice(1).join(' ') || lastname;\n  }\n\n  return {\n    json: {\n      run_at: runAt,\n      scheduled_date: scheduledDate.split(' ')[0] || '',\n      scheduled_time: scheduledTime || '',\n      appointment_id: a.id || '',\n      user_patient_id: a.patient?.id || '',\n      firstname,\n      lastname,\n      mobile: a.patient?.user?.mobile?.toString() || a.customer?.mobile?.toString() || '',\n      national_code: a.customer?.national_code || a.patient?.national_code || '',\n      scheduled_from: scheduledDate ? `${scheduledDate} ${scheduledTime}` : '',\n      scheduled_to: '',\n      doctor_id: a.context?.doctor?.id || defaultDoctorId,\n      source_page: '',\n      raw_json: JSON.stringify(a),\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5232,
+        96
+      ],
+      "id": "e27f03d2-6142-42f5-870a-dde58db193a0",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -5040,
+        96
+      ],
+      "id": "002940e1-0b0b-4461-a63e-559fb26cdaa7",
+      "name": "Append row in sheet1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const appts = items.map(it => it.json);\nconst count = appts.length;\nconst dateLabel = appts[0]?.scheduled_date || \"امروز\";\n\nlet text = 'DOCTORETO\\n\\n';\ntext += `📋 لیست بیماران برای ${dateLabel} — تعداد: ${count}\\n\\n`;\n\nfor (const a of appts) {\n  let timePart = '';\n  if (a.scheduled_from) {\n    const parts = a.scheduled_from.split(' ');\n    timePart = parts.length > 1 ? `${parts[0]} ${parts[1]}` : a.scheduled_from;\n  }\n  text += `${a.firstname} ${a.lastname} — ${a.mobile || '-'} — ${timePart}\\n`;\n}\n\nreturn [{ json: { message: text } }];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4832,
+        96
+      ],
+      "id": "e440e4c0-e2c5-492b-ae51-d72365301354",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "={{ $json.message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -4624,
+        96
+      ],
+      "id": "42b61779-edc6-41ec-9e35-8245b7206767",
+      "name": "Send a text message1",
+      "webhookId": "e1e03ccc-2805-4408-8096-0f20916b03fe"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a0266170-0501-46d8-90eb-d427881d7d20",
+              "name": "date",
+              "value": "2025-08-13",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -6128,
+        -672
+      ],
+      "id": "82721f16-d0dd-4961-bf3b-2597e4f13dfb",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "=لیست بیماران دکتر {{ $('appointments/search').first().json.result.appointments[0].doctor.firstname }}  {{ $('appointments/search').first().json.result.appointments[0].doctor.lastname }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2544,
+        -112
+      ],
+      "id": "cf5a5387-88c2-4b77-9a69-035142919e26",
+      "name": "Send a text message2",
+      "webhookId": "669f02a6-d615-46e3-88e6-a02e2696c763"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctor_platform_credentials",
+          "mode": "list",
+          "cachedResultName": "doctor_platform_credentials"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -5536,
+        -1024
+      ],
+      "id": "14df3666-e01f-4673-bfbb-f8b5438be158",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -6768,
+        -608
+      ],
+      "id": "fdf5653b-c51c-42f6-b673-0f4f8eb115b1",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "connections": {
+    "normalize tokens into json": {
+      "main": [
+        [
+          {
+            "node": "shouldRefresh",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "shouldRefresh": {
+      "main": [
+        [
+          {
+            "node": "appointments/search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "needRefresh": {
+      "main": [
+        [
+          {
+            "node": "Refresh token",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "appointments/search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refresh token": {
+      "main": [
+        [
+          {
+            "node": "process refresh response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "process refresh response": {
+      "main": [
+        [
+          {
+            "node": "Update tokens2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update tokens4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update tokens5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "appointments/search": {
+      "main": [
+        [
+          {
+            "node": "extract appointments & pagination",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extract appointments & pagination": {
+      "main": [
+        [
+          {
+            "node": "buildPages",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buildPages": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "transform appointments to rows for Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "transform appointments to rows for Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "list ": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "list ",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message2": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "normalize tokens into json",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "triggerCount": 0,
+  "versionId": "e067710c-d163-4b88-852b-bb078a25a38a",
+  "owner": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  },
+  "parentFolderId": null,
+  "isArchived": false
+}

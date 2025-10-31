@@ -1,0 +1,228 @@
+{
+  "id": "7NQONi0Z0jQ3qaT8",
+  "name": "drdr/clinic",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3c606150-cb24-4a53-8157-a838d3cdc813",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://panel.drdr.ir/api/v3/me",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9,fa;q=0.8,ar;q=0.7"
+            },
+            {
+              "name": "authorization",
+              "value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJjMTlmOWM3Ny0yMzRmLTRhZjYtYTE0ZS03OGY3NjU5MWYwYjEiLCJqdGkiOiIxODZhOTNiMzRiMTYwNGQwZTZkNjkyMWQzODM0MTI2ZTM4OWU3MzQ5NWNjNWQ5MDVlMzkyM2YyMDY5Mzg0MjVmY2ZhZjFlM2FmN2MxMzRjMiIsImlhdCI6MTc1NTc4NDgwMi41MzY5NTEsIm5iZiI6MTc1NTc4NDgwMi41MzY5NTQsImV4cCI6MTc2MzczMzYwMi41MTgxNTUsInN1YiI6IjI3OTk0Iiwic2NvcGVzIjpbXX0.snc8F-qqvyuNpQLE_5D-TXYcgV4RQydweIEuOj65If4CPYwFUSIV-G3_H-tDTOmScvvz-YpREafctMFpGuIgNPDtJl9oigk9jtniYfKwu9Hr3lpReZEOUWT7kir3_tjHsLR8a2WBOqKFV02CANOsFUQ7YKD3Z1q1oyP2bV_AqYv1U_0wdb54rHa9eVfK-cm_DOQgUVOXrgqIwQeBaBUmFScvb7CB0Qjjo_ZheKJ3ase41k85GC21FuY4cV1U6_8Ff8lFBd93udycXT2Mb5CDoMpoYGXSnq4NR99pbc_khtWuhXXLfWnmpZ1qMUFDnsSc_ff4TVNfcbO3m-LFm5_H8Hq0YrhRTY1Cl62d23NVdQciWiED5wMjYi7TsqH4LBFFwhYpYvi8OqQ-qWNxu7e_aTlptItDnfPlqcAI9ZXgtyHNulqBMhw_9uQ9KxdTtcQyCduTLWfkgNdOdM40g056sgUkjQo4s1wuTwXdh0rNK5ABsmg7cCnks-v5woz4nZV4rx4ZmlG0R7vTjrmuiw4TtW4aUwMSRTQs_a8SsB_CDxKXbkZcaZT2eGyXAedfzhbvDh1t_pIXcOJn3od6LTLWVPvUpGG1fRIGb1ta1buRJoGiVjw9uw8iPH86fdF7d-6EwxgR303ZIAxRTC77o38xyWiYbGgJsZGhZ--T2YCF8S8"
+            },
+            {
+              "name": "cache-control",
+              "value": "no-cache"
+            },
+            {
+              "name": "client-id",
+              "value": "c19f9c77-234f-4af6-a14e-78f76591f0b1"
+            },
+            {
+              "name": "pragma",
+              "value": "no-cache"
+            },
+            {
+              "name": "priority",
+              "value": "u=1, i"
+            },
+            {
+              "name": "referer",
+              "value": "https://panel.drdr.ir/?_gl=1*1o19kt2*_gcl_au*MjExMDMxNDgzLjE3NTU3ODQ2OTg.*_ga*ODE3ODk1MzE5LjE3NTU3ODQ2OTk.*_ga_0Y8NF1G4YD*czE3NTc3NjA4MzIkbzUkZzEkdDE3NTc3NjA4MzUkajU3JGwwJGgw&_ga=2.19970686.715683761.1757760835-817895319.1755784699"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Microsoft Edge\";v=\"140\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "empty"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "cors"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0"
+            },
+            {
+              "name": "user-role",
+              "value": "doctor"
+            },
+            {
+              "name": "user-role-id",
+              "value": "27994"
+            },
+            {
+              "name": "cookie",
+              "value": "_gcl_au=1.1.211031483.1755784698;_gid=GA1.2.715683761.1757760835;_gat_UA-101159391-1=1;_ga_0Y8NF1G4YD=GS2.1.s1757760832$o5$g1$t1757760839$j53$l0$h0;_ga=GA1.1.817895319.1755784699;_ga_FFET8W66JW=GS2.1.s1757760842$o10$g0$t1757760851$j51$l0$h0;"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "e3098d12-0cd6-4101-8edd-00efdffaa0a2",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e9aed994-d783-4047-bd8d-6adbc106aba5",
+              "name": "id",
+              "value": "={{ $json.result.user.clinics[0].id }}",
+              "type": "string"
+            },
+            {
+              "id": "3bced41c-6b35-401d-aa0a-ce5d600de5d6",
+              "name": "=status",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "7fbaf1ce-0b43-4151-b6cd-90a4d0753676",
+              "name": "name",
+              "value": "={{ $json.result.user.clinics[0].title }}",
+              "type": "string"
+            },
+            {
+              "id": "28e934b1-748b-46a1-aaa5-c3acbd3a29d3",
+              "name": "tell",
+              "value": "={{ $json.result.user.clinics[0].phones[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "8e3f21ea-f48f-44f3-a05d-df7189aecea4",
+              "name": "display_number",
+              "value": "={{ $json.result.user.clinics[0].phones[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "5ee28ad3-0eb8-40b7-8764-8a420de78652",
+              "name": "address",
+              "value": "={{ $json.result.user.clinics[0].address }}",
+              "type": "string"
+            },
+            {
+              "id": "e9d89d5a-0dc8-4c68-9a55-af8b6189ad49",
+              "name": "slug",
+              "value": "={{ $json.result.user.clinics[0].title }}",
+              "type": "string"
+            },
+            {
+              "id": "467a00ca-4c0e-4677-9cb2-cfe67b7a08bb",
+              "name": "map.lat",
+              "value": "={{ $json.result.user.clinics[0].latitude }}",
+              "type": "string"
+            },
+            {
+              "id": "11a02f87-1017-456b-8be4-8a9d81f50eca",
+              "name": "map.long",
+              "value": "={{ $json.result.user.clinics[0].longitude }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "8bc79aab-675f-420b-86fc-fdb830bec2db",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "content": "## not good enogh\n### still need to be completed\n\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        160,
+        -176
+      ],
+      "typeVersion": 1,
+      "id": "d3d56bab-b5a0-4522-b11b-ae7b7d9e8645",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "triggerCount": 0,
+  "versionId": "2107e91b-8cd3-463a-8220-0106c6f94c4a",
+  "owner": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  },
+  "parentFolderId": null,
+  "isArchived": false
+}

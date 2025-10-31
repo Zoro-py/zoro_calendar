@@ -1,0 +1,486 @@
+{
+  "id": "jWEIGqopcbWeF1uR",
+  "name": "drdr-refresh_token",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -176
+      ],
+      "id": "b581fcd6-d56a-4547-8952-9b9517e91ae0",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "id",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        448,
+        -176
+      ],
+      "id": "6147b81f-0985-4ffc-bff7-579005e8d4b4",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7c501832-b291-4633-bda8-88d8c443dadb",
+              "leftValue": "={{ $json.need_update }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        896,
+        -176
+      ],
+      "id": "d95b2183-adbb-4af5-bfde-17bd5a78f54f",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://drdr.ir/api/v3/oauth/token",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "grant_type",
+              "value": "refresh_token"
+            },
+            {
+              "name": "client_id",
+              "value": "={{ $json.client_id }}"
+            },
+            {
+              "name": "client_secret",
+              "value": "={{ $json.client_secret }}"
+            },
+            {
+              "name": "refresh_token",
+              "value": "={{ $json.refresh_token }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1136,
+        -288
+      ],
+      "id": "58cf38a0-417c-4b1a-977e-5b75d36d29a5",
+      "name": "Refresh token",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctor_platform_credentials",
+          "mode": "list",
+          "cachedResultName": "doctor_platform_credentials"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Split Out').item.json.id }}",
+            "access_token": "={{ $('Refresh token').item.json.result.token.access_token }}",
+            "refresh_token": "={{ $('Refresh token').item.json.result.token.refresh_token }}",
+            "updated_at": "={{ $json.now_tehran }}",
+            "expires_at": "={{ $json.expires_at }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "doctor_id",
+              "displayName": "doctor_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "platform_id",
+              "displayName": "platform_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "platform_doctor_id",
+              "displayName": "platform_doctor_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "client_id",
+              "displayName": "client_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "client_secret",
+              "displayName": "client_secret",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "access_token",
+              "displayName": "access_token",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "refresh_token",
+              "displayName": "refresh_token",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "expires_at",
+              "displayName": "expires_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "token_created",
+              "displayName": "token_created",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone_in_platform",
+              "displayName": "phone_in_platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1584,
+        -288
+      ],
+      "id": "c2508edb-e566-4922-82a2-719a75d75594",
+      "name": "Update rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        288,
+        0
+      ],
+      "id": "9358d6a5-9fab-42ac-82fa-b99e23506f10",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "❌drdr / refresh token has error❌",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        496,
+        0
+      ],
+      "id": "a998631d-3fe3-49c8-bebc-5f2a99fc1439",
+      "name": "Send a text message",
+      "webhookId": "370b2ba6-fa65-4667-a1d5-f6910589b382",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "list",
+          "cachedResultName": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctor_platform_credentials",
+          "mode": "list",
+          "cachedResultName": "doctor_platform_credentials"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "platform_id",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        224,
+        -176
+      ],
+      "id": "8cba7288-fbde-4b14-bcd2-4653549189df",
+      "name": "select drdr cridencials",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// کد داخل Node -> Code\n\nreturn items.map(item => {\n  const updatedAt = new Date(item.json.updated_at); // زمان آخرین آپدیت (UTC)\n\n  // گرفتن زمان الان بر اساس تایم‌زون تهران\n  const now = new Date(\n    new Date().toLocaleString(\"en-US\", { timeZone: \"Asia/Tehran\" })\n  );\n\n  // اختلاف زمان به میلی‌ثانیه\n  const diffMs = now - updatedAt;\n\n  // تبدیل به روز\n  const diffDays = diffMs / (1000 * 60 * 60 * 24);\n\n  // اگر بیشتر از 7 روز بود\n  const needUpdate = diffDays >= 7;\n\n  return {\n    json: {\n      ...item.json,\n      updated_at: updatedAt.toISOString(),              // زمان آخرین آپدیت\n      current_time_tehran: now.toISOString(),           // زمان فعلی در تهران\n      need_update: needUpdate                           // پرچم نیاز به آپدیت\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        -176
+      ],
+      "id": "7a743ae1-31d9-49d0-944a-f738f35b554e",
+      "name": "is it a week later"
+    },
+    {
+      "parameters": {
+        "jsCode": "// این نود زمان فعلی را به همراه یک تاریخ آینده محاسبه می‌کند\n// و خروجی را در فرمت ISO 8601 با offset تهران (+03:30) می‌دهد\n\n// تعداد ثانیه‌هایی که می‌خواهیم به زمان فعلی اضافه کنیم\nconst oneYearSeconds = $input.first().json.result.token.expires_in; // معادل یک سال\n\n// گرفتن زمان فعلی با timezone تهران\nconst nowTehran = new Date(\n  new Date().toLocaleString(\"en-US\", { timeZone: \"Asia/Tehran\" })\n);\n\n// محاسبه تاریخ آینده: زمان فعلی + oneYearSeconds\nconst futureDate = new Date(nowTehran.getTime() + oneYearSeconds * 1000);\n\n// خروجی نود\nreturn [\n  {\n    json: {\n      // زمان فعلی در تهران با فرمت ISO 8601 +03:30\n      now_tehran: nowTehran.toISOString().replace('Z', '+03:30'),\n\n      // مقدار ثانیه‌های اضافه شده (مثلاً یک سال)\n      one_year_seconds: oneYearSeconds,\n\n      // زمان آینده = زمان فعلی + عدد مشخص، با همان فرمت\n      expires_at: futureDate.toISOString().replace('Z', '+03:30')\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1360,
+        -288
+      ],
+      "id": "a8dea571-55de-46ec-9f73-34f541c27d19",
+      "name": "create needed times"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "select drdr cridencials",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "is it a week later",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Refresh token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Refresh token": {
+      "main": [
+        [
+          {
+            "node": "create needed times",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "select drdr cridencials": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is it a week later": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create needed times": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "triggerCount": 1,
+  "versionId": "aa78d8ff-ef3a-4296-bd4c-c5f75dcd3e78",
+  "owner": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  },
+  "parentFolderId": null,
+  "isArchived": false
+}

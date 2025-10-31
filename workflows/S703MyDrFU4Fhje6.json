@@ -1,0 +1,922 @@
+{
+  "id": "S703MyDrFU4Fhje6",
+  "name": "drdr/get-appointment",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://panel.drdr.ir/api/v3/appointments/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json;charset=UTF-8"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$json.access_token}}"
+            },
+            {
+              "name": "client-id",
+              "value": "={{$json.client_id}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"doctor_id\": {{ $json.platform_doctor_id }},\n  \"page\": 1,\n  \"scheduled_date\": \"{{ $('Webhook').item.json.body.date }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2976,
+        800
+      ],
+      "id": "85e3716a-49d6-4121-8397-58f07a479fa4",
+      "name": "appointments/search",
+      "retryOnFail": false,
+      "waitBetweenTries": 3000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "i did not build this part\n",
+        "height": 400,
+        "width": 720
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -4544,
+        1504
+      ],
+      "typeVersion": 1,
+      "id": "c545ad47-5fe7-413b-b4e2-35d68685cc39",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "path": "drdr/get-appointment",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -3872,
+        896
+      ],
+      "id": "bd337a5e-e692-42a7-8518-d8004a39a3e1",
+      "name": "Webhook",
+      "webhookId": "be688471-eb2c-4180-b3ab-f9a1ad199384"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctors",
+          "mode": "list",
+          "cachedResultName": "doctors"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "p24_id",
+              "value": "={{ $json.body.p24_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -3648,
+        896
+      ],
+      "id": "607841ed-5179-49ec-bebd-fbb7e2e487d7",
+      "name": "find doctor id",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0d2221ad-d208-477f-a76f-9c366f7e3194",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3424,
+        896
+      ],
+      "id": "d22f049e-073a-4e6d-be23-56e7d5c9d248",
+      "name": "does dr exists"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "dr does not exist",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -3200,
+        992
+      ],
+      "id": "6750470e-2886-42f6-b6dd-c58185a881f9",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctor_platform_credentials",
+          "mode": "list",
+          "cachedResultName": "doctor_platform_credentials"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "platform_id",
+              "value": "1"
+            },
+            {
+              "column": "doctor_id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -3200,
+        800
+      ],
+      "id": "c9d60cba-ba01-4ef5-aa92-839c76e095d3",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -1200,
+        592
+      ],
+      "id": "62d4b8b6-b6ca-4c07-b38d-f8194095204a",
+      "name": "Respond to Webhook2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e581cbf-63da-447f-a529-04f075eb7d51",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "10b3b3f8-871a-4001-ad7a-394a09fa63e7",
+              "name": "type",
+              "value": "={{ $json.type_label }}",
+              "type": "string"
+            },
+            {
+              "id": "1bddb2f9-6d8e-461d-acdb-a0b6e1ee53a3",
+              "name": "type_id",
+              "value": "={{ $json.type_id }}",
+              "type": "string"
+            },
+            {
+              "id": "ae59be4e-def7-48fe-8229-fb99ba2aa129",
+              "name": "user_center_id",
+              "value": "={{ $json.user_center_id }}",
+              "type": "string"
+            },
+            {
+              "id": "e78dc91c-47d5-42d1-9a4d-6b6116b87f25",
+              "name": "book_status",
+              "value": "visited",
+              "type": "string"
+            },
+            {
+              "id": "3f3bae6f-e1f8-4798-b756-2997bb278ebb",
+              "name": "ref_id",
+              "value": "={{ $json.ref_id }}",
+              "type": "string"
+            },
+            {
+              "id": "abcccb4d-b597-4419-a1b6-b20d54bc7697",
+              "name": "from",
+              "value": "={{ $json.from }}",
+              "type": "string"
+            },
+            {
+              "id": "73c02c16-2f2c-4f0d-9d6f-5cdce6397393",
+              "name": "to",
+              "value": "={{ $json.to }}",
+              "type": "string"
+            },
+            {
+              "id": "9131405c-0046-44b9-9e0b-dc1ed62343bc",
+              "name": "from_date",
+              "value": "={{ $json.from_date }}",
+              "type": "string"
+            },
+            {
+              "id": "f03a9eea-046e-4500-a598-45d7cd728b58",
+              "name": "to_date",
+              "value": "={{ $json.to_date }}",
+              "type": "string"
+            },
+            {
+              "id": "624b10a3-4869-4746-a379-a6b8671e2847",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "7a1a1358-7ae0-4e92-a333-630f869f5476",
+              "name": "family",
+              "value": "={{ $json.family }}",
+              "type": "string"
+            },
+            {
+              "id": "b50235bb-c51b-478e-9f5c-68c9ece5a5f0",
+              "name": "display_name",
+              "value": "={{ $json.display_name }}",
+              "type": "string"
+            },
+            {
+              "id": "b6d8980d-1f0e-44cb-a928-2b3b0120d1ad",
+              "name": "cell",
+              "value": "={{ $json.cell }}",
+              "type": "string"
+            },
+            {
+              "id": "9676ded4-2327-4878-b43b-115fae97afd8",
+              "name": "national_code",
+              "value": "={{ $json.national_code }}",
+              "type": "string"
+            },
+            {
+              "id": "f3d56483-d199-4863-af0a-836609384b7c",
+              "name": "payment_status",
+              "value": "paid",
+              "type": "string"
+            },
+            {
+              "id": "a622b7c1-0136-4737-b9b2-07921170b163",
+              "name": "cost",
+              "value": "={{ $json.cost }}",
+              "type": "string"
+            },
+            {
+              "id": "0f8c52bb-96c1-4686-9651-77ce4245dc40",
+              "name": "insurance",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "23486055-4d7c-4ccc-aa5c-3e3e06078405",
+              "name": "platform.name",
+              "value": "drdr",
+              "type": "string"
+            },
+            {
+              "id": "57bf7055-8f7a-42ac-9ba2-1a49de30bd68",
+              "name": "platform.p_name",
+              "value": "دکتردکتر",
+              "type": "string"
+            },
+            {
+              "id": "5bccba0f-513a-47ef-ba32-caf279e66878",
+              "name": "platform.id",
+              "value": "1",
+              "type": "string"
+            },
+            {
+              "id": "915ad2a6-dcd9-4dd6-9463-8acaf37f3ad0",
+              "name": "platform.icon",
+              "value": "https://zoro-icon.s3.ir-tbz-sh1.arvanstorage.ir/drdr.png",
+              "type": "string"
+            },
+            {
+              "id": "0bce6483-9ec0-4097-a2f5-3d3526c0bf14",
+              "name": "platform.link",
+              "value": "https://panel.drdr.ir/",
+              "type": "string"
+            },
+            {
+              "id": "6c31c0d6-c5c9-4de6-a87d-7accbe5e0eaf",
+              "name": "center.id",
+              "value": "={{ $json.center_id }}",
+              "type": "string"
+            },
+            {
+              "id": "edbe219a-4121-4626-842e-089576be4ebd",
+              "name": "center.name",
+              "value": "={{ $json.center_name }}",
+              "type": "string"
+            },
+            {
+              "id": "0136c2c3-dfab-4725-8bc7-96fa4e2d909b",
+              "name": "center.address",
+              "value": "={{ $json.center_address }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1440,
+        592
+      ],
+      "id": "d2c9eecc-1d52-4ae3-b246-edec19a8a71c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ورودی خام را که یک آرایه با یک عضو است، می‌گیریم\nconst rawInput = items[0].json;\n\n// به آرایه appointments دسترسی پیدا می‌کنیم\nconst appointmentsArray = rawInput.result.appointments;\n\n// یک آیتم جدید برمی‌گردانیم که فقط شامل این آرایه است\n// این کار نود بعدی (Split Out) را بسیار ساده می‌کند\nreturn [{\n  json: {\n    appointments: appointmentsArray\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2528,
+        672
+      ],
+      "id": "651d69f4-6346-459b-904e-666ed1a0c4ef",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "appointments",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2304,
+        672
+      ],
+      "id": "9fae48d5-bfad-4382-b9a3-42b5bc3b707f",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// این کد روی هر آیتم جداگانه اجرا می‌شود\nconst input = $json;\n\n// --- تابع کمکی برای تبدیل تاریخ به ISO ایران ---\nfunction toIranISO(dateString) {\n  if (!dateString) return null;\n\n  // ورودی دقیقاً به وقت تهران هست → فقط استانداردسازی\n  return dateString.replace(' ', 'T') + '+03:30';\n}\n\n// --- تابع کمکی برای تبدیل ISO به timestamp ---\nfunction isoToTimestamp(isoString) {\n  if (!isoString) return null;\n  return Math.floor(new Date(isoString).getTime() / 1000);\n}\n\n// --- مپ کردن وضعیت عددی ---\nlet bookStatus = 'unknown';\nif (input.status === 100) {\n    bookStatus = 'visited';\n} else if (input.canceled_at) {\n    bookStatus = 'canceled';\n} else {\n    bookStatus = 'booked';\n}\n\n// --- مپ کردن وضعیت پرداخت ---\nlet paymentStatus = 'unpaid';\nif (input.invoice && input.invoice.status === 100) {\n    paymentStatus = 'paid';\n}\n\n// --- پیدا کردن موبایل ---\n// اولویت: user_patient → input.mobile → transaction.mobile\nlet mobile = null;\n\nif (input.user_patient?.mobile) {\n  mobile = input.user_patient.mobile;\n} else if (input.mobile && input.mobile !== \"-\" && input.mobile !== null) {\n  mobile = input.mobile;\n} else if (\n  input.invoice &&\n  Array.isArray(input.invoice.transactions) &&\n  input.invoice.transactions.length > 0\n) {\n  mobile = input.invoice.transactions[0].mobile || null;\n}\n\n// نرمال‌سازی شماره (+98 → 0)\nif (mobile) {\n  mobile = mobile.replace('+98', '0');\n}\n\n// --- تاریخ‌ها ---\nconst fromISO = toIranISO(input.scheduled_from);\nconst toISO = toIranISO(input.scheduled_to);\n\n// --- مپ کردن type ---\nlet typeLabel = null;\nlet typeId = null;\nlet clinic_id = \"\";\nlet clinic_name = \"\";\nlet clinic_address = \"\";\n\nif (input.type === 1) {\n  typeLabel = \"in_person\";\n  typeId = 1;\n  clinic_id = $json.clinic.id;\n  clinic_name = $json.clinic.title;\n  clinic_address = $json.clinic.address;\n} else if (input.type === 2 || input.type === 4 || input.type === 8) {\n  typeLabel = \"online\";\n  typeId = 2;\n}\n\n// --- ساختن آبجکت خروجی ---\nconst output = {\n  id: input.id,\n  type: \"book\",\n  user_center_id: \"9ce160cd-8963-428b-bd7e-615bc240dc0c\",\n  book_status: bookStatus,\n  ref_id: String(input.tracking_code),\n  from: isoToTimestamp(fromISO),\n  to: isoToTimestamp(toISO),\n  from_date: fromISO,\n  to_date: toISO,\n  name: input.firstname,\n  family: input.lastname,\n  display_name: `${input.firstname} ${input.lastname}`,\n  cell: mobile,\n  national_code: input.national_code,\n  payment_status: paymentStatus,\n  cost: input.amount,\n  insurance: null,\n  type_label: typeLabel,\n  type_id: typeId,\n  center_id : clinic_id,\n  center_name : clinic_name,\n  center_address : clinic_address\n};\n\n// بازگرداندن آیتم تبدیل شده\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1632,
+        592
+      ],
+      "id": "69fb044a-4cf3-4deb-b11b-15332749ac4b",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5ff880df-d894-4f6a-8b25-ac891b0538d0",
+              "leftValue": "={{ $json.result.appointments }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2752,
+        768
+      ],
+      "id": "aab37cec-1fc3-4d0d-bb3b-a15643e204ad",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -2528,
+        864
+      ],
+      "id": "777cfb2f-7480-4929-bb53-40bffd69b6b2",
+      "name": "Respond to Webhook3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -3536,
+        1264
+      ],
+      "id": "6ea31abf-d3e0-441d-b8e3-235b140aff49",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "❌drdr/get-appointment has error❌",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3312,
+        1264
+      ],
+      "id": "bcd2ed52-842e-41f4-ac3c-c440335e93e6",
+      "name": "Send a text message",
+      "webhookId": "370b2ba6-fa65-4667-a1d5-f6910589b382",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "754fd104-4116-4175-9929-af47b0ca45e8",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": 100,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "3a6011c0-d1cf-40dc-ab2d-83f4d7ccc202",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -2096,
+        672
+      ],
+      "id": "33cf9bea-a82f-440c-a3c0-20f1debba3df",
+      "name": "Filter",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "80e421f3-9c45-4961-a95d-b522edbbb693",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1888,
+        672
+      ],
+      "id": "7edbbeca-54c6-4282-a3d6-0673b9b1af22",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {
+          "responseCode": 204
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -1680,
+        768
+      ],
+      "id": "e4962e92-e472-410f-bb51-bc6b009385d7",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -2704,
+        1152
+      ],
+      "id": "d2ec7ab5-fc51-4693-899c-900764587878",
+      "name": "Respond to Webhook4"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "❌drdr/get-appointment has error (http request)❌",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2752,
+        1488
+      ],
+      "id": "cd357062-735e-41d0-b4f8-0ba31ea4b684",
+      "name": "Send a text message1",
+      "webhookId": "370b2ba6-fa65-4667-a1d5-f6910589b382",
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const pagination = items[0].json.pagination || {};\nconst last = pagination.last_page || 1;\nconst pages = [];\nfor (let p=1; p<=last; p++) {\n  pages.push({ page: p });\n}\nreturn pages.map(p=>({json:p}));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4480,
+        1680
+      ],
+      "id": "726ab3cb-fa9c-4d2f-882d-4da7d8b133a2",
+      "name": "buildPages",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -4256,
+        1680
+      ],
+      "id": "45580e3e-9434-43c6-90a8-21d216a4db6c",
+      "name": "Loop Over Items",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -4032,
+        1680
+      ],
+      "id": "9af0a67c-58fb-4291-882c-a880915afdc2",
+      "name": "HTTP Request",
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "appointments/search": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "find doctor id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "find doctor id": {
+      "main": [
+        [
+          {
+            "node": "does dr exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "does dr exists": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "appointments/search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Code4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buildPages": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "triggerCount": 1,
+  "versionId": "bb2ca9dc-3877-4609-a8fd-62961cbdc679",
+  "owner": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  },
+  "parentFolderId": null,
+  "isArchived": false
+}

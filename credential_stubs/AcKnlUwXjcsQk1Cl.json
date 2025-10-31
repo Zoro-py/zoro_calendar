@@ -1,0 +1,13 @@
+{
+  "id": "AcKnlUwXjcsQk1Cl",
+  "name": "widget",
+  "type": "telegramApi",
+  "data": {
+    "accessToken": ""
+  },
+  "ownedBy": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  }
+}

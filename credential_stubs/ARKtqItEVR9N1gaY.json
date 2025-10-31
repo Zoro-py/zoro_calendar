@@ -1,0 +1,15 @@
+{
+  "id": "ARKtqItEVR9N1gaY",
+  "name": "Telegram account",
+  "type": "telegramApi",
+  "data": {
+    "accessToken": "",
+    "baseUrl": ""
+  },
+  "ownedBy": {
+    "type": "personal",
+    "projectId": "Zp6TRlq4gxhqUmDN",
+    "projectName": "mmd hey <m.h.heidari1384@gmail.com>",
+    "personalEmail": "m.h.heidari1384@gmail.com"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "id": "oSZ0fo1NolfEmqVt",
+  "name": "calendar report bot",
+  "type": "telegramApi",
+  "data": {
+    "accessToken": ""
+  },
+  "ownedBy": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  }
+}

@@ -1,0 +1,153 @@
+{
+  "id": "MwBzuvZEEesZ5K6W",
+  "name": "get-clinics",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "v1/clinics",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -816,
+        128
+      ],
+      "id": "74996d02-7de7-4e02-be11-f54940badde9",
+      "name": "Webhook",
+      "webhookId": "be688471-eb2c-4180-b3ab-f9a1ad199384"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctors",
+          "mode": "list",
+          "cachedResultName": "doctors"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "p24_id",
+              "value": "={{ $json.query.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -368,
+        16
+      ],
+      "id": "9eb407ab-c77a-40f3-b9f9-77f753ada842",
+      "name": "find doctor id",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "fc204ab2-18de-4f42-818a-59d16cc33976",
+              "leftValue": "={{ $json.headers[\"x-api-key\"] }}",
+              "rightValue": "7mPqK9jH2rT5wXzC8vB1nL4gYfDsG6",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -592,
+        128
+      ],
+      "id": "daecf002-c946-4cd0-a132-5f464a2c62c1",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "secret is wrong!",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -368,
+        224
+      ],
+      "id": "56b4a872-adbd-4547-a0c4-1de9c52415a7",
+      "name": "Respond to Webhook2"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "find doctor id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "triggerCount": 1,
+  "versionId": "cad277ae-35b3-468e-b5d0-836e2f113d82",
+  "owner": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  },
+  "parentFolderId": null,
+  "isArchived": false
+}

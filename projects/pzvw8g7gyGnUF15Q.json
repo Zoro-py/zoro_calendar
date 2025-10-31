@@ -1,0 +1,16 @@
+{
+  "id": "pzvw8g7gyGnUF15Q",
+  "name": "calendar",
+  "icon": {
+    "type": "icon",
+    "value": "smile"
+  },
+  "description": "",
+  "type": "team",
+  "owner": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  },
+  "variableStubs": []
+}

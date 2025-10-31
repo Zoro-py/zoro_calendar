@@ -1,0 +1,14 @@
+{
+  "id": "3UN48Ejir4Oxfhcd",
+  "name": "calendar_bot",
+  "type": "telegramApi",
+  "data": {
+    "accessToken": "",
+    "baseUrl": ""
+  },
+  "ownedBy": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  }
+}

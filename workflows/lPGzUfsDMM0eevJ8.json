@@ -1,0 +1,650 @@
+{
+  "id": "lPGzUfsDMM0eevJ8",
+  "name": "widget",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -384
+      ],
+      "id": "a41c5858-1f30-4df1-a310-02a754c54b47",
+      "name": "Telegram Trigger",
+      "webhookId": "2120b747-302f-472c-b245-a00ac949281f",
+      "credentials": {
+        "telegramApi": {
+          "id": "AcKnlUwXjcsQk1Cl",
+          "name": "widget"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a7152b6a-0b65-40b8-9e2d-6a0f85d297fd",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "paziresh24",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        -144
+      ],
+      "id": "2f6fb42c-e654-49f3-9042-4781e12dd1e1",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2b75d692-4f62-48e6-8108-46c8f5a6f19e",
+              "name": "message.text",
+              "value": "={{ $json.message.text.split('/').filter(part => part).pop() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        672,
+        0
+      ],
+      "id": "c0d1705a-d18b-4a96-9ff2-e8e8f06115f8",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "❌NOT FOUND❌",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        -48
+      ],
+      "id": "c41d762e-9f94-4b13-abfd-77b7e66a3090",
+      "name": "Send a text message",
+      "webhookId": "a69f111c-74cd-4286-9441-ce9ba37f258d",
+      "credentials": {
+        "telegramApi": {
+          "id": "AcKnlUwXjcsQk1Cl",
+          "name": "widget"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://hamdast.paziresh24.com/api/v1/apps/zorocalandar/widgets/{{ $json.user_id }}/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "35399abd-59bb-40e3-85d8-b4699088bed3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1344,
+        -96
+      ],
+      "id": "8f6876f9-ed20-4906-becc-95720d58279c",
+      "name": "HTTP Request",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "=https://drprofile.paziresh24.com/api/doctors/{{ $json.message.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        896,
+        -288
+      ],
+      "id": "756910b7-14f4-452d-ab38-4ba255c20551",
+      "name": "get_user_id",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "34389d42-b9e3-480d-82ac-6014fbc6b518",
+              "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+              "rightValue": "delete",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        -240
+      ],
+      "id": "4b78d341-c174-4c61-9abc-f87210042412",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://hamdast.paziresh24.com/api/v1/apps/zorocalandar/widgets/{{ $json.user_id }}/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "35399abd-59bb-40e3-85d8-b4699088bed3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1344,
+        -384
+      ],
+      "id": "215252ff-f33d-485c-96f2-0ecb55ad8aff",
+      "name": "HTTP Request1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "✅ SUCCESSFUL",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        -336
+      ],
+      "id": "9b40c848-9937-4d5b-b7f1-313d78af45fb",
+      "name": "Send a text message1",
+      "webhookId": "a69f111c-74cd-4286-9441-ce9ba37f258d",
+      "credentials": {
+        "telegramApi": {
+          "id": "AcKnlUwXjcsQk1Cl",
+          "name": "widget"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "❌ FAILED",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        -144
+      ],
+      "id": "3fdac01c-1775-4e61-a0cc-34701ef72dae",
+      "name": "Send a text message2",
+      "webhookId": "a69f111c-74cd-4286-9441-ce9ba37f258d",
+      "credentials": {
+        "telegramApi": {
+          "id": "AcKnlUwXjcsQk1Cl",
+          "name": "widget"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://drprofile.paziresh24.com/api/doctors/{{ $json.message.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        896,
+        0
+      ],
+      "id": "9348576f-1ea9-4fc1-8b29-606879ff3a40",
+      "name": "get_user_id1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8fff96af-7ce2-4b24-9b62-8a8a2b557849",
+              "leftValue": "={{ $json.message.text.length }}",
+              "rightValue": 20,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        -384
+      ],
+      "id": "248fc98a-078e-4ce5-a7ea-c33cbe1b5bd5",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://hamdast.paziresh24.com/api/v1/apps/zorocalandar/widgets/{{ $json.message.text.match(/\\d+/)[0] }}/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "35399abd-59bb-40e3-85d8-b4699088bed3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        -480
+      ],
+      "id": "368cab1e-e408-48a0-bcc3-8a61ee438438",
+      "name": "HTTP Request2",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "34389d42-b9e3-480d-82ac-6014fbc6b518",
+              "leftValue": "={{ $('Telegram Trigger').item.json.message.text }}",
+              "rightValue": "delete",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        -624
+      ],
+      "id": "b1c75c48-f37d-476c-ac4b-f5ea94449f2f",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://hamdast.paziresh24.com/api/v1/apps/zorocalandar/widgets/{{ $json.message.text.match(/\\d+/)[0] }}/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "35399abd-59bb-40e3-85d8-b4699088bed3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        -768
+      ],
+      "id": "d2084a9e-066e-4dba-9560-041248a53dae",
+      "name": "HTTP Request3",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "✅ SUCCESSFUL",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        896,
+        -720
+      ],
+      "id": "2bb79500-c48b-4baa-a161-005709dd21b0",
+      "name": "Send a text message3",
+      "webhookId": "a69f111c-74cd-4286-9441-ce9ba37f258d",
+      "credentials": {
+        "telegramApi": {
+          "id": "AcKnlUwXjcsQk1Cl",
+          "name": "widget"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "❌ FAILED",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        896,
+        -528
+      ],
+      "id": "5ae104e7-a978-4567-9ca2-325680259d68",
+      "name": "Send a text message4",
+      "webhookId": "a69f111c-74cd-4286-9441-ce9ba37f258d",
+      "credentials": {
+        "telegramApi": {
+          "id": "AcKnlUwXjcsQk1Cl",
+          "name": "widget"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "If": {
+      "main": [
+        [
+          {
+            "node": "get_user_id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "get_user_id1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_user_id": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_user_id1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "triggerCount": 1,
+  "versionId": "0289b469-2447-4b71-b749-99412c82eedc",
+  "owner": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  },
+  "parentFolderId": null,
+  "isArchived": false
+}

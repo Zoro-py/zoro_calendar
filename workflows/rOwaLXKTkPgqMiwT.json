@@ -1,0 +1,1350 @@
+{
+  "id": "rOwaLXKTkPgqMiwT",
+  "name": "drdr/login",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://panel.drdr.ir/api/v3/auth/login/mobile/init",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "mobile",
+              "value": "09123456789"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -224,
+        -1264
+      ],
+      "id": "0fb785bd-8972-40b4-a0c2-35adcda3ab3e",
+      "name": "HTTP Request",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://panel.drdr.ir/api/v3/auth/login/verify-otp",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "mobile",
+              "value": "09123456789"
+            },
+            {
+              "name": "code",
+              "value": "123456"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -224,
+        -816
+      ],
+      "id": "d1865e9f-503b-4c0b-b460-cc9f08b83c95",
+      "name": "HTTP Request1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://panel.drdr.ir/api/v3/auth/login/mobile/init",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9,fa;q=0.8,ar;q=0.7"
+            },
+            {
+              "name": "authorization",
+              "value": "null"
+            },
+            {
+              "name": "client-id",
+              "value": "c19f9c77-234f-4af6-a14e-78f76591f0b1"
+            },
+            {
+              "name": "origin",
+              "value": "https://panel.drdr.ir"
+            },
+            {
+              "name": "priority",
+              "value": "u=1, i"
+            },
+            {
+              "name": "referer",
+              "value": "https://panel.drdr.ir/login"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Not;A=Brand\";v=\"99\", \"Microsoft Edge\";v=\"139\", \"Chromium\";v=\"139\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "empty"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "cors"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0"
+            },
+            {
+              "name": "user-role",
+              "value": "undefined"
+            },
+            {
+              "name": "user-role-id",
+              "value": "undefined"
+            },
+            {
+              "name": "Cookie",
+              "value": "_gcl_au=1.1.211031483.1755784698; _gid=GA1.2.1679082415.1755784702; _gat_UA-101159391-1=1; _ga_0Y8NF1G4YD=GS2.1.s1755784698$o1$g1$t1755784702$j56$l0$h0; _ga=GA1.1.817895319.1755784699; _ga_FFET8W66JW=GS2.1.s1755784702$o1$g1$t1755784718$j44$l0$h0"
+            },
+            {
+              "name": "cookie",
+              "value": "_gcl_au=1.1.211031483.1755784698;_gid=GA1.2.1679082415.1755784702;_gat_UA-101159391-1=1;_ga_0Y8NF1G4YD=GS2.1.s1755784698$o1$g1$t1755784702$j56$l0$h0;_ga=GA1.1.817895319.1755784699;_ga_FFET8W66JW=GS2.1.s1755784702$o1$g1$t1755784718$j44$l0$h0;"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json;charset=UTF-8",
+        "body": "mobile",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -224,
+        -1040
+      ],
+      "id": "9d27d6ec-ad92-4b6f-9eaf-fed4f5285145",
+      "name": "HTTP Request2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://panel.drdr.ir/api/v3/auth/login/mobile/init",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9,fa;q=0.8,ar;q=0.7"
+            },
+            {
+              "name": "authorization",
+              "value": "null"
+            },
+            {
+              "name": "client-id",
+              "value": "c19f9c77-234f-4af6-a14e-78f76591f0b1"
+            },
+            {
+              "name": "origin",
+              "value": "https://panel.drdr.ir"
+            },
+            {
+              "name": "priority",
+              "value": "u=1, i"
+            },
+            {
+              "name": "referer",
+              "value": "https://panel.drdr.ir/login"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Not;A=Brand\";v=\"99\", \"Microsoft Edge\";v=\"139\", \"Chromium\";v=\"139\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "empty"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "cors"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0"
+            },
+            {
+              "name": "user-role",
+              "value": "undefined"
+            },
+            {
+              "name": "user-role-id",
+              "value": "undefined"
+            },
+            {
+              "name": "Cookie",
+              "value": "_gcl_au=1.1.211031483.1755784698; _gid=GA1.2.1679082415.1755784702; _gat_UA-101159391-1=1; _ga_0Y8NF1G4YD=GS2.1.s1755784698$o1$g1$t1755784702$j56$l0$h0; _ga=GA1.1.817895319.1755784699; _ga_FFET8W66JW=GS2.1.s1755784702$o1$g1$t1755784718$j44$l0$h0"
+            },
+            {
+              "name": "cookie",
+              "value": "_gcl_au=1.1.211031483.1755784698;_gid=GA1.2.1679082415.1755784702;_gat_UA-101159391-1=1;_ga_0Y8NF1G4YD=GS2.1.s1755784698$o1$g1$t1755784702$j56$l0$h0;_ga=GA1.1.817895319.1755784699;_ga_FFET8W66JW=GS2.1.s1755784702$o1$g1$t1755784718$j44$l0$h0;"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json;charset=UTF-8",
+        "body": "mobile",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        -1040
+      ],
+      "id": "a53d0154-6c80-4cb4-afb8-8b3b5e623a15",
+      "name": "HTTP Request3",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://panel.drdr.ir/api/v3/auth/login/mobile/init",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9,fa;q=0.8,ar;q=0.7"
+            },
+            {
+              "name": "authorization",
+              "value": "null"
+            },
+            {
+              "name": "client-id",
+              "value": "c19f9c77-234f-4af6-a14e-78f76591f0b1"
+            },
+            {
+              "name": "origin",
+              "value": "https://panel.drdr.ir"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "mobile",
+              "value": "={{ $('Edit Fields').item.json.body.mobile }}"
+            }
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        352,
+        -240
+      ],
+      "id": "1deb803c-952f-4757-ad21-b1d888865d65",
+      "name": "send_mobile",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://panel.drdr.ir/api/v3/auth/login/mobile/init",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "client-id",
+              "value": "c19f9c77-234f-4af6-a14e-78f76591f0b1"
+            },
+            {
+              "name": "origin",
+              "value": "https://panel.drdr.ir"
+            },
+            {
+              "name": "referer",
+              "value": "https://panel.drdr.ir/login"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -32,
+        720
+      ],
+      "id": "a04567da-bfb3-4646-8d1c-11084b259308",
+      "name": "HTTP Request5",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://panel.drdr.ir/api/v3/oauth/token",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9,fa;q=0.8,ar;q=0.7"
+            },
+            {
+              "name": "authorization",
+              "value": "null"
+            },
+            {
+              "name": "client-id",
+              "value": "c19f9c77-234f-4af6-a14e-78f76591f0b1"
+            },
+            {
+              "name": "origin",
+              "value": "https://panel.drdr.ir"
+            },
+            {
+              "name": "priority",
+              "value": "u=1, i"
+            },
+            {
+              "name": "referer",
+              "value": "https://panel.drdr.ir/login"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Not;A=Brand\";v=\"99\", \"Microsoft Edge\";v=\"139\", \"Chromium\";v=\"139\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "empty"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "cors"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "client_id",
+              "value": "c19f9c77-234f-4af6-a14e-78f76591f0b1"
+            },
+            {
+              "name": "client_secret",
+              "value": "cwxfEHPM0VNDqw3KiZTXG44B6ih56AojJoNeUOoA"
+            },
+            {
+              "name": "grant_type",
+              "value": "otp"
+            },
+            {
+              "name": "mobile",
+              "value": "={{ $('Edit Fields1').item.json.body.mobile }}"
+            },
+            {
+              "name": "otp_code",
+              "value": "={{ $('Webhook1').item.json.body.otp }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        336,
+        176
+      ],
+      "id": "3aa3c71d-ebd8-473b-a8c1-d2144deb5623",
+      "name": "otp"
+    },
+    {
+      "parameters": {
+        "url": "https://panel.drdr.ir/api/v3/me",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9,fa;q=0.8,ar;q=0.7"
+            },
+            {
+              "name": "authorization",
+              "value": "=Bearer {{ $json.result.token.access_token }}"
+            },
+            {
+              "name": "client-id",
+              "value": "c19f9c77-234f-4af6-a14e-78f76591f0b1"
+            },
+            {
+              "name": "priority",
+              "value": "u=1, i"
+            },
+            {
+              "name": "referer",
+              "value": "https://panel.drdr.ir/login"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Not;A=Brand\";v=\"99\", \"Microsoft Edge\";v=\"139\", \"Chromium\";v=\"139\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "empty"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "cors"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36 Edg/139.0.0.0"
+            },
+            {
+              "name": "user-role",
+              "value": "undefined"
+            },
+            {
+              "name": "user-role-id",
+              "value": "undefined"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        176
+      ],
+      "id": "22713ee5-452a-4443-9136-9225f44b8642",
+      "name": "me"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "drdr/phone_number",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -320,
+        -240
+      ],
+      "id": "d585848b-3ba6-49aa-a96f-3dbc342600d4",
+      "name": "Webhook",
+      "webhookId": "0f09f8dc-85d2-4478-a6ea-aaf219491f61"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7b3e210b-5bfc-4c77-8173-1a2d8e346fad",
+              "name": "body.mobile",
+              "value": "={{ $json.body.mobile.replace(/^0/, \"\") }}",
+              "type": "string"
+            },
+            {
+              "id": "ed59ab01-5a2b-463b-b8e2-39bce9e1d26c",
+              "name": "headers.authorization",
+              "value": "={{ $json.headers.authorization.replace(/^Bearer\\s+/i, \"\").trim() }}",
+              "type": "string"
+            },
+            {
+              "id": "1cdca26e-ac13-4f3f-bc66-d9b4d0599fb2",
+              "name": "body.captcha",
+              "value": "={{ $json.body.captcha }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -96,
+        -240
+      ],
+      "id": "895c2f9d-bd6b-4f1c-831a-1488d8b1981c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctors",
+          "mode": "list",
+          "cachedResultName": "doctors"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "temp_token",
+              "value": "={{ $json.headers.authorization }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        128,
+        -240
+      ],
+      "id": "50bd390f-467b-4ae2-a44e-08daecab9f50",
+      "name": "Select rows from a table",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        592,
+        -352
+      ],
+      "id": "179f0f2b-4c50-47d2-af51-1312beb2e941",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "drdr/otp",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -320,
+        176
+      ],
+      "id": "ec135bd1-515a-4c67-9357-842f0e14d920",
+      "name": "Webhook1",
+      "webhookId": "7d6f578a-4e35-4cb0-ad5a-9559f3966be2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7b3e210b-5bfc-4c77-8173-1a2d8e346fad",
+              "name": "body.mobile",
+              "value": "={{ $json.body.mobile.replace(/^0/, \"\") }}",
+              "type": "string"
+            },
+            {
+              "id": "ed59ab01-5a2b-463b-b8e2-39bce9e1d26c",
+              "name": "headers.authorization",
+              "value": "={{ $json.headers.authorization.replace(/^Bearer\\s+/i, \"\").trim() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -96,
+        176
+      ],
+      "id": "2acf9a03-df76-4d35-9453-c99ef2379211",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctors",
+          "mode": "list",
+          "cachedResultName": "doctors"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "temp_token",
+              "value": "={{ $json.headers.authorization }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        128,
+        176
+      ],
+      "id": "c13ba26b-baeb-439e-9dc7-e31cb1ecc517",
+      "name": "Select rows from a table1",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// متن ورودی (مثلاً از هدر Set-Cookie گرفته شده)\nconst cookie = $json[\"cookie\"]; \n// یا به صورت مستقیم تست کن:\nconst cookieStr = `auth_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...; expires=Sat, 18 Oct 2025 17:25:56 GMT; Max-Age=5184000; path=/; domain=.doctoreto.com; secure; httponly; samesite=strict`;\n\n// استخراج بخش expires با regex\nconst match = cookieStr.match(/expires=([^;]+)/);\nif (!match) {\n  return [{ json: { error: \"No expires found\" } }];\n}\n\n// مقدار تاریخ GMT\nconst expiresStr = match[1]; // \"Sat, 18 Oct 2025 17:25:56 GMT\"\n\n// تبدیل به Date\nconst dateObj = new Date(expiresStr);\n\n// تبدیل به فرمت \"YYYY-MM-DD HH:mm:ss\"\nconst pad = (n) => n.toString().padStart(2, \"0\");\n\nconst formatted = `${dateObj.getUTCFullYear()}-${pad(dateObj.getUTCMonth()+1)}-${pad(dateObj.getUTCDate())} ${pad(dateObj.getUTCHours())}:${pad(dateObj.getUTCMinutes())}:${pad(dateObj.getUTCSeconds())}`;\n\nreturn [\n  {\n    json: {\n      rawExpires: expiresStr,\n      formattedDate: formatted\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        496,
+        720
+      ],
+      "id": "7a229780-6e59-4325-b864-82bc7b093bff",
+      "name": "Code2",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctor_platform_credentials",
+          "mode": "list",
+          "cachedResultName": "doctor_platform_credentials"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "access_token": "={{ $('otp').item.json.result.token.access_token }}",
+            "phone_in_platform": "={{ $('Edit Fields1').item.json.body.mobile }}",
+            "doctor_id": "={{ $('Select rows from a table1').item.json.id }}",
+            "refresh_token": "={{ $('otp').item.json.result.token.refresh_token }}",
+            "platform_doctor_id": "={{ $('me').item.json.result.user.doctor.id }}",
+            "client_id": "c19f9c77-234f-4af6-a14e-78f76591f0b1",
+            "client_secret": "cwxfEHPM0VNDqw3KiZTXG44B6ih56AojJoNeUOoA",
+            "expires_at": "={{ $json.expires_at }}",
+            "token_created": "={{ $json.now_iso }}",
+            "updated_at": "={{ $json.now_iso }}",
+            "platform_id": 1
+          },
+          "matchingColumns": [
+            "doctor_id",
+            "platform_id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "doctor_id",
+              "displayName": "doctor_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "platform_id",
+              "displayName": "platform_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "platform_doctor_id",
+              "displayName": "platform_doctor_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "client_id",
+              "displayName": "client_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "client_secret",
+              "displayName": "client_secret",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "access_token",
+              "displayName": "access_token",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "refresh_token",
+              "displayName": "refresh_token",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "expires_at",
+              "displayName": "expires_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "token_created",
+              "displayName": "token_created",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "phone_in_platform",
+              "displayName": "phone_in_platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1392,
+        176
+      ],
+      "id": "6e2d5ba3-4a53-4e66-a4fc-c8e5bc016907",
+      "name": "Insert or update rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1824,
+        176
+      ],
+      "id": "d0bd74ef-6d68-4629-858e-a321c2fdbbf2",
+      "name": "Respond to Webhook3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.doctoreto.com/api/web/patient/v1/accounts/login",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "app-version",
+              "value": "2.0.0"
+            },
+            {
+              "name": "origin",
+              "value": "https://doctoreto.com"
+            },
+            {
+              "name": "priority",
+              "value": "u=1, i"
+            },
+            {
+              "name": "referer",
+              "value": "https://doctoreto.com/"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?1"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Android\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "empty"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "cors"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-site"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36"
+            },
+            {
+              "name": "cookie",
+              "value": "_gcl_au=1.1.498441742.1752003342;analytics_campaign={%22source%22:%22google%22%2C%22medium%22:%22organic%22};_clck=1u4a78c%7C2%7Cfyg%7C0%7C2015;_gid=GA1.2.1768495969.1755540709;_ga=GA1.2.1884793141.1752003344;_ga_WYWKZ71LLD=GS2.1.s1755540708$o14$g1$t1755540890$j7$l0$h0;"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "mobile",
+              "value": "={{ $('Edit Fields1').item.json.body.mobile }}"
+            },
+            {
+              "name": "password",
+              "value": "={{ $('Webhook1').item.json.body.otp }}"
+            },
+            {
+              "name": "country_id",
+              "value": "205"
+            },
+            {
+              "name": "captcha"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        720
+      ],
+      "id": "e9cc1054-8697-4aef-93f7-c8eb088d5cb8",
+      "name": "HTTP Request4",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// مقدار expires_in به ثانیه\nconst expiresInSeconds = $('otp').first().json.result.token.expires_in;\n\n// آفست زمانی ایران به میلی‌ثانیه (3.5 ساعت)\nconst iranOffsetMilliseconds = 3.5 * 60 * 60 * 1000;\n\n// ۱. زمان فعلی به وقت ایران\n// ابتدا زمان فعلی (UTC) را می‌گیریم\nconst nowUTC = new Date();\n// سپس آفست ایران را به آن اضافه می‌کنیم تا زمان محلی به دست آید\nconst nowIran = new Date(nowUTC.getTime() + iranOffsetMilliseconds);\n// به فرمت ایزو تبدیل کرده، حرف 'Z' را حذف و آفست ایران را اضافه می‌کنیم\nconst nowIsoIran = nowIran.toISOString().slice(0, -1) + \"+03:30\";\n\n\n// ۲. زمان انقضا به وقت ایران\n// زمان انقضا را بر اساس UTC محاسبه می‌کنیم\nconst expiresUTC = new Date(nowUTC.getTime() + expiresInSeconds * 1000);\n// آفست ایران را به زمان انقضای UTC اضافه می‌کنیم\nconst expiresIran = new Date(expiresUTC.getTime() + iranOffsetMilliseconds);\n// فرمت آن را نیز مانند زمان فعلی تصحیح می‌کنیم\nconst expiresIsoIran = expiresIran.toISOString().slice(0, -1) + \"+03:30\";\n\n\n// ۳. خروجی نهایی را برمی‌گردانیم\nreturn [{\n  json: {\n    \"now_iso\": nowIsoIran,\n    \"expires_at\": expiresIsoIran,\n    \"expires_in\": expiresInSeconds\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        176
+      ],
+      "id": "a3675e81-8755-475a-8622-dc75eb768e01",
+      "name": "Code"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        -256
+      ],
+      "id": "54bc5e77-209f-4c2a-bb5f-5f3a1214c49f",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "❌drdr/login has error❌",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1312,
+        -256
+      ],
+      "id": "502339c7-11ff-45c7-8872-d16226a485c8",
+      "name": "Send a text message",
+      "webhookId": "370b2ba6-fa65-4667-a1d5-f6910589b382",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. استخراج رشته خطا از ورودی\nconst rawMessage = $json.error.message;\n\n// 2. پیدا کردن بخش JSON در رشته با استفاده از عبارت باقاعده\nconst match = rawMessage.match(/{.*}/);\n\nif (match && match[0]) {\n  // 3. رشته JSON پیدا شد، اما هنوز دارای کاراکترهای escape شده است\n  const jsonStringWithEscapes = match[0];\n  \n  // 4. جایگزینی کاراکترهای \\\" با \" تا رشته به یک JSON معتبر تبدیل شود\n  const cleanJsonString = jsonStringWithEscapes.replace(/\\\\\"/g, '\"');\n\n  try {\n    // 5. پارس کردن رشته JSON تمیز شده\n    const parsedData = JSON.parse(cleanJsonString);\n    \n    // 6. استخراج پیام نهایی\n    const finalMessage = parsedData.meta.message.body;\n    \n    // 7. برگرداندن خروجی برای نود بعدی\n    return [{\n      json: {\n        message: finalMessage\n      }\n    }];\n  } catch (error) {\n    // در صورتی که پارس کردن JSON با خطا مواجه شود\n    return [{ json: { error: \"Failed to parse JSON from error message\", details: error.message } }];\n  }\n}\n\n// اگر هیچ بخش JSON در پیام خطا پیدا نشد\nreturn [{ json: { error: \"No JSON object found in the error message\" } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        -144
+      ],
+      "id": "6a49fd42-785d-403d-ac81-cf9de505edfa",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": "={{ $('send_mobile').item.json.error.status }}"
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        768,
+        -144
+      ],
+      "id": "26700ac9-c98e-4804-8b34-698a5930d3ad",
+      "name": "Respond to Webhook1"
+    }
+  ],
+  "connections": {
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "send_mobile": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        []
+      ]
+    },
+    "otp": {
+      "main": [
+        [
+          {
+            "node": "me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "send_mobile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table1": {
+      "main": [
+        [
+          {
+            "node": "otp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        []
+      ]
+    },
+    "Insert or update rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        []
+      ]
+    },
+    "me": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Insert or update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "triggerCount": 2,
+  "versionId": "0b2247e9-06cf-4087-8b7d-e3506dea5346",
+  "owner": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  },
+  "parentFolderId": null,
+  "isArchived": false
+}

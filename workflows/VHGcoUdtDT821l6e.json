@@ -1,0 +1,322 @@
+{
+  "id": "VHGcoUdtDT821l6e",
+  "name": "slug to id and risman",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "*"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        32
+      ],
+      "id": "141e7cff-1874-4670-bdf3-f2b6119c93b6",
+      "name": "Telegram Trigger",
+      "webhookId": "47979b52-8dc9-4495-b476-2801f15f505b",
+      "credentials": {
+        "telegramApi": {
+          "id": "2CEpBzdL13hfW2Dg",
+          "name": "slug to id and risman"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "=نام دکتر : {{ $('full profile').item.json.data.name }} {{ $('full profile').item.json.data.family }}\n\nآیدی دکتر:\n\n{{ $('full profile').item.json.data.id }}\n\nآیدی عددی دکتر :\n\n{{ $('get_user_id2').item.json.user_id }}\n\nپلتفرم ها : \n\n{{ $json.data[0].platformList }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1808,
+        32
+      ],
+      "id": "d6a4a78d-e30b-45f6-9775-0b9df79e9a77",
+      "name": "Send a text message",
+      "webhookId": "45662dbd-6df8-4c86-85a0-95bcb9707416",
+      "executeOnce": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "2CEpBzdL13hfW2Dg",
+          "name": "slug to id and risman"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// دریافت تمام آیتم‌های ورودی\nconst items = $input.all();\n\n// حلقه برای پردازش هر آیتم (اگرچه در مثال شما یکی است)\nfor (const item of items) {\n  // استخراج آبجکت destinations\n  const destinations = item.json.destinations;\n  \n  // تعریف یک متغیر برای نگهداری لیست پلتفرم‌ها\n  let platformListText = \"\";\n\n  // بررسی اینکه آیا آبجکت destinations وجود دارد و خالی نیست\n  if (destinations && Object.keys(destinations).length > 0) {\n    // گرفتن نام پلتفرم‌ها (کلیدهای آبجکت)\n    const platformNames = Object.keys(destinations);\n    \n    // تبدیل آرایه نام‌ها به یک رشته شماره‌گذاری شده\n    // هر آیتم در یک خط جدید قرار می‌گیرد\n    platformListText = platformNames\n      .map((name, index) => `${index + 1}. ${name}`)\n      .join('\\n');\n      \n  } else {\n    // متنی برای زمانی که هیچ پلتفرمی وجود ندارد\n    platformListText = \"هیچ پلتفرمی یافت نشد.\";\n  }\n  \n  // اضافه کردن فیلد جدید به خروجی\n  item.json.platformList = platformListText;\n}\n\n// بازگرداندن آیتم‌های پردازش شده\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        0
+      ],
+      "id": "5497e00c-5dd5-4dbc-bf6a-c05a347fab8d",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.paziresh24.com/doctor/v1/full-profile/{{ $json.message.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "72bc791d-9375-4229-be19-6742faccf20a",
+      "name": "full profile"
+    },
+    {
+      "parameters": {
+        "url": "=https://mansoorizade-n8n.paziresh24.com/webhook/v1/risman/doctors/?doctor_id=doctor_{{ $('full profile').item.json.data.id }}_1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        816,
+        0
+      ],
+      "id": "bed46364-e908-41cb-b990-f3ea380b1bff",
+      "name": "risman"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a7152b6a-0b65-40b8-9e2d-6a0f85d297fd",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "paziresh24",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        224,
+        32
+      ],
+      "id": "dad3f7a0-2470-4a73-b0ec-70633a811133",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2b75d692-4f62-48e6-8108-46c8f5a6f19e",
+              "name": "message.text",
+              "value": "={{ $json.message.text.split('/').filter(part => part).pop() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        96
+      ],
+      "id": "58a1fadf-98c0-4581-8b68-89e44d94bd09",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "=https://drprofile.paziresh24.com/api/doctors/{{ $json.message.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        624,
+        208
+      ],
+      "id": "07b5d867-1f9f-4273-9d7c-db111205426c",
+      "name": "get_user_id2",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1296,
+        32
+      ],
+      "id": "fde4aac3-a25c-46e8-8af9-eb3f6258d89d",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        32
+      ],
+      "id": "60f93dd3-e640-4ab7-b403-705522b6d631",
+      "name": "Aggregate"
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "full profile": {
+      "main": [
+        [
+          {
+            "node": "risman",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "risman": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "full profile",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "get_user_id2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "full profile",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "get_user_id2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_user_id2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "triggerCount": 1,
+  "versionId": "029758b1-6fde-4f5a-9a15-3a2f4632f560",
+  "owner": {
+    "type": "personal",
+    "projectId": "Zp6TRlq4gxhqUmDN",
+    "projectName": "mmd hey <m.h.heidari1384@gmail.com>",
+    "personalEmail": "m.h.heidari1384@gmail.com"
+  },
+  "parentFolderId": null,
+  "isArchived": false
+}

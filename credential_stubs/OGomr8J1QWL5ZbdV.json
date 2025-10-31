@@ -1,0 +1,16 @@
+{
+  "id": "OGomr8J1QWL5ZbdV",
+  "name": "Postgres account",
+  "type": "postgres",
+  "data": {
+    "host": "",
+    "database": "",
+    "user": "",
+    "password": ""
+  },
+  "ownedBy": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  }
+}

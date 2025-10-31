@@ -1,0 +1,316 @@
+{
+  "id": "l2NxMTK4F6KKXYnm",
+  "name": "doctoreto/clinics",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        0
+      ],
+      "id": "c63ff2e7-8c6f-43be-86a0-6681a0763fae",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "url": "https://api.doctoreto.com/api/web/doctor/v1/places",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9,fa;q=0.8,ar;q=0.7"
+            },
+            {
+              "name": "app-device",
+              "value": "LsHcvdVHXL"
+            },
+            {
+              "name": "app-version",
+              "value": "2.1.1"
+            },
+            {
+              "name": "cache-control",
+              "value": "no-cache"
+            },
+            {
+              "name": "origin",
+              "value": "https://doctorpanel.doctoreto.com"
+            },
+            {
+              "name": "pragma",
+              "value": "no-cache"
+            },
+            {
+              "name": "priority",
+              "value": "u=1, i"
+            },
+            {
+              "name": "referer",
+              "value": "https://doctorpanel.doctoreto.com/"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Microsoft Edge\";v=\"140\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "empty"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "cors"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-site"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0"
+            },
+            {
+              "name": "cookie",
+              "value": "={{ $json.access_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        320,
+        0
+      ],
+      "id": "abff9333-fbd1-480d-890b-4a84271a1fa3",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctor_platform_credentials",
+          "mode": "list",
+          "cachedResultName": "doctor_platform_credentials"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        96,
+        0
+      ],
+      "id": "0e4622a1-9890-4d8b-aa8f-4dc3136f41a1",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "items.data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        528,
+        0
+      ],
+      "id": "d432c866-4905-41c1-9f02-4239a585abc0",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// این کد فرض می‌کند که بعد از نود \"Split Out\" اجرا می‌شود\n// و هر بار فقط یک آیتم را پردازش می‌کند.\n\n// دریافت آیتم تکی که از نود \"Split Out\" ارسال شده است.\nconst item = $json;\n\n// تعریف دیکشنری برای نگاشت نوع مرکز\n// 0: مطب, 3: بیمارستان\nconst centerTypeMap = {\n  0: { type: 1, name: 'مطب' },\n  3: { type: 2, name: 'بیمارستان' } // فرض شده که type=3 معادل بیمارستان با آیدی 2 است\n};\n\n// تابع کمکی برای استخراج نام فایل از آدرس تصویر\nconst getAvatarFilename = (url) => {\n  if (!url) {\n    return \"\";\n  }\n  const parts = url.split('/');\n  return parts[parts.length - 1];\n};\n\n// استخراج نام فایل تصویر از avatar_url یا avatar\nconst avatarFilename = item.avatar_url ? getAvatarFilename(item.avatar_url) : (item.avatar ? getAvatarFilename(item.avatar) : \"\");\n\n// اگر slug در ورودی null بود، آن را از name بساز\nconst slug = item.slug ? item.slug : item.name.replace(/\\s+/g, '-');\n\n// پیدا کردن نوع و نام مرکز بر اساس نگاشت تعریف‌شده\nconst centerTypeInfo = centerTypeMap[item.type] || { type: null, name: '' };\n\n// استخراج اولین شماره تلفن\nconst primaryPhone = item.phone ? item.phone.split(',')[0] : '';\n\n// ساختار آیتم جدید بر اساس فرمت خروجی\nconst newItem = {\n  id: String(item.id),\n  status: item.status,\n  user_center_id: String(item.doctor_place_id),\n  server_id: 1, // مقدار ثابت طبق نمونه\n  name: item.name,\n  tell: primaryPhone,\n  display_number: primaryPhone,\n  image: avatarFilename,\n  address: item.address,\n  province_name: \"\", // این فیلد در ورودی موجود نیست\n  province_id: null,   // این فیلد در ورودی موجود نیست\n  city_name: \"\",       // این فیلد در ورودی موجود نیست\n  city_id: item.city_id,\n  city_slug: \"\",       // این فیلد در ورودی موجود نیست\n  center_type: centerTypeInfo.type,\n  center_type_name: centerTypeInfo.name,\n  slug: slug,\n  map: {\n    lat: item.latitude ? parseFloat(item.latitude) : null,\n    lon: item.longitude ? parseFloat(item.longitude) : null,\n  },\n  is_master: 1, // مقدار ثابت طبق نمونه\n  user_image: avatarFilename,\n  disable_booking: false, // مقدار ثابت طبق نمونه\n};\n\n// بازگرداندن آیتم تکی تبدیل‌شده\n// n8n این عملیات را برای تمام آیتم‌هایی که از نود قبل می‌آیند تکرار می‌کند\nreturn {\n  json: newItem\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        736,
+        0
+      ],
+      "id": "3bcda34d-facf-4055-b010-98c0139fec1a",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "={{ $json.name }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1136,
+        0
+      ],
+      "id": "98cabe6d-e368-446c-a9b1-4d3c078c6c4e",
+      "name": "Send a text message",
+      "webhookId": "370b2ba6-fa65-4667-a1d5-f6910589b382",
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "01d00df6-1df0-4874-8364-58d9db183c15",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "21b38e37-2e5d-4162-a0cb-5cfc9cc966b6",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "f92615e2-274c-4aa6-88d7-4a7b07c51cbc",
+              "name": "address",
+              "value": "={{ $json.address }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        944,
+        0
+      ],
+      "id": "65c2eb39-b9be-45ef-9276-b40e38225158",
+      "name": "Edit Fields"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "triggerCount": 0,
+  "versionId": "7a05d8db-fe81-4016-9a5f-a070f8da6c77",
+  "owner": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  },
+  "parentFolderId": null,
+  "isArchived": false
+}

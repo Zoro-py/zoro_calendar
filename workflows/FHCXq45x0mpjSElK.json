@@ -1,0 +1,2738 @@
+{
+  "id": "FHCXq45x0mpjSElK",
+  "name": "drdr/get-appointment v2",
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://panel.drdr.ir/api/v3/appointments/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json;charset=UTF-8"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{$json.access_token}}"
+            },
+            {
+              "name": "client-id",
+              "value": "={{$json.client_id}}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"doctor_id\": {{ $json.platform_doctor_id }},\n  \"page\": 1,\n  \"per_page\": 100,\n  \"scheduled_date\": \"{{ $('Webhook').item.json.body.date }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3200,
+        544
+      ],
+      "id": "7bb4cd27-610b-485e-851b-8badb262f788",
+      "name": "appointments/search",
+      "retryOnFail": false,
+      "waitBetweenTries": 3000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ورودی رو بگیر\nconst pagination = items[0].json.result?.pagination || {};\nconst last = pagination.last_page || 1;\n\nconst output = [];\nfor (let p = 1; p <= last; p++) {\n  output.push({\n    json: { page: p }\n  });\n}\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3872,
+        2512
+      ],
+      "id": "e7607244-0770-49a4-a5c3-9b07c9ae6ec4",
+      "name": "buildPages"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -3648,
+        2512
+      ],
+      "id": "dc462a0f-43e6-4df0-aeea-457f33a1c0df",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "path": "drdr/get-appointment/v2",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -4096,
+        640
+      ],
+      "id": "0e8b57b1-331c-427e-99c1-91fd58ecaf00",
+      "name": "Webhook",
+      "webhookId": "9de0bca8-c68e-4507-a759-42b0a080df52"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctors",
+          "mode": "list",
+          "cachedResultName": "doctors"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "p24_id",
+              "value": "={{ $json.body.p24_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -3872,
+        640
+      ],
+      "id": "fbd55cb2-cda2-49a5-967a-d5ad92512c87",
+      "name": "find doctor id",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0d2221ad-d208-477f-a76f-9c366f7e3194",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3648,
+        640
+      ],
+      "id": "e0c3079d-0a20-4b12-b7ca-1075b7166f73",
+      "name": "does dr exists"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "dr does not exist",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -3424,
+        736
+      ],
+      "id": "93690350-03ed-4744-8148-2e44047243c3",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctor_platform_credentials",
+          "mode": "list",
+          "cachedResultName": "doctor_platform_credentials"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "platform_id",
+              "value": "1"
+            },
+            {
+              "column": "doctor_id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -3424,
+        544
+      ],
+      "id": "8778fb4e-4594-4af4-ac9c-742ab2183d9b",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -1184,
+        256
+      ],
+      "id": "f9601156-fc3b-4bdf-ae31-c6340bcee254",
+      "name": "Respond to Webhook2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e581cbf-63da-447f-a529-04f075eb7d51",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "10b3b3f8-871a-4001-ad7a-394a09fa63e7",
+              "name": "type",
+              "value": "={{ $json.type_label }}",
+              "type": "string"
+            },
+            {
+              "id": "1bddb2f9-6d8e-461d-acdb-a0b6e1ee53a3",
+              "name": "type_id",
+              "value": "={{ $json.type_id }}",
+              "type": "string"
+            },
+            {
+              "id": "ae59be4e-def7-48fe-8229-fb99ba2aa129",
+              "name": "user_center_id",
+              "value": "={{ $json.user_center_id }}",
+              "type": "string"
+            },
+            {
+              "id": "e78dc91c-47d5-42d1-9a4d-6b6116b87f25",
+              "name": "book_status",
+              "value": "visited",
+              "type": "string"
+            },
+            {
+              "id": "3f3bae6f-e1f8-4798-b756-2997bb278ebb",
+              "name": "ref_id",
+              "value": "={{ $json.ref_id }}",
+              "type": "string"
+            },
+            {
+              "id": "abcccb4d-b597-4419-a1b6-b20d54bc7697",
+              "name": "from",
+              "value": "={{ $json.from }}",
+              "type": "string"
+            },
+            {
+              "id": "73c02c16-2f2c-4f0d-9d6f-5cdce6397393",
+              "name": "to",
+              "value": "={{ $json.to }}",
+              "type": "string"
+            },
+            {
+              "id": "9131405c-0046-44b9-9e0b-dc1ed62343bc",
+              "name": "from_date",
+              "value": "={{ $json.from_date }}",
+              "type": "string"
+            },
+            {
+              "id": "f03a9eea-046e-4500-a598-45d7cd728b58",
+              "name": "to_date",
+              "value": "={{ $json.to_date }}",
+              "type": "string"
+            },
+            {
+              "id": "624b10a3-4869-4746-a379-a6b8671e2847",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "7a1a1358-7ae0-4e92-a333-630f869f5476",
+              "name": "family",
+              "value": "={{ $json.family }}",
+              "type": "string"
+            },
+            {
+              "id": "b50235bb-c51b-478e-9f5c-68c9ece5a5f0",
+              "name": "display_name",
+              "value": "={{ $json.display_name }}",
+              "type": "string"
+            },
+            {
+              "id": "b6d8980d-1f0e-44cb-a928-2b3b0120d1ad",
+              "name": "cell",
+              "value": "={{ $json.cell }}",
+              "type": "string"
+            },
+            {
+              "id": "9676ded4-2327-4878-b43b-115fae97afd8",
+              "name": "national_code",
+              "value": "={{ $json.national_code }}",
+              "type": "string"
+            },
+            {
+              "id": "f3d56483-d199-4863-af0a-836609384b7c",
+              "name": "payment_status",
+              "value": "paid",
+              "type": "string"
+            },
+            {
+              "id": "a622b7c1-0136-4737-b9b2-07921170b163",
+              "name": "cost",
+              "value": "={{ $json.cost }}",
+              "type": "string"
+            },
+            {
+              "id": "0f8c52bb-96c1-4686-9651-77ce4245dc40",
+              "name": "insurance",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "23486055-4d7c-4ccc-aa5c-3e3e06078405",
+              "name": "platform.name",
+              "value": "drdr",
+              "type": "string"
+            },
+            {
+              "id": "57bf7055-8f7a-42ac-9ba2-1a49de30bd68",
+              "name": "platform.p_name",
+              "value": "دکتردکتر",
+              "type": "string"
+            },
+            {
+              "id": "5bccba0f-513a-47ef-ba32-caf279e66878",
+              "name": "platform.id",
+              "value": "1",
+              "type": "string"
+            },
+            {
+              "id": "915ad2a6-dcd9-4dd6-9463-8acaf37f3ad0",
+              "name": "platform.icon",
+              "value": "https://zoro-icon.s3.ir-tbz-sh1.arvanstorage.ir/drdr.png",
+              "type": "string"
+            },
+            {
+              "id": "0bce6483-9ec0-4097-a2f5-3d3526c0bf14",
+              "name": "platform.link",
+              "value": "https://panel.drdr.ir/",
+              "type": "string"
+            },
+            {
+              "id": "6c31c0d6-c5c9-4de6-a87d-7accbe5e0eaf",
+              "name": "center.id",
+              "value": "={{ $json.center_id }}",
+              "type": "string"
+            },
+            {
+              "id": "edbe219a-4121-4626-842e-089576be4ebd",
+              "name": "center.name",
+              "value": "={{ $json.center_name }}",
+              "type": "string"
+            },
+            {
+              "id": "0136c2c3-dfab-4725-8bc7-96fa4e2d909b",
+              "name": "center.address",
+              "value": "={{ $json.center_address }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1408,
+        256
+      ],
+      "id": "2a92a35f-39cb-41a2-81b1-33c4d0c16fcc",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ورودی خام را که یک آرایه با یک عضو است، می‌گیریم\nconst rawInput = items[0].json;\n\n// به آرایه appointments دسترسی پیدا می‌کنیم\nconst appointmentsArray = rawInput.result.appointments;\n\n// یک آیتم جدید برمی‌گردانیم که فقط شامل این آرایه است\n// این کار نود بعدی (Split Out) را بسیار ساده می‌کند\nreturn [{\n  json: {\n    appointments: appointmentsArray\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2528,
+        352
+      ],
+      "id": "543a0acf-0fed-4322-834a-ef99246f2350",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "appointments",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2304,
+        352
+      ],
+      "id": "1c59942f-c1be-4430-b54a-9b7c1093f3c8",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// این کد روی هر آیتم جداگانه اجرا می‌شود\nconst input = $json;\n\n// --- تابع کمکی برای تبدیل تاریخ به ISO ایران ---\nfunction toIranISO(dateString) {\n  if (!dateString) return null;\n\n  // ورودی دقیقاً به وقت تهران هست → فقط استانداردسازی\n  return dateString.replace(' ', 'T') + '+03:30';\n}\n\n// --- تابع کمکی برای تبدیل ISO به timestamp ---\nfunction isoToTimestamp(isoString) {\n  if (!isoString) return null;\n  return Math.floor(new Date(isoString).getTime() / 1000);\n}\n\n// --- مپ کردن وضعیت عددی ---\nlet bookStatus = 'unknown';\nif (input.status === 100) {\n    bookStatus = 'visited';\n} else if (input.canceled_at) {\n    bookStatus = 'canceled';\n} else {\n    bookStatus = 'booked';\n}\n\n// --- مپ کردن وضعیت پرداخت ---\nlet paymentStatus = 'unpaid';\nif (input.invoice && input.invoice.status === 100) {\n    paymentStatus = 'paid';\n}\n\n// --- پیدا کردن موبایل ---\n// اولویت: user_patient → input.mobile → transaction.mobile\nlet mobile = null;\n\nif (input.user_patient?.mobile) {\n  mobile = input.user_patient.mobile;\n} else if (input.mobile && input.mobile !== \"-\" && input.mobile !== null) {\n  mobile = input.mobile;\n} else if (\n  input.invoice &&\n  Array.isArray(input.invoice.transactions) &&\n  input.invoice.transactions.length > 0\n) {\n  mobile = input.invoice.transactions[0].mobile || null;\n}\n\n// نرمال‌سازی شماره (+98 → 0)\nif (mobile) {\n  mobile = mobile.replace('+98', '0');\n}\n\n// --- تاریخ‌ها ---\nconst fromISO = toIranISO(input.scheduled_from);\nconst toISO = toIranISO(input.scheduled_to);\n\n// --- مپ کردن type ---\nlet typeLabel = null;\nlet typeId = null;\nlet clinic_id = \"\";\nlet clinic_name = \"\";\nlet clinic_address = \"\";\n\nif (input.type === 1) {\n  typeLabel = \"in_person\";\n  typeId = 1;\n  clinic_id = $json.clinic.id;\n  clinic_name = $json.clinic.title;\n  clinic_address = $json.clinic.address;\n} else if (input.type === 2 || input.type === 4 || input.type === 8) {\n  typeLabel = \"online\";\n  typeId = 2;\n}\n\n// --- ساختن آبجکت خروجی ---\nconst output = {\n  id: input.id,\n  type: \"book\",\n  user_center_id: \"9ce160cd-8963-428b-bd7e-615bc240dc0c\",\n  book_status: bookStatus,\n  ref_id: String(input.tracking_code),\n  from: isoToTimestamp(fromISO),\n  to: isoToTimestamp(toISO),\n  from_date: fromISO,\n  to_date: toISO,\n  name: input.firstname,\n  family: input.lastname,\n  display_name: `${input.firstname} ${input.lastname}`,\n  cell: mobile,\n  national_code: input.national_code,\n  payment_status: paymentStatus,\n  cost: input.amount,\n  insurance: null,\n  type_label: typeLabel,\n  type_id: typeId,\n  center_id : clinic_id,\n  center_name : clinic_name,\n  center_address : clinic_address\n};\n\n// بازگرداندن آیتم تبدیل شده\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1632,
+        256
+      ],
+      "id": "7ee963d1-2143-46cb-aba1-b2a8afbd1a5f",
+      "name": "Code4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5ff880df-d894-4f6a-8b25-ac891b0538d0",
+              "leftValue": "={{ $json.result.appointments }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2976,
+        352
+      ],
+      "id": "ea50c103-5fb8-475c-9312-61196dbf0428",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -2752,
+        448
+      ],
+      "id": "00a4f823-8dc4-45ea-abcc-b3134d1c7d00",
+      "name": "Respond to Webhook3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -4096,
+        960
+      ],
+      "id": "7db79c01-5012-43ce-b8ed-15027d01099d",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "❌drdr/get-appointment V2 has error❌",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3872,
+        960
+      ],
+      "id": "32d6a69d-f76a-4689-ad3c-392ca057ab0f",
+      "name": "Send a text message",
+      "webhookId": "c71cc3d3-9a06-4554-8a04-2b087e5e05a3",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "754fd104-4116-4175-9929-af47b0ca45e8",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": 100,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "3a6011c0-d1cf-40dc-ab2d-83f4d7ccc202",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -2080,
+        352
+      ],
+      "id": "478267d8-d29e-4fe0-97b2-6c61b7e3dd00",
+      "name": "Filter",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "80e421f3-9c45-4961-a95d-b522edbbb693",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1856,
+        352
+      ],
+      "id": "34b1a695-bd42-4750-9ae8-ed8ed3207857",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {
+          "responseCode": 204
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -1632,
+        448
+      ],
+      "id": "61df0264-c74e-4f74-bd1d-a64a9eb127cc",
+      "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -2976,
+        544
+      ],
+      "id": "1c8cce5f-66e0-4b66-86ec-6b60f1842e14",
+      "name": "Respond to Webhook4"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "❌drdr/get-appointment has error V2 (http request)❌",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -2976,
+        736
+      ],
+      "id": "87c34203-eb57-4811-9e04-86578728304b",
+      "name": "Send a text message1",
+      "webhookId": "1a07876a-66fe-4d40-9c54-6acfe791d6cf",
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d0f472a6-4937-4d0e-9672-eca2431049e6",
+              "leftValue": "={{ $json.result.pagination.last_page }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4096,
+        2512
+      ],
+      "id": "54e30d61-30ab-45c8-93d9-7bc53e1ddd2d",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://panel.drdr.ir/api/v3/appointments/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json;charset=UTF-8"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Select rows from a table').item.json.access_token }}"
+            },
+            {
+              "name": "client-id",
+              "value": "={{ $('Select rows from a table').item.json.client_id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"doctor_id\": {{ $('Select rows from a table').item.json.doctor_id }},\n  \"page\": {{ $json.page }},\n  \"scheduled_date\": \"{{ $('Webhook').item.json.body.date }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3424,
+        2464
+      ],
+      "id": "e7a59254-427f-4c48-afe5-b5170cddf34a",
+      "name": "appointments/search1",
+      "retryOnFail": false,
+      "waitBetweenTries": 3000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ورودی خام را که یک آرایه با یک عضو است، می‌گیریم\nconst rawInput = items[0].json;\n\n// به آرایه appointments دسترسی پیدا می‌کنیم\nconst appointmentsArray = rawInput.result.appointments;\n\n// یک آیتم جدید برمی‌گردانیم که فقط شامل این آرایه است\n// این کار نود بعدی (Split Out) را بسیار ساده می‌کند\nreturn [{\n  json: {\n    appointments: appointmentsArray\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3200,
+        2464
+      ],
+      "id": "82f5671f-3705-416c-ba6f-2928cb24d189",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "appointments",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2976,
+        2464
+      ],
+      "id": "d8a74948-09e0-433e-8fee-15ffd4321530",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// این کد روی هر آیتم جداگانه اجرا می‌شود\nconst input = $json;\n\n// --- تابع کمکی برای تبدیل تاریخ به ISO ایران ---\nfunction toIranISO(dateString) {\n  if (!dateString) return null;\n\n  // ورودی دقیقاً به وقت تهران هست → فقط استانداردسازی\n  return dateString.replace(' ', 'T') + '+03:30';\n}\n\n// --- تابع کمکی برای تبدیل ISO به timestamp ---\nfunction isoToTimestamp(isoString) {\n  if (!isoString) return null;\n  return Math.floor(new Date(isoString).getTime() / 1000);\n}\n\n// --- مپ کردن وضعیت عددی ---\nlet bookStatus = 'unknown';\nif (input.status === 100) {\n    bookStatus = 'visited';\n} else if (input.canceled_at) {\n    bookStatus = 'canceled';\n} else {\n    bookStatus = 'booked';\n}\n\n// --- مپ کردن وضعیت پرداخت ---\nlet paymentStatus = 'unpaid';\nif (input.invoice && input.invoice.status === 100) {\n    paymentStatus = 'paid';\n}\n\n// --- پیدا کردن موبایل ---\n// اولویت: user_patient → input.mobile → transaction.mobile\nlet mobile = null;\n\nif (input.user_patient?.mobile) {\n  mobile = input.user_patient.mobile;\n} else if (input.mobile && input.mobile !== \"-\" && input.mobile !== null) {\n  mobile = input.mobile;\n} else if (\n  input.invoice &&\n  Array.isArray(input.invoice.transactions) &&\n  input.invoice.transactions.length > 0\n) {\n  mobile = input.invoice.transactions[0].mobile || null;\n}\n\n// نرمال‌سازی شماره (+98 → 0)\nif (mobile) {\n  mobile = mobile.replace('+98', '0');\n}\n\n// --- تاریخ‌ها ---\nconst fromISO = toIranISO(input.scheduled_from);\nconst toISO = toIranISO(input.scheduled_to);\n\n// --- مپ کردن type ---\nlet typeLabel = null;\nlet typeId = null;\nlet clinic_id = \"\";\nlet clinic_name = \"\";\nlet clinic_address = \"\";\n\nif (input.type === 1) {\n  typeLabel = \"in_person\";\n  typeId = 1;\n  clinic_id = $json.clinic.id;\n  clinic_name = $json.clinic.title;\n  clinic_address = $json.clinic.address;\n} else if (input.type === 2 || input.type === 4 || input.type === 8) {\n  typeLabel = \"online\";\n  typeId = 2;\n}\n\n// --- ساختن آبجکت خروجی ---\nconst output = {\n  id: input.id,\n  type: \"book\",\n  user_center_id: \"9ce160cd-8963-428b-bd7e-615bc240dc0c\",\n  book_status: bookStatus,\n  ref_id: String(input.tracking_code),\n  from: isoToTimestamp(fromISO),\n  to: isoToTimestamp(toISO),\n  from_date: fromISO,\n  to_date: toISO,\n  name: input.firstname,\n  family: input.lastname,\n  display_name: `${input.firstname} ${input.lastname}`,\n  cell: mobile,\n  national_code: input.national_code,\n  payment_status: paymentStatus,\n  cost: input.amount,\n  insurance: null,\n  type_label: typeLabel,\n  type_id: typeId,\n  center_id : clinic_id,\n  center_name : clinic_name,\n  center_address : clinic_address\n};\n\n// بازگرداندن آیتم تبدیل شده\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2304,
+        2464
+      ],
+      "id": "1604df8f-18c5-4bfb-b5c0-e6de005b650a",
+      "name": "Code5"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "754fd104-4116-4175-9929-af47b0ca45e8",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": 100,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "3a6011c0-d1cf-40dc-ab2d-83f4d7ccc202",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -2752,
+        2464
+      ],
+      "id": "812fa782-2b99-4bba-9764-1bd8d2e338e7",
+      "name": "Filter1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "80e421f3-9c45-4961-a95d-b522edbbb693",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2528,
+        2464
+      ],
+      "id": "ddc7b44b-41f8-45e6-83de-3b437d26f41d",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {
+          "responseCode": 204
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -2304,
+        2656
+      ],
+      "id": "cd12ca0d-4a76-459e-89c5-d55a25a78e66",
+      "name": "Respond to Webhook5"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2080,
+        2464
+      ],
+      "id": "d34b06a7-d647-4a07-b665-4d71a2d48dba",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d0f472a6-4937-4d0e-9672-eca2431049e6",
+              "leftValue": "={{ $json.result.pagination.last_page }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2752,
+        256
+      ],
+      "id": "0c77fc06-a0e3-4b83-9d34-009ce026c39d",
+      "name": "If4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://panel.drdr.ir/api/v3/appointments/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json;charset=UTF-8"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Select rows from a table').item.json.access_token }}"
+            },
+            {
+              "name": "client-id",
+              "value": "={{ $('Select rows from a table').item.json.client_id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"doctor_id\": {{ $('Select rows from a table').item.json.platform_doctor_id }},\n  \"page\": 1,\n  \"scheduled_date\": \"{{ $('Webhook').item.json.body.date }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3872,
+        2144
+      ],
+      "id": "07063198-494b-40bd-b70e-27519466441c",
+      "name": "appointments/search2",
+      "retryOnFail": false,
+      "waitBetweenTries": 3000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://panel.drdr.ir/api/v3/appointments/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json;charset=UTF-8"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Select rows from a table').item.json.access_token }}"
+            },
+            {
+              "name": "client-id",
+              "value": "={{ $('Select rows from a table').item.json.client_id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"doctor_id\": {{ $('Select rows from a table').item.json.platform_doctor_id }},\n  \"page\": 2,\n  \"scheduled_date\": \"{{ $('Webhook').item.json.body.date }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3872,
+        1760
+      ],
+      "id": "8d8cc485-a12a-4dd3-afbf-b7041e135a30",
+      "name": "appointments/search3",
+      "retryOnFail": false,
+      "waitBetweenTries": 3000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "id",
+        "joinMode": "keepEverything",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -2304,
+        1856
+      ],
+      "id": "68a303be-ed1e-4773-be0f-86dbf95047bd",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ورودی خام را که یک آرایه با یک عضو است، می‌گیریم\nconst rawInput = items[0].json;\n\n// به آرایه appointments دسترسی پیدا می‌کنیم\nconst appointmentsArray = rawInput.result.appointments;\n\n// یک آیتم جدید برمی‌گردانیم که فقط شامل این آرایه است\n// این کار نود بعدی (Split Out) را بسیار ساده می‌کند\nreturn [{\n  json: {\n    appointments: appointmentsArray\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3648,
+        2144
+      ],
+      "id": "b8a61041-0685-4aae-89ec-fb499e583d11",
+      "name": "Code6"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "appointments",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -3424,
+        2144
+      ],
+      "id": "ce640496-624a-491c-bcda-c74e96fa7ed0",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// این کد روی هر آیتم جداگانه اجرا می‌شود\nconst input = $json;\n\n// --- تابع کمکی برای تبدیل تاریخ به ISO ایران ---\nfunction toIranISO(dateString) {\n  if (!dateString) return null;\n\n  // ورودی دقیقاً به وقت تهران هست → فقط استانداردسازی\n  return dateString.replace(' ', 'T') + '+03:30';\n}\n\n// --- تابع کمکی برای تبدیل ISO به timestamp ---\nfunction isoToTimestamp(isoString) {\n  if (!isoString) return null;\n  return Math.floor(new Date(isoString).getTime() / 1000);\n}\n\n// --- مپ کردن وضعیت عددی ---\nlet bookStatus = 'unknown';\nif (input.status === 100) {\n    bookStatus = 'visited';\n} else if (input.canceled_at) {\n    bookStatus = 'canceled';\n} else {\n    bookStatus = 'booked';\n}\n\n// --- مپ کردن وضعیت پرداخت ---\nlet paymentStatus = 'unpaid';\nif (input.invoice && input.invoice.status === 100) {\n    paymentStatus = 'paid';\n}\n\n// --- پیدا کردن موبایل ---\n// اولویت: user_patient → input.mobile → transaction.mobile\nlet mobile = null;\n\nif (input.user_patient?.mobile) {\n  mobile = input.user_patient.mobile;\n} else if (input.mobile && input.mobile !== \"-\" && input.mobile !== null) {\n  mobile = input.mobile;\n} else if (\n  input.invoice &&\n  Array.isArray(input.invoice.transactions) &&\n  input.invoice.transactions.length > 0\n) {\n  mobile = input.invoice.transactions[0].mobile || null;\n}\n\n// نرمال‌سازی شماره (+98 → 0)\nif (mobile) {\n  mobile = mobile.replace('+98', '0');\n}\n\n// --- تاریخ‌ها ---\nconst fromISO = toIranISO(input.scheduled_from);\nconst toISO = toIranISO(input.scheduled_to);\n\n// --- مپ کردن type ---\nlet typeLabel = null;\nlet typeId = null;\nlet clinic_id = \"\";\nlet clinic_name = \"\";\nlet clinic_address = \"\";\n\nif (input.type === 1) {\n  typeLabel = \"in_person\";\n  typeId = 1;\n  clinic_id = $json.clinic.id;\n  clinic_name = $json.clinic.title;\n  clinic_address = $json.clinic.address;\n} else if (input.type === 2 || input.type === 4 || input.type === 8) {\n  typeLabel = \"online\";\n  typeId = 2;\n}\n\n// --- ساختن آبجکت خروجی ---\nconst output = {\n  id: input.id,\n  type: \"book\",\n  user_center_id: \"9ce160cd-8963-428b-bd7e-615bc240dc0c\",\n  book_status: bookStatus,\n  ref_id: String(input.tracking_code),\n  from: isoToTimestamp(fromISO),\n  to: isoToTimestamp(toISO),\n  from_date: fromISO,\n  to_date: toISO,\n  name: input.firstname,\n  family: input.lastname,\n  display_name: `${input.firstname} ${input.lastname}`,\n  cell: mobile,\n  national_code: input.national_code,\n  payment_status: paymentStatus,\n  cost: input.amount,\n  insurance: null,\n  type_label: typeLabel,\n  type_id: typeId,\n  center_id : clinic_id,\n  center_name : clinic_name,\n  center_address : clinic_address\n};\n\n// بازگرداندن آیتم تبدیل شده\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2752,
+        2048
+      ],
+      "id": "d9915698-be79-43be-9f29-061f41f3e78c",
+      "name": "Code7"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "754fd104-4116-4175-9929-af47b0ca45e8",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": 100,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "3a6011c0-d1cf-40dc-ab2d-83f4d7ccc202",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -3200,
+        2144
+      ],
+      "id": "4b01d63e-9871-4583-a81a-e81c2ae59249",
+      "name": "Filter2",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "80e421f3-9c45-4961-a95d-b522edbbb693",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2976,
+        2144
+      ],
+      "id": "09ba52dd-0ab1-49cd-97ae-f60adfdf5574",
+      "name": "If5"
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {
+          "responseCode": 204
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -2752,
+        2240
+      ],
+      "id": "6c44c40d-1725-41e0-be1a-e8c28d1a81b8",
+      "name": "Respond to Webhook7"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ورودی خام را که یک آرایه با یک عضو است، می‌گیریم\nconst rawInput = items[0].json;\n\n// به آرایه appointments دسترسی پیدا می‌کنیم\nconst appointmentsArray = rawInput.result.appointments;\n\n// یک آیتم جدید برمی‌گردانیم که فقط شامل این آرایه است\n// این کار نود بعدی (Split Out) را بسیار ساده می‌کند\nreturn [{\n  json: {\n    appointments: appointmentsArray\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3648,
+        1760
+      ],
+      "id": "7cae0124-3337-46a8-ae4a-07bb4b931e8d",
+      "name": "Code8"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "appointments",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -3424,
+        1760
+      ],
+      "id": "d4cf265e-1187-42b4-8fa2-721eb002f01c",
+      "name": "Split Out3"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// این کد روی هر آیتم جداگانه اجرا می‌شود\nconst input = $json;\n\n// --- تابع کمکی برای تبدیل تاریخ به ISO ایران ---\nfunction toIranISO(dateString) {\n  if (!dateString) return null;\n\n  // ورودی دقیقاً به وقت تهران هست → فقط استانداردسازی\n  return dateString.replace(' ', 'T') + '+03:30';\n}\n\n// --- تابع کمکی برای تبدیل ISO به timestamp ---\nfunction isoToTimestamp(isoString) {\n  if (!isoString) return null;\n  return Math.floor(new Date(isoString).getTime() / 1000);\n}\n\n// --- مپ کردن وضعیت عددی ---\nlet bookStatus = 'unknown';\nif (input.status === 100) {\n    bookStatus = 'visited';\n} else if (input.canceled_at) {\n    bookStatus = 'canceled';\n} else {\n    bookStatus = 'booked';\n}\n\n// --- مپ کردن وضعیت پرداخت ---\nlet paymentStatus = 'unpaid';\nif (input.invoice && input.invoice.status === 100) {\n    paymentStatus = 'paid';\n}\n\n// --- پیدا کردن موبایل ---\n// اولویت: user_patient → input.mobile → transaction.mobile\nlet mobile = null;\n\nif (input.user_patient?.mobile) {\n  mobile = input.user_patient.mobile;\n} else if (input.mobile && input.mobile !== \"-\" && input.mobile !== null) {\n  mobile = input.mobile;\n} else if (\n  input.invoice &&\n  Array.isArray(input.invoice.transactions) &&\n  input.invoice.transactions.length > 0\n) {\n  mobile = input.invoice.transactions[0].mobile || null;\n}\n\n// نرمال‌سازی شماره (+98 → 0)\nif (mobile) {\n  mobile = mobile.replace('+98', '0');\n}\n\n// --- تاریخ‌ها ---\nconst fromISO = toIranISO(input.scheduled_from);\nconst toISO = toIranISO(input.scheduled_to);\n\n// --- مپ کردن type ---\nlet typeLabel = null;\nlet typeId = null;\nlet clinic_id = \"\";\nlet clinic_name = \"\";\nlet clinic_address = \"\";\n\nif (input.type === 1) {\n  typeLabel = \"in_person\";\n  typeId = 1;\n  clinic_id = $json.clinic.id;\n  clinic_name = $json.clinic.title;\n  clinic_address = $json.clinic.address;\n} else if (input.type === 2 || input.type === 4 || input.type === 8) {\n  typeLabel = \"online\";\n  typeId = 2;\n}\n\n// --- ساختن آبجکت خروجی ---\nconst output = {\n  id: input.id,\n  type: \"book\",\n  user_center_id: \"9ce160cd-8963-428b-bd7e-615bc240dc0c\",\n  book_status: bookStatus,\n  ref_id: String(input.tracking_code),\n  from: isoToTimestamp(fromISO),\n  to: isoToTimestamp(toISO),\n  from_date: fromISO,\n  to_date: toISO,\n  name: input.firstname,\n  family: input.lastname,\n  display_name: `${input.firstname} ${input.lastname}`,\n  cell: mobile,\n  national_code: input.national_code,\n  payment_status: paymentStatus,\n  cost: input.amount,\n  insurance: null,\n  type_label: typeLabel,\n  type_id: typeId,\n  center_id : clinic_id,\n  center_name : clinic_name,\n  center_address : clinic_address\n};\n\n// بازگرداندن آیتم تبدیل شده\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2736,
+        1600
+      ],
+      "id": "d5aa2d7b-fc05-4b2a-b34a-a3af866d977b",
+      "name": "Code9"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "754fd104-4116-4175-9929-af47b0ca45e8",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": 100,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "3a6011c0-d1cf-40dc-ab2d-83f4d7ccc202",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -3200,
+        1760
+      ],
+      "id": "9a591a7f-ddb0-47c5-a7bc-23e3f653b0ac",
+      "name": "Filter3",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "80e421f3-9c45-4961-a95d-b522edbbb693",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2976,
+        1760
+      ],
+      "id": "7ef570de-ee8f-4765-ab1b-484852438d07",
+      "name": "If6"
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {
+          "responseCode": 204
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -2752,
+        1856
+      ],
+      "id": "57d18533-e772-4fad-a760-01bf2d32dc49",
+      "name": "Respond to Webhook9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e581cbf-63da-447f-a529-04f075eb7d51",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "10b3b3f8-871a-4001-ad7a-394a09fa63e7",
+              "name": "type",
+              "value": "={{ $json.type_label }}",
+              "type": "string"
+            },
+            {
+              "id": "1bddb2f9-6d8e-461d-acdb-a0b6e1ee53a3",
+              "name": "type_id",
+              "value": "={{ $json.type_id }}",
+              "type": "string"
+            },
+            {
+              "id": "ae59be4e-def7-48fe-8229-fb99ba2aa129",
+              "name": "user_center_id",
+              "value": "={{ $json.user_center_id }}",
+              "type": "string"
+            },
+            {
+              "id": "e78dc91c-47d5-42d1-9a4d-6b6116b87f25",
+              "name": "book_status",
+              "value": "visited",
+              "type": "string"
+            },
+            {
+              "id": "3f3bae6f-e1f8-4798-b756-2997bb278ebb",
+              "name": "ref_id",
+              "value": "={{ $json.ref_id }}",
+              "type": "string"
+            },
+            {
+              "id": "abcccb4d-b597-4419-a1b6-b20d54bc7697",
+              "name": "from",
+              "value": "={{ $json.from }}",
+              "type": "string"
+            },
+            {
+              "id": "73c02c16-2f2c-4f0d-9d6f-5cdce6397393",
+              "name": "to",
+              "value": "={{ $json.to }}",
+              "type": "string"
+            },
+            {
+              "id": "9131405c-0046-44b9-9e0b-dc1ed62343bc",
+              "name": "from_date",
+              "value": "={{ $json.from_date }}",
+              "type": "string"
+            },
+            {
+              "id": "f03a9eea-046e-4500-a598-45d7cd728b58",
+              "name": "to_date",
+              "value": "={{ $json.to_date }}",
+              "type": "string"
+            },
+            {
+              "id": "624b10a3-4869-4746-a379-a6b8671e2847",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "7a1a1358-7ae0-4e92-a333-630f869f5476",
+              "name": "family",
+              "value": "={{ $json.family }}",
+              "type": "string"
+            },
+            {
+              "id": "b50235bb-c51b-478e-9f5c-68c9ece5a5f0",
+              "name": "display_name",
+              "value": "={{ $json.display_name }}",
+              "type": "string"
+            },
+            {
+              "id": "b6d8980d-1f0e-44cb-a928-2b3b0120d1ad",
+              "name": "cell",
+              "value": "={{ $json.cell }}",
+              "type": "string"
+            },
+            {
+              "id": "9676ded4-2327-4878-b43b-115fae97afd8",
+              "name": "national_code",
+              "value": "={{ $json.national_code }}",
+              "type": "string"
+            },
+            {
+              "id": "f3d56483-d199-4863-af0a-836609384b7c",
+              "name": "payment_status",
+              "value": "paid",
+              "type": "string"
+            },
+            {
+              "id": "a622b7c1-0136-4737-b9b2-07921170b163",
+              "name": "cost",
+              "value": "={{ $json.cost }}",
+              "type": "string"
+            },
+            {
+              "id": "0f8c52bb-96c1-4686-9651-77ce4245dc40",
+              "name": "insurance",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "23486055-4d7c-4ccc-aa5c-3e3e06078405",
+              "name": "platform.name",
+              "value": "drdr",
+              "type": "string"
+            },
+            {
+              "id": "57bf7055-8f7a-42ac-9ba2-1a49de30bd68",
+              "name": "platform.p_name",
+              "value": "دکتردکتر",
+              "type": "string"
+            },
+            {
+              "id": "5bccba0f-513a-47ef-ba32-caf279e66878",
+              "name": "platform.id",
+              "value": "1",
+              "type": "string"
+            },
+            {
+              "id": "915ad2a6-dcd9-4dd6-9463-8acaf37f3ad0",
+              "name": "platform.icon",
+              "value": "https://zoro-icon.s3.ir-tbz-sh1.arvanstorage.ir/drdr.png",
+              "type": "string"
+            },
+            {
+              "id": "0bce6483-9ec0-4097-a2f5-3d3526c0bf14",
+              "name": "platform.link",
+              "value": "https://panel.drdr.ir/",
+              "type": "string"
+            },
+            {
+              "id": "6c31c0d6-c5c9-4de6-a87d-7accbe5e0eaf",
+              "name": "center.id",
+              "value": "={{ $json.center_id }}",
+              "type": "string"
+            },
+            {
+              "id": "edbe219a-4121-4626-842e-089576be4ebd",
+              "name": "center.name",
+              "value": "={{ $json.center_name }}",
+              "type": "string"
+            },
+            {
+              "id": "0136c2c3-dfab-4725-8bc7-96fa4e2d909b",
+              "name": "center.address",
+              "value": "={{ $json.center_address }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2528,
+        2048
+      ],
+      "id": "7b7ef7cb-fd39-49b7-b95f-a2ec335ebb08",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e581cbf-63da-447f-a529-04f075eb7d51",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "10b3b3f8-871a-4001-ad7a-394a09fa63e7",
+              "name": "type",
+              "value": "={{ $json.type_label }}",
+              "type": "string"
+            },
+            {
+              "id": "1bddb2f9-6d8e-461d-acdb-a0b6e1ee53a3",
+              "name": "type_id",
+              "value": "={{ $json.type_id }}",
+              "type": "string"
+            },
+            {
+              "id": "ae59be4e-def7-48fe-8229-fb99ba2aa129",
+              "name": "user_center_id",
+              "value": "={{ $json.user_center_id }}",
+              "type": "string"
+            },
+            {
+              "id": "e78dc91c-47d5-42d1-9a4d-6b6116b87f25",
+              "name": "book_status",
+              "value": "visited",
+              "type": "string"
+            },
+            {
+              "id": "3f3bae6f-e1f8-4798-b756-2997bb278ebb",
+              "name": "ref_id",
+              "value": "={{ $json.ref_id }}",
+              "type": "string"
+            },
+            {
+              "id": "abcccb4d-b597-4419-a1b6-b20d54bc7697",
+              "name": "from",
+              "value": "={{ $json.from }}",
+              "type": "string"
+            },
+            {
+              "id": "73c02c16-2f2c-4f0d-9d6f-5cdce6397393",
+              "name": "to",
+              "value": "={{ $json.to }}",
+              "type": "string"
+            },
+            {
+              "id": "9131405c-0046-44b9-9e0b-dc1ed62343bc",
+              "name": "from_date",
+              "value": "={{ $json.from_date }}",
+              "type": "string"
+            },
+            {
+              "id": "f03a9eea-046e-4500-a598-45d7cd728b58",
+              "name": "to_date",
+              "value": "={{ $json.to_date }}",
+              "type": "string"
+            },
+            {
+              "id": "624b10a3-4869-4746-a379-a6b8671e2847",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "7a1a1358-7ae0-4e92-a333-630f869f5476",
+              "name": "family",
+              "value": "={{ $json.family }}",
+              "type": "string"
+            },
+            {
+              "id": "b50235bb-c51b-478e-9f5c-68c9ece5a5f0",
+              "name": "display_name",
+              "value": "={{ $json.display_name }}",
+              "type": "string"
+            },
+            {
+              "id": "b6d8980d-1f0e-44cb-a928-2b3b0120d1ad",
+              "name": "cell",
+              "value": "={{ $json.cell }}",
+              "type": "string"
+            },
+            {
+              "id": "9676ded4-2327-4878-b43b-115fae97afd8",
+              "name": "national_code",
+              "value": "={{ $json.national_code }}",
+              "type": "string"
+            },
+            {
+              "id": "f3d56483-d199-4863-af0a-836609384b7c",
+              "name": "payment_status",
+              "value": "paid",
+              "type": "string"
+            },
+            {
+              "id": "a622b7c1-0136-4737-b9b2-07921170b163",
+              "name": "cost",
+              "value": "={{ $json.cost }}",
+              "type": "string"
+            },
+            {
+              "id": "0f8c52bb-96c1-4686-9651-77ce4245dc40",
+              "name": "insurance",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "23486055-4d7c-4ccc-aa5c-3e3e06078405",
+              "name": "platform.name",
+              "value": "drdr",
+              "type": "string"
+            },
+            {
+              "id": "57bf7055-8f7a-42ac-9ba2-1a49de30bd68",
+              "name": "platform.p_name",
+              "value": "دکتردکتر",
+              "type": "string"
+            },
+            {
+              "id": "5bccba0f-513a-47ef-ba32-caf279e66878",
+              "name": "platform.id",
+              "value": "1",
+              "type": "string"
+            },
+            {
+              "id": "915ad2a6-dcd9-4dd6-9463-8acaf37f3ad0",
+              "name": "platform.icon",
+              "value": "https://zoro-icon.s3.ir-tbz-sh1.arvanstorage.ir/drdr.png",
+              "type": "string"
+            },
+            {
+              "id": "0bce6483-9ec0-4097-a2f5-3d3526c0bf14",
+              "name": "platform.link",
+              "value": "https://panel.drdr.ir/",
+              "type": "string"
+            },
+            {
+              "id": "6c31c0d6-c5c9-4de6-a87d-7accbe5e0eaf",
+              "name": "center.id",
+              "value": "={{ $json.center_id }}",
+              "type": "string"
+            },
+            {
+              "id": "edbe219a-4121-4626-842e-089576be4ebd",
+              "name": "center.name",
+              "value": "={{ $json.center_name }}",
+              "type": "string"
+            },
+            {
+              "id": "0136c2c3-dfab-4725-8bc7-96fa4e2d909b",
+              "name": "center.address",
+              "value": "={{ $json.center_address }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2512,
+        1600
+      ],
+      "id": "e4250bc6-04a4-4a32-8e4a-895b77db4334",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "amount": 0.6
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -4096,
+        1760
+      ],
+      "id": "6ae92d42-f491-4a32-b342-27a904ef4150",
+      "name": "Wait",
+      "webhookId": "3c556d55-17af-4796-9285-3d3368f1d665"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://panel.drdr.ir/api/v3/appointments/search",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "page",
+              "value": "1"
+            },
+            {
+              "name": "per_page",
+              "value": "100"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "authorization",
+              "value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiJjMTlmOWM3Ny0yMzRmLTRhZjYtYTE0ZS03OGY3NjU5MWYwYjEiLCJqdGkiOiJiYTYxYTgzNTQ2N2UyYTZhZTRmNTVjN2JlN2Q1ZmRjNzBhOGViNzNmMDNjNTcyYzQ5OGJkZmNkMzI5YjcxOGVkMGZmNmExOWFlYjQ5NWQxMyIsImlhdCI6MTc1ODcyMjQxOS4xMjA5NTksIm5iZiI6MTc1ODcyMjQxOS4xMjA5NjYsImV4cCI6MTc5MDI1ODQxOS4xMDE3MTIsInN1YiI6IjcwOTA0Iiwic2NvcGVzIjpbXX0.bKZp8fBdhAtwd3MCCK5_s_n85XcFjGdo4EnUgZ7CeMlbCqDMWTmyCN1DG_9Hy2pbaDjL9ZY--2rAGDze-UTGPRjy-pUTwSeYJUY2D5ORnAgoqTkn6wlzaX0lX4R_YbLBxvC_3YLTgSisFGkuxdspsqMantFoKvYmmfdiSco7FJ_WvkDtMMyv9GyiU1LoaEUisg0OHYQYcH7GayzGFqOp8_g2SIY0ozyrLbhdcIdCZx3YUcOzbC1nSAENV-5wWbGIigNlcfqLBHRKd8FU4ayMsGYkyUptKyAguVuIR8_5Fv43p86MffmueG7Sf_pY5lMOx2uJtIATDkceqs--qfuYPm-TOvdtVDU9C4uKMs2u11z8BSUbBF8DMAkUKMQQhzFHOy3z8wUUA0gtn9gePK8Uv_sobdm5zlQ5h4bqpdiMkaLekTbGzmNFs94dADub3wIVaWFYqiKN_ZD9YQUCigoEESrmAFWGzB4XnfBw9TbNMzGA3yxXHdL3gRFQhRgisK7grPhQXYiT8fQj9wbg--ee753C1ZSgvv0qv_DJlmD6-X36vgrfdq3LZ7aCPNtf1eg6Jg8uqsWbImnOzAhC3i-QinAMDwBJX1dJsxgcgn5RyRET4rDoMF0HUiu7DcFrAHcPi8tQwzhkM9nv8yu-X1OogXSE5088EZt_hOoFEeeRUI8"
+            },
+            {
+              "name": "client-id",
+              "value": "c19f9c77-234f-4af6-a14e-78f76591f0b1"
+            },
+            {
+              "name": "origin",
+              "value": "https://panel.drdr.ir"
+            },
+            {
+              "name": "priority",
+              "value": "u=1, i"
+            },
+            {
+              "name": "referer",
+              "value": "https://panel.drdr.ir/"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Google Chrome\";v=\"140\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "empty"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "cors"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-origin"
+            },
+            {
+              "name": "user-agent",
+              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+            },
+            {
+              "name": "user-role",
+              "value": "clinic"
+            },
+            {
+              "name": "user-role-id",
+              "value": "70904"
+            },
+            {
+              "name": "cookie",
+              "value": "_gcl_au=1.1.1066516944.1754203264;analytics_campaign={%22source%22:%22google%22%2C%22medium%22:%22organic%22};_clck=lunxo8%5E2%5Efyz%5E0%5E2041;_ga_0Y8NF1G4YD=GS2.1.s1757687171$o14$g1$t1757687181$j50$l0$h0;_ga=GA1.1.833285822.1754203265;_ga_FFET8W66JW=GS2.1.s1758741285$o24$g0$t1758741285$j60$l0$h0;"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"doctor_id\": 70904,\n  \"page\": 1,\n  \"per_page\": 100,\n  \"scheduled_date\": \"2025-09-17\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -3856,
+        2960
+      ],
+      "id": "5999023d-2e6c-480a-ba9b-7d3dc34d2c19",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ورودی رو بگیر\nconst pagination = items[0].json.result?.pagination || {};\nconst last = pagination.last_page || 1;\n\nconst output = [];\nfor (let p = 1; p <= last; p++) {\n  output.push({\n    json: { page: p }\n  });\n}\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2528,
+        64
+      ],
+      "id": "2df75949-9cae-4cde-8d3a-c0f045dbba23",
+      "name": "buildPages1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "page",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2304,
+        64
+      ],
+      "id": "d7894bc3-409e-4f41-bc45-78519fd5806a",
+      "name": "Split Out4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://panel.drdr.ir/api/v3/appointments/search",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json;charset=UTF-8"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $('Select rows from a table').item.json.access_token }}"
+            },
+            {
+              "name": "client-id",
+              "value": "={{ $('Select rows from a table').item.json.client_id }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"doctor_id\": {{ $('Select rows from a table').item.json.platform_doctor_id }},\n  \"page\": {{ $json.page }},\n  \"scheduled_date\": \"{{ $('Webhook').item.json.body.date }}\"\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2080,
+        64
+      ],
+      "id": "b282f1f0-8e14-4a57-be20-18a1b7f52bbf",
+      "name": "appointments/search4",
+      "retryOnFail": false,
+      "waitBetweenTries": 3000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ورودی اصلی\nconst rawInput = items[0].json;\n\n// مطمئن می‌شیم که data وجود داره و آرایه است\nconst dataArray = rawInput.data || [];\n\nlet output = [];\n\n// پیمایش صفحات داخل data\nfor (const entry of dataArray) {\n  if (entry.result && Array.isArray(entry.result.appointments)) {\n    for (const appointment of entry.result.appointments) {\n      output.push({ json: appointment });\n    }\n  }\n}\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1632,
+        64
+      ],
+      "id": "3ce1d76f-74f2-400c-8464-1a51c2bbd943",
+      "name": "Code10"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        -1856,
+        64
+      ],
+      "id": "d9bd049d-99d5-43b5-8008-ec8beb85d9ef",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// این کد روی هر آیتم جداگانه اجرا می‌شود\nconst input = $json;\n\n// --- تابع کمکی برای تبدیل تاریخ به ISO ایران ---\nfunction toIranISO(dateString) {\n  if (!dateString) return null;\n\n  // ورودی دقیقاً به وقت تهران هست → فقط استانداردسازی\n  return dateString.replace(' ', 'T') + '+03:30';\n}\n\n// --- تابع کمکی برای تبدیل ISO به timestamp ---\nfunction isoToTimestamp(isoString) {\n  if (!isoString) return null;\n  return Math.floor(new Date(isoString).getTime() / 1000);\n}\n\n// --- مپ کردن وضعیت عددی ---\nlet bookStatus = 'unknown';\nif (input.status === 100) {\n    bookStatus = 'visited';\n} else if (input.canceled_at) {\n    bookStatus = 'canceled';\n} else {\n    bookStatus = 'booked';\n}\n\n// --- مپ کردن وضعیت پرداخت ---\nlet paymentStatus = 'unpaid';\nif (input.invoice && input.invoice.status === 100) {\n    paymentStatus = 'paid';\n}\n\n// --- پیدا کردن موبایل ---\n// اولویت: user_patient → input.mobile → transaction.mobile\nlet mobile = null;\n\nif (input.user_patient?.mobile) {\n  mobile = input.user_patient.mobile;\n} else if (input.mobile && input.mobile !== \"-\" && input.mobile !== null) {\n  mobile = input.mobile;\n} else if (\n  input.invoice &&\n  Array.isArray(input.invoice.transactions) &&\n  input.invoice.transactions.length > 0\n) {\n  mobile = input.invoice.transactions[0].mobile || null;\n}\n\n// نرمال‌سازی شماره (+98 → 0)\nif (mobile) {\n  mobile = mobile.replace('+98', '0');\n}\n\n// --- تاریخ‌ها ---\nconst fromISO = toIranISO(input.scheduled_from);\nconst toISO = toIranISO(input.scheduled_to);\n\n// --- مپ کردن type ---\nlet typeLabel = null;\nlet typeId = null;\nlet clinic_id = \"\";\nlet clinic_name = \"\";\nlet clinic_address = \"\";\n\nif (input.type === 1) {\n  typeLabel = \"in_person\";\n  typeId = 1;\n  clinic_id = $json.clinic.id;\n  clinic_name = $json.clinic.title;\n  clinic_address = $json.clinic.address;\n} else if (input.type === 2 || input.type === 4 || input.type === 8) {\n  typeLabel = \"online\";\n  typeId = 2;\n}\n\n// --- ساختن آبجکت خروجی ---\nconst output = {\n  id: input.id,\n  type: \"book\",\n  user_center_id: \"9ce160cd-8963-428b-bd7e-615bc240dc0c\",\n  book_status: bookStatus,\n  ref_id: String(input.tracking_code),\n  from: isoToTimestamp(fromISO),\n  to: isoToTimestamp(toISO),\n  from_date: fromISO,\n  to_date: toISO,\n  name: input.firstname,\n  family: input.lastname,\n  display_name: `${input.firstname} ${input.lastname}`,\n  cell: mobile,\n  national_code: input.national_code,\n  payment_status: paymentStatus,\n  cost: input.amount,\n  insurance: null,\n  type_label: typeLabel,\n  type_id: typeId,\n  center_id : clinic_id,\n  center_name : clinic_name,\n  center_address : clinic_address\n};\n\n// بازگرداندن آیتم تبدیل شده\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -960,
+        -32
+      ],
+      "id": "48ef4638-b86e-4f88-849e-8cfaac8dd5c0",
+      "name": "Code11"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "754fd104-4116-4175-9929-af47b0ca45e8",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": 100,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "3a6011c0-d1cf-40dc-ab2d-83f4d7ccc202",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        -1408,
+        64
+      ],
+      "id": "4f064b74-0fb7-4546-8fd5-fee90ba11013",
+      "name": "Filter4",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "80e421f3-9c45-4961-a95d-b522edbbb693",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1184,
+        64
+      ],
+      "id": "cffe2fd4-cadc-4215-b910-6bc3cedfa74c",
+      "name": "If7"
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {
+          "responseCode": 204
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -960,
+        160
+      ],
+      "id": "2b836711-2881-4910-b0f3-8952e28e45b8",
+      "name": "Respond to Webhook8"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e581cbf-63da-447f-a529-04f075eb7d51",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "10b3b3f8-871a-4001-ad7a-394a09fa63e7",
+              "name": "type",
+              "value": "={{ $json.type_label }}",
+              "type": "string"
+            },
+            {
+              "id": "1bddb2f9-6d8e-461d-acdb-a0b6e1ee53a3",
+              "name": "type_id",
+              "value": "={{ $json.type_id }}",
+              "type": "string"
+            },
+            {
+              "id": "ae59be4e-def7-48fe-8229-fb99ba2aa129",
+              "name": "user_center_id",
+              "value": "={{ $json.user_center_id }}",
+              "type": "string"
+            },
+            {
+              "id": "e78dc91c-47d5-42d1-9a4d-6b6116b87f25",
+              "name": "book_status",
+              "value": "visited",
+              "type": "string"
+            },
+            {
+              "id": "3f3bae6f-e1f8-4798-b756-2997bb278ebb",
+              "name": "ref_id",
+              "value": "={{ $json.ref_id }}",
+              "type": "string"
+            },
+            {
+              "id": "abcccb4d-b597-4419-a1b6-b20d54bc7697",
+              "name": "from",
+              "value": "={{ $json.from }}",
+              "type": "string"
+            },
+            {
+              "id": "73c02c16-2f2c-4f0d-9d6f-5cdce6397393",
+              "name": "to",
+              "value": "={{ $json.to }}",
+              "type": "string"
+            },
+            {
+              "id": "9131405c-0046-44b9-9e0b-dc1ed62343bc",
+              "name": "from_date",
+              "value": "={{ $json.from_date }}",
+              "type": "string"
+            },
+            {
+              "id": "f03a9eea-046e-4500-a598-45d7cd728b58",
+              "name": "to_date",
+              "value": "={{ $json.to_date }}",
+              "type": "string"
+            },
+            {
+              "id": "624b10a3-4869-4746-a379-a6b8671e2847",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "7a1a1358-7ae0-4e92-a333-630f869f5476",
+              "name": "family",
+              "value": "={{ $json.family }}",
+              "type": "string"
+            },
+            {
+              "id": "b50235bb-c51b-478e-9f5c-68c9ece5a5f0",
+              "name": "display_name",
+              "value": "={{ $json.display_name }}",
+              "type": "string"
+            },
+            {
+              "id": "b6d8980d-1f0e-44cb-a928-2b3b0120d1ad",
+              "name": "cell",
+              "value": "={{ $json.cell }}",
+              "type": "string"
+            },
+            {
+              "id": "9676ded4-2327-4878-b43b-115fae97afd8",
+              "name": "national_code",
+              "value": "={{ $json.national_code }}",
+              "type": "string"
+            },
+            {
+              "id": "f3d56483-d199-4863-af0a-836609384b7c",
+              "name": "payment_status",
+              "value": "paid",
+              "type": "string"
+            },
+            {
+              "id": "a622b7c1-0136-4737-b9b2-07921170b163",
+              "name": "cost",
+              "value": "={{ $json.cost }}",
+              "type": "string"
+            },
+            {
+              "id": "0f8c52bb-96c1-4686-9651-77ce4245dc40",
+              "name": "insurance",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "23486055-4d7c-4ccc-aa5c-3e3e06078405",
+              "name": "platform.name",
+              "value": "drdr",
+              "type": "string"
+            },
+            {
+              "id": "57bf7055-8f7a-42ac-9ba2-1a49de30bd68",
+              "name": "platform.p_name",
+              "value": "دکتردکتر",
+              "type": "string"
+            },
+            {
+              "id": "5bccba0f-513a-47ef-ba32-caf279e66878",
+              "name": "platform.id",
+              "value": "1",
+              "type": "string"
+            },
+            {
+              "id": "915ad2a6-dcd9-4dd6-9463-8acaf37f3ad0",
+              "name": "platform.icon",
+              "value": "https://zoro-icon.s3.ir-tbz-sh1.arvanstorage.ir/drdr.png",
+              "type": "string"
+            },
+            {
+              "id": "0bce6483-9ec0-4097-a2f5-3d3526c0bf14",
+              "name": "platform.link",
+              "value": "https://panel.drdr.ir/",
+              "type": "string"
+            },
+            {
+              "id": "6c31c0d6-c5c9-4de6-a87d-7accbe5e0eaf",
+              "name": "center.id",
+              "value": "={{ $json.center_id }}",
+              "type": "string"
+            },
+            {
+              "id": "edbe219a-4121-4626-842e-089576be4ebd",
+              "name": "center.name",
+              "value": "={{ $json.center_name }}",
+              "type": "string"
+            },
+            {
+              "id": "0136c2c3-dfab-4725-8bc7-96fa4e2d909b",
+              "name": "center.address",
+              "value": "={{ $json.center_address }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -736,
+        -32
+      ],
+      "id": "1ff0cb72-afe7-4cad-9655-7f08900ad8f9",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -512,
+        -32
+      ],
+      "id": "3a551387-356b-4f70-9acd-eaea7b46eb6f",
+      "name": "Respond to Webhook6"
+    }
+  ],
+  "connections": {
+    "appointments/search": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook4",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buildPages": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "appointments/search1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "find doctor id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "find doctor id": {
+      "main": [
+        [
+          {
+            "node": "does dr exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "does dr exists": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "appointments/search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code4": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "If4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Code4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "buildPages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "appointments/search1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Code5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code5": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If4": {
+      "main": [
+        [
+          {
+            "node": "buildPages1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "appointments/search2": {
+      "main": [
+        [
+          {
+            "node": "Code6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code6": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Filter2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code7": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter2": {
+      "main": [
+        [
+          {
+            "node": "If5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If5": {
+      "main": [
+        [
+          {
+            "node": "Code7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code8": {
+      "main": [
+        [
+          {
+            "node": "Split Out3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out3": {
+      "main": [
+        [
+          {
+            "node": "Filter3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code9": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter3": {
+      "main": [
+        [
+          {
+            "node": "If6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If6": {
+      "main": [
+        [
+          {
+            "node": "Code9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "appointments/search3": {
+      "main": [
+        [
+          {
+            "node": "Code8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "appointments/search3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buildPages1": {
+      "main": [
+        [
+          {
+            "node": "Split Out4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "appointments/search4": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out4": {
+      "main": [
+        [
+          {
+            "node": "appointments/search4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Code10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code11": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter4": {
+      "main": [
+        [
+          {
+            "node": "If7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If7": {
+      "main": [
+        [
+          {
+            "node": "Code11",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code10": {
+      "main": [
+        [
+          {
+            "node": "Filter4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "triggerCount": 1,
+  "versionId": "5c0a3ce0-31d3-4369-aaa0-981cc15882f6",
+  "owner": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  },
+  "parentFolderId": null,
+  "isArchived": false
+}

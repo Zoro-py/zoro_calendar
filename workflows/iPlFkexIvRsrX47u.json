@@ -1,0 +1,74 @@
+{
+  "id": "iPlFkexIvRsrX47u",
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        0
+      ],
+      "id": "f987d669-304a-400e-b61f-2e3de19938c7",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://apigw.paziresh24.com/v1/hamdast/apps/zorocalandar/notifications",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "35399abd-59bb-40e3-85d8-b4699088bed3"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"user_id\": \"17175469\",\n  \"title\": \"تو همه پلتفرم هات لاگین نیستی!\",\n  \"description\": \"یک یا چندتا از پلتفرم های نوبت دهی ات نیاز به لاگین دوباره دارن. با کلیک روی همین پیام داخل اون پلتفرم ها دوباره لاگین کن تا همه نوبت هارو یکجا داشته باشی \",\n  \"link\": \"https://www.paziresh24.com/_/zorocalandar/launcher/\",\n  \"action_button_text\": \"صفحه تقویم یکپارچه\",\n  \"display_at\": [\n    \"doctor_calendar\"\n  ]\n}",
+        "options": {
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        144,
+        0
+      ],
+      "id": "2cca3d44-a3cc-41a8-8207-3a1ff76e5da5",
+      "name": "send notification"
+    }
+  ],
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "send notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "triggerCount": 0,
+  "versionId": "8ee2df26-6e70-46f0-bf1c-bd6edbf09a26",
+  "owner": {
+    "type": "personal",
+    "projectId": "Zp6TRlq4gxhqUmDN",
+    "projectName": "mmd hey <m.h.heidari1384@gmail.com>",
+    "personalEmail": "m.h.heidari1384@gmail.com"
+  },
+  "parentFolderId": null,
+  "isArchived": false
+}
