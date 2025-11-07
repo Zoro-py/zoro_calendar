@@ -259,6 +259,16 @@
               "type": "string",
               "canBeUsedToMatch": false,
               "removed": false
+            },
+            {
+              "id": "login_reminder_count",
+              "displayName": "login_reminder_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false,
+              "removed": true
             }
           ],
           "attemptToConvertTypes": false,
@@ -721,6 +731,29 @@
       "id": "72b36df1-a763-4068-83f5-b10a7a14e9e5",
       "name": "HTTP Request3",
       "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://apigw.paziresh24.com/open-platform/v1/user/information/",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.access_token }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1200,
+        -432
+      ],
+      "id": "c830d029-82b9-4f49-9868-587f9a5ba508",
+      "name": "HTTP Request4"
     }
   ],
   "connections": {
@@ -875,6 +908,11 @@
             "node": "HTTP Request3",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -922,7 +960,7 @@
     "executionOrder": "v1"
   },
   "triggerCount": 1,
-  "versionId": "aaaf575f-aa4d-439f-9248-2f139643e950",
+  "versionId": "9c73b666-b91d-4f25-98ea-e02d269a901c",
   "owner": {
     "type": "team",
     "teamId": "pzvw8g7gyGnUF15Q",
