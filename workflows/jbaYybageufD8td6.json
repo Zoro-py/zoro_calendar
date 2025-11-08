@@ -1596,6 +1596,63 @@
       ],
       "id": "352dd843-3736-46c8-ae96-20d6f9f9f479",
       "name": "send notification"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9f39150c-7e07-4a6f-8ba5-ca67c576f543",
+              "leftValue": "={{ $json.type.value }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2896,
+        -832
+      ],
+      "id": "5582c0ac-1ee7-4f67-9c47-2d001ccd8dd6",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "=📞{{ $('find doctor id').item.json.full_name }} یک نوبت تلفنی دارد📞",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        3168,
+        -1040
+      ],
+      "id": "cda09127-563e-48a5-9e63-bb2a66527527",
+      "name": "Send a text message7",
+      "webhookId": "370b2ba6-fa65-4667-a1d5-f6910589b382",
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
+        }
+      }
     }
   ],
   "connections": {
@@ -1700,6 +1757,11 @@
         [
           {
             "node": "Code1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -1924,13 +1986,24 @@
           }
         ]
       ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a text message7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
     "executionOrder": "v1"
   },
   "triggerCount": 1,
-  "versionId": "aa49258a-525c-41db-a092-6b0a96e51eb1",
+  "versionId": "77ebf054-1bf7-4e00-903c-c8d0a1d88be5",
   "owner": {
     "type": "team",
     "teamId": "pzvw8g7gyGnUF15Q",
