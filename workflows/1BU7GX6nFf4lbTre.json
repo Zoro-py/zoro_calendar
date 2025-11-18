@@ -503,7 +503,8 @@
             "phone_in_platform": "={{ $('Edit Fields1').item.json.body.mobile }}",
             "platform_id": 2,
             "doctor_id": "={{ $('Select rows from a table1').item.json.id }}",
-            "token_created": "={{ new Date(Date.now() - 24*60*60*1000).toLocaleString(\"sv-SE\", { timeZone: \"Asia/Tehran\", hour12: false }).replace(\" \", \"T\") + \"+03:30\" }}\n"
+            "token_created": "={{ new Date(Date.now() - 24*60*60*1000).toLocaleString(\"sv-SE\", { timeZone: \"Asia/Tehran\", hour12: false }).replace(\" \", \"T\") + \"+03:30\" }}\n",
+            "is_valid": true
           },
           "matchingColumns": [
             "doctor_id",
@@ -670,7 +671,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        992,
+        1056,
         704
       ],
       "id": "4d8b7d0b-deef-4f6a-a526-0ad85ab7da87",
@@ -741,6 +742,76 @@
       ],
       "id": "268ffb72-e7f1-4483-a5b8-7a883d82919d",
       "name": "Code"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "={{ $('Select rows from a table1').item.json.full_name }} توی دکترتو لاگین کرد",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1056,
+        992
+      ],
+      "id": "98922e96-7ade-4c57-b2ca-0ee0e9675a50",
+      "name": "Send a text message1",
+      "webhookId": "370b2ba6-fa65-4667-a1d5-f6910589b382",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "l2NxMTK4F6KKXYnm",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/l2NxMTK4F6KKXYnm",
+          "cachedResultName": "calendar — doctoreto/clinics"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "doctor_id": "={{ $json.doctor_id }}"
+          },
+          "matchingColumns": [
+            "doctor_id"
+          ],
+          "schema": [
+            {
+              "id": "doctor_id",
+              "displayName": "doctor_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1152,
+        496
+      ],
+      "id": "9f551e56-407c-44ff-a35c-5cf548b1a675",
+      "name": "Call 'doctoreto/clinics'"
     }
   ],
   "connections": {
@@ -882,6 +953,16 @@
             "node": "Respond to Webhook3",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call 'doctoreto/clinics'",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -913,7 +994,7 @@
     "executionOrder": "v1"
   },
   "triggerCount": 2,
-  "versionId": "a8a1338a-14ad-4a53-b763-1c1641551bd0",
+  "versionId": "86adbd48-3b26-4ce3-ad94-ee3f62e6324b",
   "owner": {
     "type": "team",
     "teamId": "pzvw8g7gyGnUF15Q",

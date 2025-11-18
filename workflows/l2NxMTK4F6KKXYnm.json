@@ -3,17 +3,6 @@
   "name": "doctoreto/clinics",
   "nodes": [
     {
-      "parameters": {},
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        -112,
-        0
-      ],
-      "id": "c63ff2e7-8c6f-43be-86a0-6681a0763fae",
-      "name": "When clicking ‘Execute workflow’"
-    },
-    {
       "parameters": {
         "url": "https://api.doctoreto.com/api/web/doctor/v1/places",
         "sendHeaders": true,
@@ -56,18 +45,6 @@
               "value": "https://doctorpanel.doctoreto.com/"
             },
             {
-              "name": "sec-ch-ua",
-              "value": "\"Chromium\";v=\"140\", \"Not=A?Brand\";v=\"24\", \"Microsoft Edge\";v=\"140\""
-            },
-            {
-              "name": "sec-ch-ua-mobile",
-              "value": "?0"
-            },
-            {
-              "name": "sec-ch-ua-platform",
-              "value": "\"Windows\""
-            },
-            {
               "name": "sec-fetch-dest",
               "value": "empty"
             },
@@ -81,11 +58,11 @@
             },
             {
               "name": "user-agent",
-              "value": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0"
+              "value": "={{ $json.userAgent }}"
             },
             {
               "name": "cookie",
-              "value": "={{ $json.access_token }}"
+              "value": "={{ $('Select rows from a table').item.json.access_token }}"
             }
           ]
         },
@@ -100,8 +77,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        320,
-        0
+        848,
+        -112
       ],
       "id": "abff9333-fbd1-480d-890b-4a84271a1fa3",
       "name": "HTTP Request"
@@ -123,8 +100,16 @@
         "where": {
           "values": [
             {
-              "column": "id",
-              "value": "10"
+              "column": "doctor_id",
+              "value": "={{ $json.id }}"
+            },
+            {
+              "column": "is_valid",
+              "value": "true"
+            },
+            {
+              "column": "platform_id",
+              "value": "2"
             }
           ]
         },
@@ -133,8 +118,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        96,
-        0
+        176,
+        -112
       ],
       "id": "0e4622a1-9890-4d8b-aa8f-4dc3136f41a1",
       "name": "Select rows from a table",
@@ -153,8 +138,8 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        528,
-        0
+        1072,
+        -112
       ],
       "id": "d432c866-4905-41c1-9f02-4239a585abc0",
       "name": "Split Out"
@@ -167,8 +152,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        736,
-        0
+        1296,
+        -16
       ],
       "id": "3bcda34d-facf-4055-b010-98c0139fec1a",
       "name": "Code"
@@ -184,8 +169,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1136,
-        0
+        1744,
+        -16
       ],
       "id": "98cabe6d-e368-446c-a9b1-4d3c078c6c4e",
       "name": "Send a text message",
@@ -193,7 +178,7 @@
       "credentials": {
         "telegramApi": {
           "id": "3UN48Ejir4Oxfhcd",
-          "name": "Telegram account 2"
+          "name": "calendar_bot"
         }
       }
     },
@@ -226,30 +211,337 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        944,
-        0
+        1520,
+        -16
       ],
       "id": "65c2eb39-b9be-45ef-9276-b40e38225158",
       "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "centers",
+          "mode": "list",
+          "cachedResultName": "centers"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "center_id": "={{ $json.id }}",
+            "doctor_id": "={{ $('Select rows from a table1').item.json.id }}",
+            "lat": "={{ $json.map.lat }}",
+            "lon": "={{ $json.map.long }}",
+            "center_name": "={{ $json.name }}",
+            "center_tell": "={{ $json.tell }}",
+            "center_address": "={{ $json.address }}",
+            "last_update": "={{ $now.setZone('Asia/Tehran').toISO() }}",
+            "doctor_name": "={{ $('Select rows from a table1').item.json.full_name }}",
+            "platform_id": 2
+          },
+          "matchingColumns": [
+            "center_id",
+            "platform_id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "doctor_id",
+              "displayName": "doctor_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "center_id",
+              "displayName": "center_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "center_name",
+              "displayName": "center_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "center_tell",
+              "displayName": "center_tell",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "center_address",
+              "displayName": "center_address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "lat",
+              "displayName": "lat",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "lon",
+              "displayName": "lon",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "platform_id",
+              "displayName": "platform_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_update",
+              "displayName": "last_update",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "doctor_name",
+              "displayName": "doctor_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1520,
+        -208
+      ],
+      "id": "6de0bd2f-193d-4b9c-8c82-5488cc984fc8",
+      "name": "Insert or update rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e9aed994-d783-4047-bd8d-6adbc106aba5",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "7fbaf1ce-0b43-4151-b6cd-90a4d0753676",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "28e934b1-748b-46a1-aaa5-c3acbd3a29d3",
+              "name": "tell",
+              "value": "={{ $json.phone }}",
+              "type": "string"
+            },
+            {
+              "id": "5ee28ad3-0eb8-40b7-8764-8a420de78652",
+              "name": "address",
+              "value": "={{ $json.address }}",
+              "type": "string"
+            },
+            {
+              "id": "467a00ca-4c0e-4677-9cb2-cfe67b7a08bb",
+              "name": "map.lat",
+              "value": "={{ $json.latitude }}",
+              "type": "string"
+            },
+            {
+              "id": "11a02f87-1017-456b-8be4-8a9d81f50eca",
+              "name": "map.long",
+              "value": "={{ $json.longitude }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1296,
+        -208
+      ],
+      "id": "87449322-ffb5-4f1e-a1ff-563c1559311e",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctors",
+          "mode": "list",
+          "cachedResultName": "doctors"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $json.doctor_id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -48,
+        -112
+      ],
+      "id": "a00850c8-d5d6-450e-b0d5-ba60c7383d24",
+      "name": "Select rows from a table1",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://zoro-calendar.ir/webhook/random_user_agent",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        624,
+        -112
+      ],
+      "id": "f512a834-9498-408e-b9be-963ca4af60d6",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7da7bbab-7913-41bb-83cb-6581bcb807b2",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        -112
+      ],
+      "id": "95b6d5d6-03c1-4328-be67-c7b182e2c76c",
+      "name": "is_empty"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "doctor_id",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -288,
+        -112
+      ],
+      "id": "b7d99c53-c4d3-433e-acd2-d0c769e5e9f3",
+      "name": "When Executed by Another Workflow"
     }
   ],
   "connections": {
-    "When clicking ‘Execute workflow’": {
-      "main": [
-        [
-          {
-            "node": "Select rows from a table",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Select rows from a table": {
       "main": [
         [
           {
-            "node": "HTTP Request",
+            "node": "is_empty",
             "type": "main",
             "index": 0
           }
@@ -272,6 +564,11 @@
         [
           {
             "node": "Code",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Edit Fields1",
             "type": "main",
             "index": 0
           }
@@ -299,13 +596,68 @@
           }
         ]
       ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Insert or update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table1": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is_empty": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
     "executionOrder": "v1"
   },
   "triggerCount": 0,
-  "versionId": "7a05d8db-fe81-4016-9a5f-a070f8da6c77",
+  "versionId": "b1a01c06-0e8d-42eb-8d85-ed3ae2831b8e",
   "owner": {
     "type": "team",
     "teamId": "pzvw8g7gyGnUF15Q",

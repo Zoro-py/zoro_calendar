@@ -1,0 +1,894 @@
+{
+  "id": "7UDDqPOQ84jw6Ccm",
+  "name": "insert_appointment_V2",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "doctor_id",
+              "type": "number"
+            },
+            {
+              "name": "doctor_name"
+            },
+            {
+              "name": "date"
+            },
+            {
+              "name": "appointments",
+              "type": "array"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "55ae2b13-a17c-4802-9493-36d5997322c5",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "appointments",
+          "mode": "list",
+          "cachedResultName": "appointments"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "doctor_id": "={{ $('When Executed by Another Workflow').item.json.doctor_id }}",
+            "platform_id": "={{ $json.platform.id }}",
+            "type": "={{ $json.type_id }}",
+            "platform_appointment_id": "={{ $json.id }}",
+            "patient_firstname": "={{ $json.name }}",
+            "patient_lastname": "={{ $json.family }}",
+            "patient_mobile": "={{ $json.cell }}",
+            "patient_national_code": "={{ $json.national_code }}",
+            "raw_data": "={{ $json }}",
+            "payment_status": "={{ $json.payment_status }}",
+            "book_status": "={{ $json.book_status }}",
+            "start_time": "={{ $json.from_date }}",
+            "end_time": "={{ $json.to_date ? $json.to_date : null }}",
+            "run_at": "={{ $now.setZone('Asia/Tehran').toISO() }}",
+            "cost": "={{ $json.cost }}",
+            "start_time_ts": "={{ $json.from }}",
+            "end_time_ts": "={{ $json.to }}",
+            "center_id": "={{ $json.center.id }}",
+            "center_name": "={{ $json.center.name }}",
+            "center_address": "={{ $json.center.address }}",
+            "date": "={{ $('When Executed by Another Workflow').item.json.date }}",
+            "doctor_name": "={{ $('When Executed by Another Workflow').item.json.doctor_name }}"
+          },
+          "matchingColumns": [
+            "platform_appointment_id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "doctor_id",
+              "displayName": "doctor_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "platform_id",
+              "displayName": "platform_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "platform_appointment_id",
+              "displayName": "platform_appointment_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "patient_firstname",
+              "displayName": "patient_firstname",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "patient_lastname",
+              "displayName": "patient_lastname",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "patient_mobile",
+              "displayName": "patient_mobile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "patient_national_code",
+              "displayName": "patient_national_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "start_time",
+              "displayName": "start_time",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "end_time",
+              "displayName": "end_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "book_status",
+              "displayName": "book_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "payment_status",
+              "displayName": "payment_status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "raw_data",
+              "displayName": "raw_data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "run_at",
+              "displayName": "run_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "cost",
+              "displayName": "cost",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "start_time_ts",
+              "displayName": "start_time_ts",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "end_time_ts",
+              "displayName": "end_time_ts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "type",
+              "displayName": "type",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "center_id",
+              "displayName": "center_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "center_name",
+              "displayName": "center_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "center_address",
+              "displayName": "center_address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "doctor_name",
+              "displayName": "doctor_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        768,
+        -16
+      ],
+      "id": "e5f94790-349d-4cb9-a415-6b3d729f7dca",
+      "name": "Insert or update rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c198cb7a-1774-49f8-a024-245d1fcdac9c",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "f568acb3-969b-40ee-98fc-421e8a402fef",
+              "name": "type",
+              "value": "={{ $json.type }}",
+              "type": "string"
+            },
+            {
+              "id": "f14c1d1f-7ed7-49e4-8d00-808712ed9443",
+              "name": "type_id",
+              "value": "={{ $json.type_id }}",
+              "type": "string"
+            },
+            {
+              "id": "ff60a90a-715e-4ac8-867b-4e0fadc7c061",
+              "name": "user_center_id",
+              "value": "={{ $json.user_center_id }}",
+              "type": "string"
+            },
+            {
+              "id": "7b4ea419-e22d-4547-a404-cf2801083a33",
+              "name": "book_status",
+              "value": "={{ $json.book_status }}",
+              "type": "string"
+            },
+            {
+              "id": "bddb18ae-eb2a-4865-89d8-27a777356b86",
+              "name": "ref_id",
+              "value": "={{ $json.ref_id }}",
+              "type": "string"
+            },
+            {
+              "id": "7ce6b814-da24-466f-9a54-31ed283d3a0a",
+              "name": "from",
+              "value": "={{ $json.from }}",
+              "type": "string"
+            },
+            {
+              "id": "f2aa55b0-9484-486d-ab00-4118a92b2f20",
+              "name": "to",
+              "value": "={{ $json.to }}",
+              "type": "string"
+            },
+            {
+              "id": "454f77df-94f8-485f-820b-b0e3bd04f321",
+              "name": "from_date",
+              "value": "={{ $json.from_date }}",
+              "type": "string"
+            },
+            {
+              "id": "539bca63-9dad-4cb1-bd12-9a8aa3c98e70",
+              "name": "to_date",
+              "value": "={{ $json.to_date }}",
+              "type": "string"
+            },
+            {
+              "id": "0b0ce8be-8aff-470c-a6d6-f345a61b6832",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "d9b94259-267a-470a-a28c-eb0afa37dcf5",
+              "name": "family",
+              "value": "={{ $json.family }}",
+              "type": "string"
+            },
+            {
+              "id": "a7e8da9b-a0cd-441f-975a-c94c9031216f",
+              "name": "display_name",
+              "value": "={{ $json.display_name }}",
+              "type": "string"
+            },
+            {
+              "id": "63212ef0-28b5-4c8f-8414-d2d80aaf41ac",
+              "name": "cell",
+              "value": "={{ $json.cell }}",
+              "type": "string"
+            },
+            {
+              "id": "eb2a0682-8870-4da8-9ed1-6ccfab728dd0",
+              "name": "national_code",
+              "value": "={{ $json.national_code }}",
+              "type": "string"
+            },
+            {
+              "id": "5a61d8fc-eb91-4d7c-9a83-cf07fa2882a6",
+              "name": "payment_status",
+              "value": "={{ $json.payment_status }}",
+              "type": "string"
+            },
+            {
+              "id": "0e2bf41a-5cbc-4cc7-99d8-d7276788e02d",
+              "name": "cost",
+              "value": "={{ $json.cost }}",
+              "type": "string"
+            },
+            {
+              "id": "7385c3f2-fd89-49d5-950e-c708c9508fff",
+              "name": "insurance",
+              "value": "={{ $json.insurance }}",
+              "type": "string"
+            },
+            {
+              "id": "3330fa70-3546-4730-b9c9-ad9ef5452858",
+              "name": "platform.name",
+              "value": "={{ $json.platform.name }}",
+              "type": "string"
+            },
+            {
+              "id": "e7fa5361-ecc7-4472-9175-e7be437a36a5",
+              "name": "platform.p_name",
+              "value": "={{ $json.platform.p_name }}",
+              "type": "string"
+            },
+            {
+              "id": "776fd02e-9a7c-4c73-bb9d-b3f58b7c17e3",
+              "name": "platform.id",
+              "value": "={{ $json.platform.id }}",
+              "type": "string"
+            },
+            {
+              "id": "cadc2595-b501-47ba-9704-78d5fc96268b",
+              "name": "platform.icon",
+              "value": "={{ $json.platform.icon }}",
+              "type": "string"
+            },
+            {
+              "id": "60681b0f-1de8-4db2-8142-993b5da576f0",
+              "name": "platform.link",
+              "value": "={{ $json.platform.link }}",
+              "type": "string"
+            },
+            {
+              "id": "d2b53b69-e506-4cfe-a1ec-7108cc1aa2c2",
+              "name": "center.id",
+              "value": "={{ $json.center.id }}",
+              "type": "string"
+            },
+            {
+              "id": "fd5845b8-9e82-4537-a1ea-a59a07ee9554",
+              "name": "center.name",
+              "value": "={{ $json.center.name }}",
+              "type": "string"
+            },
+            {
+              "id": "7e94007c-f2b4-4cfb-909f-16906e91aacb",
+              "name": "center.address",
+              "value": "={{ $json.center.address }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        32,
+        528
+      ],
+      "id": "520cfc9e-1e48-491d-9282-39fb977b3531",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "appointments",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        240,
+        0
+      ],
+      "id": "828ae073-c320-4e2c-9fdb-16c2e7fd94f5",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctors",
+          "mode": "list",
+          "cachedResultName": "doctors"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "last_read_time": "={{ $now.setZone('Asia/Tehran').toISO() }}",
+            "id": "={{ $('When Executed by Another Workflow').item.json.doctor_id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "full_name",
+              "displayName": "full_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "mobile",
+              "displayName": "mobile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "medical_council_number",
+              "displayName": "medical_council_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "national_code",
+              "displayName": "national_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "p24_id",
+              "displayName": "p24_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "temp_token",
+              "displayName": "temp_token",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "p24_user_id",
+              "displayName": "p24_user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "login_reminder_count",
+              "displayName": "login_reminder_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "last_read_time",
+              "displayName": "last_read_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        992,
+        -16
+      ],
+      "id": "fc70908e-050b-4fbf-805c-bc015448fca2",
+      "name": "Update rows in a table",
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        256
+      ],
+      "id": "e85f0a10-94a7-4bd4-929f-5a6d634e4fc3",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "❌insert-appointment-V2 has error❌",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        224,
+        256
+      ],
+      "id": "31060cca-a67e-44fb-b391-0b637c164550",
+      "name": "Send a text message",
+      "webhookId": "0644b9d1-ed75-4fc8-8fe1-9b75e450b2c6",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3b28a074-f7b4-4b00-a2ef-288caee439a5",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "f9b33fb1-a796-4374-8422-df85433a9090",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "cashed_days",
+          "mode": "list",
+          "cachedResultName": "cashed_days"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "doctor_id": "={{ $json.doctor_id }}",
+            "date": "={{ $json.date }}",
+            "last_updated": "={{ $now.setZone('Asia/Tehran').toISO() }}"
+          },
+          "matchingColumns": [
+            "doctor_id",
+            "date"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "doctor_id",
+              "displayName": "doctor_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last_updated",
+              "displayName": "last_updated",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        144,
+        -192
+      ],
+      "id": "61016857-bf8d-44fa-b9da-8ce9c5d9c160",
+      "name": "Insert or update rows in a table1",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Insert or update rows in a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert or update rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Insert or update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update rows in a table": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "triggerCount": 0,
+  "versionId": "8bebd659-6ae1-49f6-8bc7-5eb6286ada11",
+  "owner": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  },
+  "parentFolderId": null,
+  "isArchived": false
+}

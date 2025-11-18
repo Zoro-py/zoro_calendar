@@ -1,6 +1,6 @@
 {
-  "id": "FHCXq45x0mpjSElK",
-  "name": "drdr/get-appointment v2",
+  "id": "6BpI0BlqfsNuKjZM",
+  "name": "drdr/get-appointment v3",
   "nodes": [
     {
       "parameters": {
@@ -25,7 +25,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"doctor_id\": {{ $json.platform_doctor_id }},\n  \"page\": 1,\n  \"scheduled_date\": \"{{ $('Webhook').item.json.body.date }}\"\n}\n",
+        "jsonBody": "={\n  \"doctor_id\": {{ $json.platform_doctor_id }},\n  \"page\": 1,\n  \"scheduled_date\": \"{{ $('When Executed by Another Workflow').item.json.date }}\"\n}\n",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -34,7 +34,7 @@
         -2992,
         544
       ],
-      "id": "7bb4cd27-610b-485e-851b-8badb262f788",
+      "id": "5e126588-1b42-4118-9910-c47af1f51ad7",
       "name": "appointments/search",
       "retryOnFail": false,
       "waitBetweenTries": 3000,
@@ -50,7 +50,7 @@
         -3872,
         2512
       ],
-      "id": "e7607244-0770-49a4-a5c3-9b07c9ae6ec4",
+      "id": "b3233017-73a9-4838-918e-cc72531912e8",
       "name": "buildPages"
     },
     {
@@ -63,24 +63,24 @@
         -3648,
         2512
       ],
-      "id": "dc462a0f-43e6-4df0-aeea-457f33a1c0df",
+      "id": "c076e6d0-3d35-4ac7-8a1c-a36a81ea1e12",
       "name": "Loop Over Items"
     },
     {
       "parameters": {
-        "path": "drdr/get-appointment/v2",
+        "path": "bb652bfc-093d-4c0d-a92f-b57ed1a5274c",
         "responseMode": "responseNode",
         "options": {}
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -4016,
-        640
+        -3968,
+        1408
       ],
-      "id": "0e8b57b1-331c-427e-99c1-91fd58ecaf00",
+      "id": "43c15bfd-1c3a-405f-bf86-1d4214570884",
       "name": "Webhook",
-      "webhookId": "9de0bca8-c68e-4507-a759-42b0a080df52"
+      "webhookId": "bb652bfc-093d-4c0d-a92f-b57ed1a5274c"
     },
     {
       "parameters": {
@@ -109,10 +109,10 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        -3664,
-        640
+        -3824,
+        1280
       ],
-      "id": "fbd55cb2-cda2-49a5-967a-d5ad92512c87",
+      "id": "0c3bdab3-b611-411a-9bcf-398fdb4d9ebf",
       "name": "find doctor id",
       "alwaysOutputData": true,
       "credentials": {
@@ -151,10 +151,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -3440,
-        640
+        -3632,
+        1312
       ],
-      "id": "e0c3079d-0a20-4b12-b7ca-1075b7166f73",
+      "id": "e25db435-0e4f-4839-b4fc-cf46ad5af2c1",
       "name": "does dr exists"
     },
     {
@@ -166,10 +166,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        -3216,
-        736
+        -3376,
+        1376
       ],
-      "id": "93690350-03ed-4744-8148-2e44047243c3",
+      "id": "ad7ceacd-7673-41e2-85ae-630e367d2a95",
       "name": "Respond to Webhook"
     },
     {
@@ -194,7 +194,7 @@
             },
             {
               "column": "doctor_id",
-              "value": "={{ $json.id }}"
+              "value": "={{ $json.doctor_id }}"
             }
           ]
         },
@@ -206,7 +206,7 @@
         -3216,
         544
       ],
-      "id": "8778fb4e-4594-4af4-ac9c-742ab2183d9b",
+      "id": "79b29942-701a-41ed-8bb1-7b6277b266ca",
       "name": "Select rows from a table",
       "credentials": {
         "postgres": {
@@ -214,20 +214,6 @@
           "name": "Postgres account"
         }
       }
-    },
-    {
-      "parameters": {
-        "respondWith": "allIncomingItems",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.4,
-      "position": [
-        -976,
-        256
-      ],
-      "id": "f9601156-fc3b-4bdf-ae31-c6340bcee254",
-      "name": "Respond to Webhook2"
     },
     {
       "parameters": {
@@ -400,7 +386,7 @@
         -1200,
         256
       ],
-      "id": "2a92a35f-39cb-41a2-81b1-33c4d0c16fcc",
+      "id": "7f6703e0-f77b-4666-b4b9-afc27df4eb04",
       "name": "Edit Fields"
     },
     {
@@ -413,7 +399,7 @@
         -2320,
         352
       ],
-      "id": "543a0acf-0fed-4322-834a-ef99246f2350",
+      "id": "368034b3-c435-4bcc-862b-255ede6e3eed",
       "name": "Code3"
     },
     {
@@ -427,7 +413,7 @@
         -2096,
         352
       ],
-      "id": "1c59942f-c1be-4430-b54a-9b7c1093f3c8",
+      "id": "c10476c1-4d95-42f4-ae39-880c9fa5020d",
       "name": "Split Out1"
     },
     {
@@ -441,7 +427,7 @@
         -1424,
         256
       ],
-      "id": "7ee963d1-2143-46cb-aba1-b2a8afbd1a5f",
+      "id": "19bb507f-50d6-4b0a-930b-ea34be984f06",
       "name": "Code4"
     },
     {
@@ -476,23 +462,8 @@
         -2768,
         352
       ],
-      "id": "ea50c103-5fb8-475c-9312-61196dbf0428",
+      "id": "d8e1fe7d-fb47-4af1-8408-66e7553365fc",
       "name": "If1"
-    },
-    {
-      "parameters": {
-        "respondWith": "json",
-        "responseBody": "{\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.4,
-      "position": [
-        -2544,
-        448
-      ],
-      "id": "00a4f823-8dc4-45ea-abcc-b3134d1c7d00",
-      "name": "Respond to Webhook3"
     },
     {
       "parameters": {},
@@ -502,13 +473,13 @@
         -4096,
         960
       ],
-      "id": "7db79c01-5012-43ce-b8ed-15027d01099d",
+      "id": "38cd6936-b830-43b2-8aaa-87657c263e4a",
       "name": "Error Trigger"
     },
     {
       "parameters": {
         "chatId": "1999634605",
-        "text": "❌drdr/get-appointment V2 has error❌",
+        "text": "❌drdr/get-appointment V3 has error❌",
         "additionalFields": {
           "appendAttribution": false
         }
@@ -519,14 +490,14 @@
         -3872,
         960
       ],
-      "id": "32d6a69d-f76a-4689-ad3c-392ca057ab0f",
+      "id": "044d3c63-d073-4194-8158-cdea3352d1a3",
       "name": "Send a text message",
-      "webhookId": "c71cc3d3-9a06-4554-8a04-2b087e5e05a3",
+      "webhookId": "de636457-d974-453b-ac7f-880e03ff138a",
       "retryOnFail": true,
       "credentials": {
         "telegramApi": {
-          "id": "3UN48Ejir4Oxfhcd",
-          "name": "calendar_bot"
+          "id": "AcKnlUwXjcsQk1Cl",
+          "name": "widget"
         }
       }
     },
@@ -569,7 +540,7 @@
         -1872,
         352
       ],
-      "id": "478267d8-d29e-4fe0-97b2-6c61b7e3dd00",
+      "id": "8ef85888-1599-4140-ae16-a962b2832925",
       "name": "Filter",
       "alwaysOutputData": true
     },
@@ -605,39 +576,8 @@
         -1648,
         352
       ],
-      "id": "34b1a695-bd42-4750-9ae8-ed8ed3207857",
+      "id": "778b1fed-9269-4255-903d-668cbdf9f734",
       "name": "If2"
-    },
-    {
-      "parameters": {
-        "respondWith": "noData",
-        "options": {
-          "responseCode": 204
-        }
-      },
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.4,
-      "position": [
-        -1424,
-        448
-      ],
-      "id": "61df0264-c74e-4f74-bd1d-a64a9eb127cc",
-      "name": "Respond to Webhook1"
-    },
-    {
-      "parameters": {
-        "respondWith": "json",
-        "responseBody": "{\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.4,
-      "position": [
-        -2768,
-        544
-      ],
-      "id": "1c8cce5f-66e0-4b66-86ec-6b60f1842e14",
-      "name": "Respond to Webhook4"
     },
     {
       "parameters": {
@@ -653,13 +593,13 @@
         -2768,
         736
       ],
-      "id": "87c34203-eb57-4811-9e04-86578728304b",
+      "id": "70362575-249c-4cf5-8561-c8a5ad8a206a",
       "name": "Send a text message1",
-      "webhookId": "1a07876a-66fe-4d40-9c54-6acfe791d6cf",
+      "webhookId": "4944642f-6861-48e9-b08f-092727ee8af7",
       "credentials": {
         "telegramApi": {
-          "id": "3UN48Ejir4Oxfhcd",
-          "name": "calendar_bot"
+          "id": "AcKnlUwXjcsQk1Cl",
+          "name": "widget"
         }
       }
     },
@@ -693,7 +633,7 @@
         -4096,
         2512
       ],
-      "id": "54e30d61-30ab-45c8-93d9-7bc53e1ddd2d",
+      "id": "3c34fca7-556c-4732-907e-563a604828a5",
       "name": "If"
     },
     {
@@ -728,7 +668,7 @@
         -3424,
         2464
       ],
-      "id": "e7a59254-427f-4c48-afe5-b5170cddf34a",
+      "id": "43a1ccf4-8311-48e8-8d04-920b51964a95",
       "name": "appointments/search1",
       "retryOnFail": false,
       "waitBetweenTries": 3000,
@@ -744,7 +684,7 @@
         -3200,
         2464
       ],
-      "id": "82f5671f-3705-416c-ba6f-2928cb24d189",
+      "id": "3d88e091-5e52-4c44-8105-3686e3d0167b",
       "name": "Code"
     },
     {
@@ -758,7 +698,7 @@
         -2976,
         2464
       ],
-      "id": "d8a74948-09e0-433e-8fee-15ffd4321530",
+      "id": "3ce0385e-f239-4a85-a8f1-4f4fc3198120",
       "name": "Split Out"
     },
     {
@@ -772,7 +712,7 @@
         -2304,
         2464
       ],
-      "id": "1604df8f-18c5-4bfb-b5c0-e6de005b650a",
+      "id": "8b6b1d58-1616-4e6c-87d9-2af9ae58dcdf",
       "name": "Code5"
     },
     {
@@ -814,7 +754,7 @@
         -2752,
         2464
       ],
-      "id": "812fa782-2b99-4bba-9764-1bd8d2e338e7",
+      "id": "b9947c13-07cf-4c96-a729-0a95e1e921a5",
       "name": "Filter1",
       "alwaysOutputData": true
     },
@@ -850,7 +790,7 @@
         -2528,
         2464
       ],
-      "id": "ddc7b44b-41f8-45e6-83de-3b437d26f41d",
+      "id": "9790cebd-d20b-4bc9-8859-d254206fc4f5",
       "name": "If3"
     },
     {
@@ -866,7 +806,7 @@
         -2304,
         2656
       ],
-      "id": "cd12ca0d-4a76-459e-89c5-d55a25a78e66",
+      "id": "52996fc1-9232-4d73-a854-b164a43517c0",
       "name": "Respond to Webhook5"
     },
     {
@@ -877,7 +817,7 @@
         -2080,
         2464
       ],
-      "id": "d34b06a7-d647-4a07-b665-4d71a2d48dba",
+      "id": "5c341321-f40f-4908-a4d6-e05f389fef1b",
       "name": "Merge"
     },
     {
@@ -910,7 +850,7 @@
         -2544,
         256
       ],
-      "id": "0c77fc06-a0e3-4b83-9d34-009ce026c39d",
+      "id": "cf92c670-f9e0-412e-b75f-961db6f7c857",
       "name": "If4"
     },
     {
@@ -945,7 +885,7 @@
         -3872,
         2144
       ],
-      "id": "07063198-494b-40bd-b70e-27519466441c",
+      "id": "cb0bf961-de3d-4158-b1cb-af86c5d536e8",
       "name": "appointments/search2",
       "retryOnFail": false,
       "waitBetweenTries": 3000,
@@ -983,7 +923,7 @@
         -3872,
         1760
       ],
-      "id": "8d8cc485-a12a-4dd3-afbf-b7041e135a30",
+      "id": "a9728dfe-a8f9-49d2-9834-0ae99e28ca66",
       "name": "appointments/search3",
       "retryOnFail": false,
       "waitBetweenTries": 3000,
@@ -1002,7 +942,7 @@
         -2304,
         1856
       ],
-      "id": "68a303be-ed1e-4773-be0f-86dbf95047bd",
+      "id": "843b7afc-3c1d-4a79-b11f-184c984acf33",
       "name": "Merge1"
     },
     {
@@ -1015,7 +955,7 @@
         -3648,
         2144
       ],
-      "id": "b8a61041-0685-4aae-89ec-fb499e583d11",
+      "id": "0f378525-197b-4c81-a42b-ef3fa427b50f",
       "name": "Code6"
     },
     {
@@ -1029,7 +969,7 @@
         -3424,
         2144
       ],
-      "id": "ce640496-624a-491c-bcda-c74e96fa7ed0",
+      "id": "6cbea5b8-5311-4a76-b526-6d726d8055f9",
       "name": "Split Out2"
     },
     {
@@ -1043,7 +983,7 @@
         -2752,
         2048
       ],
-      "id": "d9915698-be79-43be-9f29-061f41f3e78c",
+      "id": "d776f8e3-6bdc-43af-9513-dc5344c0afb8",
       "name": "Code7"
     },
     {
@@ -1085,7 +1025,7 @@
         -3200,
         2144
       ],
-      "id": "4b01d63e-9871-4583-a81a-e81c2ae59249",
+      "id": "18410242-79d0-46f7-a5bf-f0616f3cb831",
       "name": "Filter2",
       "alwaysOutputData": true
     },
@@ -1121,7 +1061,7 @@
         -2976,
         2144
       ],
-      "id": "09ba52dd-0ab1-49cd-97ae-f60adfdf5574",
+      "id": "b46c7632-7417-486d-a1d4-ad543b4c73bf",
       "name": "If5"
     },
     {
@@ -1137,7 +1077,7 @@
         -2752,
         2240
       ],
-      "id": "6c44c40d-1725-41e0-be1a-e8c28d1a81b8",
+      "id": "6ea0d9d0-3d9b-46e1-9e52-e53f4a22ae6b",
       "name": "Respond to Webhook7"
     },
     {
@@ -1150,7 +1090,7 @@
         -3648,
         1760
       ],
-      "id": "7cae0124-3337-46a8-ae4a-07bb4b931e8d",
+      "id": "a7f500d6-8bcc-4dc3-bc92-50dc16574215",
       "name": "Code8"
     },
     {
@@ -1164,7 +1104,7 @@
         -3424,
         1760
       ],
-      "id": "d4cf265e-1187-42b4-8fa2-721eb002f01c",
+      "id": "6f5be9a2-331a-4131-a08d-79fb57b2d317",
       "name": "Split Out3"
     },
     {
@@ -1178,7 +1118,7 @@
         -2736,
         1600
       ],
-      "id": "d5aa2d7b-fc05-4b2a-b34a-a3af866d977b",
+      "id": "77fa82ad-e4b2-4d1d-851e-45544ca27fd9",
       "name": "Code9"
     },
     {
@@ -1220,7 +1160,7 @@
         -3200,
         1760
       ],
-      "id": "9a591a7f-ddb0-47c5-a7bc-23e3f653b0ac",
+      "id": "5bcad520-3faf-4789-98cc-6ff92588d0ab",
       "name": "Filter3",
       "alwaysOutputData": true
     },
@@ -1256,7 +1196,7 @@
         -2976,
         1760
       ],
-      "id": "7ef570de-ee8f-4765-ab1b-484852438d07",
+      "id": "0a24600f-2549-4cb0-a323-7ef4bec66b13",
       "name": "If6"
     },
     {
@@ -1272,7 +1212,7 @@
         -2752,
         1856
       ],
-      "id": "57d18533-e772-4fad-a760-01bf2d32dc49",
+      "id": "14b13fba-9cf7-4a41-808e-29eb2dd816dc",
       "name": "Respond to Webhook9"
     },
     {
@@ -1446,7 +1386,7 @@
         -2528,
         2048
       ],
-      "id": "7b7ef7cb-fd39-49b7-b95f-a2ec335ebb08",
+      "id": "62f01dc8-7e52-4d02-b4c3-f2308901ba70",
       "name": "Edit Fields1"
     },
     {
@@ -1620,7 +1560,7 @@
         -2512,
         1600
       ],
-      "id": "e4250bc6-04a4-4a32-8e4a-895b77db4334",
+      "id": "0578de66-2be9-4565-8331-8e56fca16a9a",
       "name": "Edit Fields2"
     },
     {
@@ -1633,9 +1573,9 @@
         -4096,
         1760
       ],
-      "id": "6ae92d42-f491-4a32-b342-27a904ef4150",
+      "id": "51ddba82-aaf7-4d8b-bad7-18b2c414f251",
       "name": "Wait",
-      "webhookId": "3c556d55-17af-4796-9285-3d3368f1d665"
+      "webhookId": "f1c49163-56bb-463e-9f96-7d97abe38994"
     },
     {
       "parameters": {
@@ -1738,7 +1678,7 @@
         -3856,
         2960
       ],
-      "id": "5999023d-2e6c-480a-ba9b-7d3dc34d2c19",
+      "id": "f91fbae8-4b90-4845-a1df-31ca297675bf",
       "name": "HTTP Request"
     },
     {
@@ -1751,7 +1691,7 @@
         -2320,
         64
       ],
-      "id": "2df75949-9cae-4cde-8d3a-c0f045dbba23",
+      "id": "28ef4639-0b2a-4a38-a304-4235af0607e0",
       "name": "buildPages1"
     },
     {
@@ -1765,7 +1705,7 @@
         -2096,
         64
       ],
-      "id": "d7894bc3-409e-4f41-bc45-78519fd5806a",
+      "id": "b71cb797-3ee8-47dc-8f13-fd71bb4e5598",
       "name": "Split Out4"
     },
     {
@@ -1791,7 +1731,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"doctor_id\": {{ $('Select rows from a table').item.json.platform_doctor_id }},\n  \"page\": {{ $json.page }},\n  \"scheduled_date\": \"{{ $('Webhook').item.json.body.date }}\"\n}\n",
+        "jsonBody": "={\n  \"doctor_id\": {{ $('Select rows from a table').item.json.platform_doctor_id }},\n  \"page\": {{ $json.page }},\n  \"scheduled_date\": \"{{ $('When Executed by Another Workflow').item.json.date }}\"\n}\n",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -1800,7 +1740,7 @@
         -1872,
         64
       ],
-      "id": "b282f1f0-8e14-4a57-be20-18a1b7f52bbf",
+      "id": "03f5a10c-4320-4bcd-bf20-195d22d97f82",
       "name": "appointments/search4",
       "retryOnFail": false,
       "waitBetweenTries": 3000,
@@ -1816,7 +1756,7 @@
         -1424,
         64
       ],
-      "id": "3ce1d76f-74f2-400c-8464-1a51c2bbd943",
+      "id": "58399c75-f403-4a06-aae7-564e92dface5",
       "name": "Code10"
     },
     {
@@ -1830,7 +1770,7 @@
         -1648,
         64
       ],
-      "id": "d9bd049d-99d5-43b5-8008-ec8beb85d9ef",
+      "id": "6e4b7409-3ffa-4227-8634-5976fe37c605",
       "name": "Aggregate"
     },
     {
@@ -1844,7 +1784,7 @@
         -752,
         -32
       ],
-      "id": "48ef4638-b86e-4f88-849e-8cfaac8dd5c0",
+      "id": "dfd77362-2285-4f34-8378-2850f16e9b8d",
       "name": "Code11"
     },
     {
@@ -1886,7 +1826,7 @@
         -1200,
         64
       ],
-      "id": "4f064b74-0fb7-4546-8fd5-fee90ba11013",
+      "id": "4ae57bae-7312-43e4-9a79-4bcd1c252859",
       "name": "Filter4",
       "alwaysOutputData": true
     },
@@ -1922,24 +1862,8 @@
         -976,
         64
       ],
-      "id": "cffe2fd4-cadc-4215-b910-6bc3cedfa74c",
+      "id": "42f3f813-b0ce-43b3-a13b-5a5568c4e76f",
       "name": "If7"
-    },
-    {
-      "parameters": {
-        "respondWith": "noData",
-        "options": {
-          "responseCode": 204
-        }
-      },
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.4,
-      "position": [
-        -752,
-        160
-      ],
-      "id": "2b836711-2881-4910-b0f3-8952e28e45b8",
-      "name": "Respond to Webhook8"
     },
     {
       "parameters": {
@@ -2112,22 +2036,8 @@
         -528,
         -32
       ],
-      "id": "1ff0cb72-afe7-4cad-9655-7f08900ad8f9",
+      "id": "667a37cd-12dc-491c-8c09-e1ebee4c9b6f",
       "name": "Edit Fields3"
-    },
-    {
-      "parameters": {
-        "respondWith": "allIncomingItems",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.4,
-      "position": [
-        -304,
-        -32
-      ],
-      "id": "3a551387-356b-4f70-9acd-eaea7b46eb6f",
-      "name": "Respond to Webhook6"
     },
     {
       "parameters": {
@@ -2154,14 +2064,97 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -3264,
-        368
+        -2992,
+        384
       ],
-      "id": "36e8b6c0-2dbd-46aa-b980-5f3c3c4f18d1",
+      "id": "bee92c0b-71b6-47f3-827b-2fcc341981e3",
       "name": "appointments/search5",
       "retryOnFail": false,
       "waitBetweenTries": 3000,
       "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "doctor_id",
+              "type": "number"
+            },
+            {
+              "name": "date"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -3504,
+        544
+      ],
+      "id": "1484a056-5083-483a-88e6-2ce62f9779fe",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -768,
+        160
+      ],
+      "id": "0d7e241e-d905-42c1-a59b-7628c84a933b",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1472,
+        448
+      ],
+      "id": "62a8f60f-8fbe-473a-9225-e320a64396e6",
+      "name": "Edit Fields5"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2368,
+        528
+      ],
+      "id": "731e9c75-7847-4bca-b500-f8425c0928f0",
+      "name": "Edit Fields6"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2768,
+        544
+      ],
+      "id": "75ea9dd1-7ec6-4b80-891c-6885678b1258",
+      "name": "Edit Fields7"
     }
   ],
   "connections": {
@@ -2176,12 +2169,12 @@
         ],
         [
           {
-            "node": "Respond to Webhook4",
+            "node": "Send a text message1",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Send a text message1",
+            "node": "Edit Fields7",
             "type": "main",
             "index": 0
           }
@@ -2213,13 +2206,7 @@
     },
     "Webhook": {
       "main": [
-        [
-          {
-            "node": "find doctor id",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "find doctor id": {
@@ -2235,13 +2222,7 @@
     },
     "does dr exists": {
       "main": [
-        [
-          {
-            "node": "Select rows from a table",
-            "type": "main",
-            "index": 0
-          }
-        ],
+        [],
         [
           {
             "node": "Respond to Webhook",
@@ -2264,13 +2245,7 @@
     },
     "Edit Fields": {
       "main": [
-        [
-          {
-            "node": "Respond to Webhook2",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Code3": {
@@ -2317,7 +2292,7 @@
         ],
         [
           {
-            "node": "Respond to Webhook3",
+            "node": "Edit Fields6",
             "type": "main",
             "index": 0
           }
@@ -2357,7 +2332,7 @@
         ],
         [
           {
-            "node": "Respond to Webhook1",
+            "node": "Edit Fields5",
             "type": "main",
             "index": 0
           }
@@ -2727,7 +2702,7 @@
         ],
         [
           {
-            "node": "Respond to Webhook8",
+            "node": "Edit Fields4",
             "type": "main",
             "index": 0
           }
@@ -2747,13 +2722,7 @@
     },
     "Edit Fields3": {
       "main": [
-        [
-          {
-            "node": "Respond to Webhook6",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "appointments/search5": {
@@ -2767,12 +2736,23 @@
         ],
         [
           {
-            "node": "Respond to Webhook4",
+            "node": "Send a text message1",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Send a text message1",
+            "node": "Edit Fields7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
             "type": "main",
             "index": 0
           }
@@ -2784,7 +2764,7 @@
     "executionOrder": "v1"
   },
   "triggerCount": 1,
-  "versionId": "87cbeb36-04a5-4f3c-b1fa-e0043e55d426",
+  "versionId": "8e50fd03-15d9-4e0b-8dcb-3668bc2109c3",
   "owner": {
     "type": "team",
     "teamId": "pzvw8g7gyGnUF15Q",

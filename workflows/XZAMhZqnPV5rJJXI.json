@@ -749,11 +749,35 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        1200,
-        -432
+        1088,
+        -464
       ],
       "id": "c830d029-82b9-4f49-9868-587f9a5ba508",
       "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://hamdast.paziresh24.com/api/v1/apps/zorocalandar/widgets/{{ $json.users[0].id }}/ ",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-API-Key",
+              "value": "35399abd-59bb-40e3-85d8-b4699088bed3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1296,
+        -464
+      ],
+      "id": "e7d88afd-7b67-438a-97f8-e4cbd60769d0",
+      "name": "HTTP Request5"
     }
   ],
   "connections": {
@@ -954,13 +978,24 @@
           }
         ]
       ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
     "executionOrder": "v1"
   },
   "triggerCount": 1,
-  "versionId": "9c73b666-b91d-4f25-98ea-e02d269a901c",
+  "versionId": "4de5209b-79f5-443e-b73a-4fff21ddefaf",
   "owner": {
     "type": "team",
     "teamId": "pzvw8g7gyGnUF15Q",

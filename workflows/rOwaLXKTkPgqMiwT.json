@@ -942,7 +942,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1392,
+        1152,
         176
       ],
       "id": "6e2d5ba3-4a53-4e66-a4fc-c8e5bc016907",
@@ -963,7 +963,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        1824,
+        1472,
         176
       ],
       "id": "d0bd74ef-6d68-4629-858e-a321c2fdbbf2",
@@ -1150,6 +1150,85 @@
       ],
       "id": "26700ac9-c98e-4804-8b34-698a5930d3ad",
       "name": "Respond to Webhook1"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "={{ $('Select rows from a table1').item.json.full_name }} توی دکتردکتر لاگین کرد",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1376,
+        432
+      ],
+      "id": "52cade90-bb43-413f-abaf-29a55ce0fb6b",
+      "name": "Send a text message1",
+      "webhookId": "370b2ba6-fa65-4667-a1d5-f6910589b382",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "7NQONi0Z0jQ3qaT8",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/7NQONi0Z0jQ3qaT8",
+          "cachedResultName": "calendar — drdr/clinic"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "dr_id": "={{ $('Select rows from a table1').item.json.id }}",
+            "clinics": "={{ $json.result.user.clinics }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "dr_id",
+              "displayName": "dr_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "clinics",
+              "displayName": "clinics",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        912,
+        400
+      ],
+      "id": "1499ca24-61a2-4bc6-8e40-d7f01fa0a3ec",
+      "name": "Call 'drdr/clinic'"
     }
   ],
   "connections": {
@@ -1281,6 +1360,11 @@
             "node": "Respond to Webhook3",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -1295,6 +1379,11 @@
         [
           {
             "node": "Code",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Call 'drdr/clinic'",
             "type": "main",
             "index": 0
           }
@@ -1339,7 +1428,7 @@
     "executionOrder": "v1"
   },
   "triggerCount": 2,
-  "versionId": "0b2247e9-06cf-4087-8b7d-e3506dea5346",
+  "versionId": "b48b390b-d087-403b-b53c-f121de7eee9b",
   "owner": {
     "type": "team",
     "teamId": "pzvw8g7gyGnUF15Q",

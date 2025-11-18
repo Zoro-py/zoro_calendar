@@ -12,7 +12,7 @@
       "typeVersion": 2.1,
       "position": [
         -816,
-        128
+        880
       ],
       "id": "74996d02-7de7-4e02-be11-f54940badde9",
       "name": "Webhook",
@@ -46,7 +46,7 @@
       "typeVersion": 2.6,
       "position": [
         -368,
-        16
+        784
       ],
       "id": "9eb407ab-c77a-40f3-b9f9-77f753ada842",
       "name": "find doctor id",
@@ -76,6 +76,16 @@
                 "type": "string",
                 "operation": "equals"
               }
+            },
+            {
+              "id": "3e1a8dd8-2535-4a5f-af8b-bbb50ea3a050",
+              "leftValue": "={{ $json.query.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
             }
           ],
           "combinator": "and"
@@ -86,7 +96,7 @@
       "typeVersion": 2.2,
       "position": [
         -592,
-        128
+        880
       ],
       "id": "daecf002-c946-4cd0-a132-5f464a2c62c1",
       "name": "If"
@@ -101,10 +111,526 @@
       "typeVersion": 1.4,
       "position": [
         -368,
-        224
+        976
       ],
       "id": "56b4a872-adbd-4547-a0c4-1de9c52415a7",
       "name": "Respond to Webhook2"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctor_platform_credentials",
+          "mode": "list",
+          "cachedResultName": "doctor_platform_credentials"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "doctor_id",
+              "value": "={{ $('find doctor id').item.json.id }}"
+            },
+            {
+              "column": "is_valid",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -816,
+        144
+      ],
+      "id": "bef1bc7c-9cc4-409f-a318-8256af7ada23",
+      "name": "Select rows from a table",
+      "alwaysOutputData": true,
+      "executeOnce": true,
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "id",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        240
+      ],
+      "id": "daed7e8c-4895-40ec-b6bb-c53efb5eedee",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.platform_id }}",
+                    "rightValue": "1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "357ce90c-6356-42bd-acfd-f288bce20291"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "drdr"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b72257c2-898d-43eb-9764-2661ed9e7352",
+                    "leftValue": "={{ $json.platform_id }}",
+                    "rightValue": "2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "doctoreto"
+            }
+          ]
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -144,
+        240
+      ],
+      "id": "f9b36138-d7c9-451c-8fc2-34b790b58345",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7da7bbab-7913-41bb-83cb-6581bcb807b2",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -592,
+        144
+      ],
+      "id": "dd35c1f6-c46e-4512-b762-78d3f35ae2b1",
+      "name": "is_empty"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -368,
+        48
+      ],
+      "id": "f39b38cf-8516-4844-b6c3-75c6f080e435",
+      "name": "Respond to Webhook3"
+    },
+    {
+      "parameters": {
+        "url": "https://zoro-calendar.ir/webhook/drdr/get-appointment/v2",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "p24_id",
+              "value": "={{ $('Webhook').item.json.query.id }}"
+            },
+            {
+              "name": "date",
+              "value": "={{ $('Webhook').item.json.query.date }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -816,
+        464
+      ],
+      "id": "d12129a7-1e0f-46f4-adfd-2d3c647396a2",
+      "name": "drdr"
+    },
+    {
+      "parameters": {
+        "url": "https://zoro-calendar.ir/webhook/doctoreto/get-appointment",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "date",
+              "value": "={{ $('Webhook').item.json.query.date }}"
+            },
+            {
+              "name": "=id",
+              "value": "={{ $('Webhook').item.json.query.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -816,
+        1200
+      ],
+      "id": "bccc0c54-2026-4f8f-b742-47552a2a1570",
+      "name": "doctoreto"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "7NQONi0Z0jQ3qaT8",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/7NQONi0Z0jQ3qaT8",
+          "cachedResultName": "calendar — drdr/clinic"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "dr_id": "={{ $json.doctor_id }}"
+          },
+          "matchingColumns": [
+            "dr_id"
+          ],
+          "schema": [
+            {
+              "id": "dr_id",
+              "displayName": "dr_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        80,
+        240
+      ],
+      "id": "060e0187-19c6-4fc7-b306-795aad11a3b6",
+      "name": "Call 'drdr/clinic'"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "centers",
+          "mode": "list",
+          "cachedResultName": "centers"
+        },
+        "where": {
+          "values": [
+            {
+              "column": "doctor_id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -144,
+        784
+      ],
+      "id": "54e782c3-6c57-47bf-9d8f-a2d0f74c2c40",
+      "name": "Select rows from a table1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9280acfd-0376-4d56-8eab-1df649c2f130",
+              "name": "center_id",
+              "value": "={{ $json.center_id }}",
+              "type": "number"
+            },
+            {
+              "id": "e4b06280-b557-48aa-8da3-2dff7d4c1b80",
+              "name": "center_name",
+              "value": "={{ $json.center_name }}",
+              "type": "string"
+            },
+            {
+              "id": "06f81092-d178-45e2-b3c3-93746f648fbc",
+              "name": "center_tell",
+              "value": "={{ $json.center_tell }}",
+              "type": "string"
+            },
+            {
+              "id": "f4b4c170-1a35-44be-ba4b-2f3d6e06fc9f",
+              "name": "center_address",
+              "value": "={{ $json.center_address }}",
+              "type": "string"
+            },
+            {
+              "id": "61497831-c506-44e4-8cdd-c516d075687f",
+              "name": "center_location.lat",
+              "value": "={{ $json.lat }}",
+              "type": "string"
+            },
+            {
+              "id": "3f7bd9dc-5e4a-46ce-b14b-9da4ce39aaaf",
+              "name": "center_location.long",
+              "value": "={{ $json.lon }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -816,
+        -176
+      ],
+      "id": "07cfc134-c5a7-4b14-b4d0-c34412daedcd",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        528,
+        688
+      ],
+      "id": "b123e739-6cdf-434f-8a04-60aa99bb77d5",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c36766ee-bdb0-46dd-bbab-2436f29e8cfc",
+              "name": "center_id",
+              "value": "={{ $json.center_id }}",
+              "type": "string"
+            },
+            {
+              "id": "c78448df-b4d5-45fc-8453-acb3c727e7ff",
+              "name": "center_name",
+              "value": "={{ $json.center_name }}",
+              "type": "string"
+            },
+            {
+              "id": "c069ce65-0df7-45f8-8ca7-00d2f17a800b",
+              "name": "center_tell",
+              "value": "={{ $json.center_tell }}",
+              "type": "string"
+            },
+            {
+              "id": "eaff6914-80d4-4690-90dc-bb2158be0a99",
+              "name": "center_address",
+              "value": "={{ $json.center_address }}",
+              "type": "string"
+            },
+            {
+              "id": "74a0d089-a772-4fe0-ad84-5c4f56a269ca",
+              "name": "platform.id",
+              "value": "={{ $json.platform_id }}",
+              "type": "string"
+            },
+            {
+              "id": "8cd7f352-ce7d-4901-89a0-e7514386e33d",
+              "name": "platform.name",
+              "value": "={{ $json.platform_id == 1 ? 'drdr' : ($json.platform_id == 2 ? 'doctoreto' : null) }}",
+              "type": "string"
+            },
+            {
+              "id": "548426bd-da77-4545-af37-43f2da9fcccb",
+              "name": "platform.p_name",
+              "value": "={{ $json.platform_id == 1 ? 'دکتردکتر' : ($json.platform_id == 2 ? 'دکترتو' : null) }}",
+              "type": "string"
+            },
+            {
+              "id": "72ea688c-79b4-4b04-99a7-3080c53e4159",
+              "name": "platform.icon",
+              "value": "={{ $json.platform_id == 1 ? 'https://zoro-icon.s3.ir-tbz-sh1.arvanstorage.ir/drdr.png' : ($json.platform_id == 2 ? 'https://zoro-icon.s3.ir-tbz-sh1.arvanstorage.ir/doctoreto.png' : null) }}",
+              "type": "string"
+            },
+            {
+              "id": "4ce68c45-a0c5-4857-b81c-fbb0019763eb",
+              "name": "platform.link",
+              "value": "={{ $json.platform_id == 1 ? 'https://panel.drdr.ir/' : ($json.platform_id == 2 ? 'https://doctorpanel.doctoreto.com/' : null) }}",
+              "type": "string"
+            },
+            {
+              "id": "33a7dce2-51ae-4b71-9b35-fb4e0fb8dd1f",
+              "name": "center_location.lat",
+              "value": "={{ $json.lat }}",
+              "type": "string"
+            },
+            {
+              "id": "3dad0361-45c6-4238-8deb-6190d38876ce",
+              "name": "center_location.long",
+              "value": "={{ $json.lon }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        304,
+        688
+      ],
+      "id": "10502612-5d3b-4988-b885-1ce5e54d89fb",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "54f9baf4-dbcc-40c6-8816-6bd526aec416",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        80,
+        784
+      ],
+      "id": "82ea5bae-2ca8-405e-95b7-9ba105c7ec74",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        304,
+        880
+      ],
+      "id": "b2bfb3af-d13d-4a9e-9da5-66c674f0f25e",
+      "name": "Respond to Webhook1"
     }
   ],
   "connections": {
@@ -136,13 +662,121 @@
           }
         ]
       ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "is_empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Call 'drdr/clinic'",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "is_empty": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "find doctor id": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
     "executionOrder": "v1"
   },
   "triggerCount": 1,
-  "versionId": "cad277ae-35b3-468e-b5d0-836e2f113d82",
+  "versionId": "e288a65c-f2fe-47cb-8e03-58c06b8a62f8",
   "owner": {
     "type": "team",
     "teamId": "pzvw8g7gyGnUF15Q",
