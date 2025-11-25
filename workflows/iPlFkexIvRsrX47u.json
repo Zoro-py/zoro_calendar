@@ -62,7 +62,7 @@
     "executionOrder": "v1"
   },
   "triggerCount": 0,
-  "versionId": "8ee2df26-6e70-46f0-bf1c-bd6edbf09a26",
+  "versionId": "bbe28fbc-32a5-4667-96d3-120a6209a07a",
   "owner": {
     "type": "personal",
     "projectId": "Zp6TRlq4gxhqUmDN",
@@ -70,5 +70,5 @@
     "personalEmail": "m.h.heidari1384@gmail.com"
   },
   "parentFolderId": null,
-  "isArchived": false
+  "isArchived": true
 }

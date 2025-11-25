@@ -12,77 +12,11 @@
       "typeVersion": 2.1,
       "position": [
         -1584,
-        304
+        272
       ],
       "id": "14eb0d6d-719b-4b30-b183-2196bbb2d4c5",
       "name": "Webhook",
       "webhookId": "c7a59bea-9056-40c4-a8b3-60eb9e7a3204"
-    },
-    {
-      "parameters": {
-        "respondWith": "text",
-        "responseBody": "={{ $json.errorMessage }}",
-        "options": {
-          "responseCode": 400
-        }
-      },
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.4,
-      "position": [
-        -688,
-        400
-      ],
-      "id": "325fac13-9ae8-4015-843f-87f4a4904e34",
-      "name": "wrong data response"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "66a29011-186b-41a9-9272-557cd6490c9e",
-              "leftValue": "={{ $json.isValid }}",
-              "rightValue": "",
-              "operator": {
-                "type": "boolean",
-                "operation": "true",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        -912,
-        304
-      ],
-      "id": "bd6ffd7b-44d8-4c1d-8306-b8115f349043",
-      "name": "is input valid",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "jsCode": "// دریافت اولین آیتم ورودی\nconst item = items[0];\nconst query = item.json.query || {};\n\n// استخراج id و date از query وب‌هوک\nconst received_id = query.id;\nconst date_str = query.date;\n\nconst errorMessages = [];\n\n// --- شروع اعتبارسنجی ---\n\n// 1. اعتبارسنجی ID\nif (!received_id) {\n  errorMessages.push(\"ID is missing or empty.\");\n}\n\n// 2. اعتبارسنجی Date\nif (!date_str) {\n  errorMessages.push(\"Date is missing.\");\n} else {\n  const receivedDate = new Date(date_str);\n  \n  // بررسی اینکه آیا تاریخ ورودی معتبر است یا نه\n  if (isNaN(receivedDate.getTime())) {\n    errorMessages.push(\"Invalid date format. Please use a recognizable format like YYYY-MM-DD.\");\n  } else {\n    const now = new Date();\n    \n    // محاسبه محدوده یک هفته قبل\n    const oneWeekAgo = new Date();\n    oneWeekAgo.setDate(now.getDate() - 7);\n    \n    // محاسبه محدوده یک هفته بعد\n    const oneWeekLater = new Date();\n    oneWeekLater.setDate(now.getDate() + 7);\n\n    // بررسی اینکه آیا تاریخ در بازه زمانی مجاز قرار دارد\n    if (!(receivedDate >= oneWeekAgo && receivedDate <= oneWeekLater)) {\n      errorMessages.push(\"Date is not within the allowed range (-1 week to +1 week).\");\n    }\n  }\n}\n\n// --- پایان اعتبارسنجی ---\n\n// 3. ساخت خروجی برای نود IF\nif (errorMessages.length > 0) {\n  // اگر خطایی وجود دارد\n  item.json.isValid = false;\n  // تمام پیام‌های خطا را به یک متن واحد تبدیل می‌کنیم\n  item.json.errorMessage = \"Validation failed: \" + errorMessages.join(\" \");\n} else {\n  // اگر همه چیز صحیح است\n  item.json.isValid = true;\n  item.json.errorMessage = null;\n}\n\n// آیتم پردازش شده را برای نود بعدی (IF) ارسال می‌کنیم\nreturn items;"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        -1136,
-        304
-      ],
-      "id": "4401ff76-d99d-4b03-ba24-930e647606f8",
-      "name": "validation",
-      "disabled": true
     },
     {
       "parameters": {
@@ -111,8 +45,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        -688,
-        208
+        -912,
+        272
       ],
       "id": "ec9bfca0-6131-40e4-99e1-e30a56134426",
       "name": "find doctor id",
@@ -153,8 +87,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -464,
-        208
+        -688,
+        272
       ],
       "id": "10982c8f-9729-4619-9ad7-545e60385585",
       "name": "does dr exists"
@@ -190,7 +124,7 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        432,
+        208,
         -96
       ],
       "id": "141807e8-b22b-4902-9b25-92bb19b94320",
@@ -213,7 +147,7 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        880,
+        656,
         0
       ],
       "id": "65c6ba4f-58fa-46b8-8c8d-2eeaba39adb0",
@@ -280,7 +214,7 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        1104,
+        880,
         0
       ],
       "id": "2e204050-cbf8-4b4f-b0d9-88c01001ea98",
@@ -294,8 +228,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        2656,
-        304
+        2224,
+        96
       ],
       "id": "f364735d-fc7f-46c3-8496-67758c32f0ac",
       "name": "Respond to Webhook1"
@@ -328,7 +262,7 @@
       "typeVersion": 2.2,
       "position": [
         -1360,
-        400
+        368
       ],
       "id": "d0eb7f23-b1d0-4ab2-9fa3-46c84c4dc1de",
       "name": "If"
@@ -345,7 +279,7 @@
       "typeVersion": 1.4,
       "position": [
         -1136,
-        496
+        464
       ],
       "id": "d484ca7a-7bd8-4b47-8a48-703d83f9b1e2",
       "name": "Respond to Webhook2"
@@ -355,7 +289,7 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        1552,
+        1328,
         0
       ],
       "id": "73b19b1c-e15e-4d5a-a25d-434b2ded3ecb",
@@ -426,7 +360,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        656,
+        432,
         -96
       ],
       "id": "11d1abcc-99df-46eb-adf8-ba23332c6389",
@@ -441,65 +375,11 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        880,
+        656,
         -192
       ],
       "id": "02533cda-92c7-41e5-a2a8-ae964817924d",
       "name": "Respond to Webhook3"
-    },
-    {
-      "parameters": {
-        "url": "https://zoro-calendar.ir/webhook/drdr/get-appointment/v2",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "p24_id",
-              "value": "={{ $('Webhook').item.json.query.id }}"
-            },
-            {
-              "name": "date",
-              "value": "={{ $('Webhook').item.json.query.date }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        1312,
-        -560
-      ],
-      "id": "10fbf36e-6a14-440f-84bf-3045802ba8e3",
-      "name": "drdr"
-    },
-    {
-      "parameters": {
-        "url": "https://zoro-calendar.ir/webhook/doctoreto/get-appointment",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "date",
-              "value": "={{ $('Webhook').item.json.query.date }}"
-            },
-            {
-              "name": "=id",
-              "value": "={{ $('Webhook').item.json.query.id }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        1312,
-        -368
-      ],
-      "id": "dc9c6b96-8b36-4689-87aa-47fc359f2493",
-      "name": "doctoreto"
     },
     {
       "parameters": {
@@ -509,7 +389,7 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        1984,
+        1552,
         0
       ],
       "id": "bdc8d2af-01b2-4093-8df3-e6757c2b6bf6",
@@ -601,11 +481,12 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.3,
       "position": [
-        -240,
+        -464,
         64
       ],
       "id": "8fa72198-b20c-4deb-afa0-c9178b566dfe",
-      "name": "is it less than 5 minutes"
+      "name": "is it less than 5 minutes",
+      "disabled": true
     },
     {
       "parameters": {
@@ -615,11 +496,485 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        432,
+        208,
         96
       ],
       "id": "23813aa0-e5dd-404c-b06a-f08417719d41",
       "name": "Respond to Webhook4"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "❌get-appointment has error in switch❌",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        288
+      ],
+      "id": "e80a6258-76a8-465b-828a-892f3bd763e8",
+      "name": "Send a text message1",
+      "webhookId": "dba0153c-82a2-46ce-aa48-096903426f26",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "BbHS6rf4zSzDalCI",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/BbHS6rf4zSzDalCI",
+          "cachedResultName": "calendar — get-appointment-bot"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [
+        -1360,
+        176
+      ],
+      "id": "11d9665d-3600-4808-81b0-cf1d9d79169d",
+      "name": "check_for_request_peak"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "dr does not exist",
+        "options": {
+          "responseCode": 404
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -464,
+        512
+      ],
+      "id": "8645b09a-4d9f-4977-8755-02edf87fe30a",
+      "name": "dr_does_not_exists"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "pCXAE2TS58t7LqKi",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/pCXAE2TS58t7LqKi",
+          "cachedResultName": "calendar — cache_checker"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "dr_id": "={{ $json.id }}",
+            "date": "={{ $('Webhook').item.json.query.date }}"
+          },
+          "matchingColumns": [
+            "list"
+          ],
+          "schema": [
+            {
+              "id": "dr_id",
+              "displayName": "dr_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -240,
+        96
+      ],
+      "id": "e8b546e3-36ed-48b0-8d1c-c20a325cec2b",
+      "name": "cash_checker"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3cd6ffb8-9fe4-4bae-b3e5-1594c17403eb",
+              "leftValue": "={{ $json.does_have_cash }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "exists",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "f6cd67a1-535e-4d05-9298-19bc59ca924f",
+              "leftValue": "={{ $json.does_have_cash }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -16,
+        96
+      ],
+      "id": "fb39669d-9020-474e-851d-2c026693d7eb",
+      "name": "have_this_day_cashed"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "={{ $('find doctor id').item.json.full_name }} با دیتای کش شده جواب گرفت",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        288
+      ],
+      "id": "daae1c60-85f2-4e38-a435-0506b2758594",
+      "name": "answered_by_cash",
+      "webhookId": "08ad198a-5fb8-4812-b902-ac0c369a6bc0",
+      "retryOnFail": true,
+      "executeOnce": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "oSZ0fo1NolfEmqVt",
+          "name": "calendar report bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c5a67935-a782-45b9-8ea9-54cd8fb256fb",
+              "leftValue": "={{ $('Edit Fields1').first().json.query.center_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "number",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1552,
+        384
+      ],
+      "id": "ff908df5-3330-4a8d-90a5-eb57ec4066e0",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1776,
+        384
+      ],
+      "id": "c5e4a6a2-1e72-4ef7-8b4f-7d56b4b7b50c",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "754fd104-4116-4175-9929-af47b0ca45e8",
+              "leftValue": "={{ $json.center.id }}",
+              "rightValue": "={{ $('Edit Fields1').first().json.query.center_id }}",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1776,
+        192
+      ],
+      "id": "dd14b400-de26-4b08-b55b-1c03b08f0b76",
+      "name": "Filter4",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "80e421f3-9c45-4961-a95d-b522edbbb693",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2000,
+        192
+      ],
+      "id": "7e2bf309-425c-4f46-a809-ab9088d70a2a",
+      "name": "If7"
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {
+          "responseCode": 204
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        2224,
+        288
+      ],
+      "id": "45ca4721-8f58-4ce9-890d-c3880bc6b818",
+      "name": "Respond to Webhook8"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "6BpI0BlqfsNuKjZM",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/6BpI0BlqfsNuKjZM",
+          "cachedResultName": "calendar — drdr/get-appointment v3"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ $('Edit Fields1').item.json.query.date }}",
+            "doctor_id": "={{ $('find doctor id').item.json.id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "doctor_id",
+              "displayName": "doctor_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1104,
+        0
+      ],
+      "id": "c10166ff-ab12-42e3-a8ad-eaea1e7c5622",
+      "name": "drdr1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "8ef0BKQShtB1JMvd",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/8ef0BKQShtB1JMvd",
+          "cachedResultName": "calendar — doctoreto/get-appointment V2"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "doctor_id": "={{ $json.doctor_id }}",
+            "date": "={{ $('Edit Fields1').item.json.query.date }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "doctor_id",
+              "displayName": "doctor_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1104,
+        192
+      ],
+      "id": "e62fbad7-2d45-4ee7-86f5-65350b325453",
+      "name": "Call 'doctoreto/get-appointment V2'"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "067049ac-2114-4b00-b2ee-bc2f43442350",
+              "name": "query.id",
+              "value": "={{ $json.query.id }}",
+              "type": "string"
+            },
+            {
+              "id": "c5799a3c-0916-4a60-ae97-fc784b6da955",
+              "name": "query.date",
+              "value": "={{ $json.query.date }}",
+              "type": "string"
+            },
+            {
+              "id": "bab79238-2150-4581-a25c-c20f8b9be882",
+              "name": "query.center_id",
+              "value": "={{ $json.query.center_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1136,
+        272
+      ],
+      "id": "7a8da156-99dc-409a-935c-fe56b1cb0db6",
+      "name": "Edit Fields1"
     },
     {
       "parameters": {
@@ -634,7 +989,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "appointments": "={{ $json.data }}",
-            "date": "={{ $('Webhook').item.json.query.date }}",
+            "date": "={{ $('Edit Fields1').item.json.query.date }}",
             "doctor_id": "={{ $('find doctor id').item.json.id }}",
             "doctor_name": "={{ $('find doctor id').item.json.full_name }}"
           },
@@ -688,11 +1043,11 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        2208,
+        1776,
         0
       ],
       "id": "63f4b925-d884-42ed-b51e-c9ce6d894b6f",
-      "name": "Execute Workflow3",
+      "name": "insert_appointments_V2",
       "executeOnce": true
     },
     {
@@ -764,141 +1119,29 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        1984,
+        1552,
         -192
       ],
       "id": "4fdf1a14-2be4-4280-9953-c5b77669a22a",
-      "name": "Execute Workflow4",
+      "name": "doctors_reading_log",
       "executeOnce": true
     },
     {
       "parameters": {
-        "chatId": "1999634605",
-        "text": "❌get-appointment has error in switch❌",
-        "additionalFields": {
-          "appendAttribution": false
-        }
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        -16,
-        288
-      ],
-      "id": "e80a6258-76a8-465b-828a-892f3bd763e8",
-      "name": "Send a text message1",
-      "webhookId": "dba0153c-82a2-46ce-aa48-096903426f26",
-      "retryOnFail": true,
-      "credentials": {
-        "telegramApi": {
-          "id": "3UN48Ejir4Oxfhcd",
-          "name": "calendar_bot"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "BbHS6rf4zSzDalCI",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/BbHS6rf4zSzDalCI",
-          "cachedResultName": "calendar — get-appointment-bot"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {
-          "waitForSubWorkflow": false
-        }
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.2,
-      "position": [
-        -1360,
-        208
-      ],
-      "id": "11d9665d-3600-4808-81b0-cf1d9d79169d",
-      "name": "check_for_request_peak"
-    },
-    {
-      "parameters": {
         "respondWith": "text",
-        "responseBody": "dr does not exist",
+        "responseBody": "={{ $json.errorMessage }}",
         "options": {
-          "responseCode": 404
+          "responseCode": 400
         }
       },
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        -240,
-        320
+        -640,
+        1200
       ],
-      "id": "8645b09a-4d9f-4977-8755-02edf87fe30a",
-      "name": "dr_does_not_exists"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "pCXAE2TS58t7LqKi",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/pCXAE2TS58t7LqKi",
-          "cachedResultName": "calendar — cache_checker"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "dr_id": "={{ $json.id }}",
-            "date": "={{ $('Webhook').item.json.query.date }}"
-          },
-          "matchingColumns": [
-            "list"
-          ],
-          "schema": [
-            {
-              "id": "dr_id",
-              "displayName": "dr_id",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "number",
-              "removed": false
-            },
-            {
-              "id": "date",
-              "displayName": "date",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "mode": "each",
-        "options": {
-          "waitForSubWorkflow": true
-        }
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        -16,
-        96
-      ],
-      "id": "e8b546e3-36ed-48b0-8d1c-c20a325cec2b",
-      "name": "cash_checker"
+      "id": "ced0106b-0dfc-4b48-8fb5-4deda10b9568",
+      "name": "wrong data response"
     },
     {
       "parameters": {
@@ -911,22 +1154,13 @@
           },
           "conditions": [
             {
-              "id": "3cd6ffb8-9fe4-4bae-b3e5-1594c17403eb",
-              "leftValue": "={{ $json.does_have_cash }}",
+              "id": "66a29011-186b-41a9-9272-557cd6490c9e",
+              "leftValue": "={{ $json.isValid }}",
               "rightValue": "",
               "operator": {
                 "type": "boolean",
-                "operation": "exists",
+                "operation": "true",
                 "singleValue": true
-              }
-            },
-            {
-              "id": "f6cd67a1-535e-4d05-9298-19bc59ca924f",
-              "leftValue": "={{ $json.does_have_cash }}",
-              "rightValue": false,
-              "operator": {
-                "type": "boolean",
-                "operation": "equals"
               }
             }
           ],
@@ -937,278 +1171,102 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        208,
-        96
+        -864,
+        1104
       ],
-      "id": "fb39669d-9020-474e-851d-2c026693d7eb",
-      "name": "have_this_day_cashed"
+      "id": "d7dd2cd8-e60c-4f46-950c-db07354a0140",
+      "name": "is input valid",
+      "disabled": true
     },
     {
       "parameters": {
-        "chatId": "1999634605",
-        "text": "={{ $('find doctor id').item.json.full_name }} با دیتای کش شده جواب گرفت",
-        "additionalFields": {
-          "appendAttribution": false
-        }
+        "jsCode": "// دریافت اولین آیتم ورودی\nconst item = items[0];\nconst query = item.json.query || {};\n\n// استخراج id و date از query وب‌هوک\nconst received_id = query.id;\nconst date_str = query.date;\n\nconst errorMessages = [];\n\n// --- شروع اعتبارسنجی ---\n\n// 1. اعتبارسنجی ID\nif (!received_id) {\n  errorMessages.push(\"ID is missing or empty.\");\n}\n\n// 2. اعتبارسنجی Date\nif (!date_str) {\n  errorMessages.push(\"Date is missing.\");\n} else {\n  const receivedDate = new Date(date_str);\n  \n  // بررسی اینکه آیا تاریخ ورودی معتبر است یا نه\n  if (isNaN(receivedDate.getTime())) {\n    errorMessages.push(\"Invalid date format. Please use a recognizable format like YYYY-MM-DD.\");\n  } else {\n    const now = new Date();\n    \n    // محاسبه محدوده یک هفته قبل\n    const oneWeekAgo = new Date();\n    oneWeekAgo.setDate(now.getDate() - 7);\n    \n    // محاسبه محدوده یک هفته بعد\n    const oneWeekLater = new Date();\n    oneWeekLater.setDate(now.getDate() + 7);\n\n    // بررسی اینکه آیا تاریخ در بازه زمانی مجاز قرار دارد\n    if (!(receivedDate >= oneWeekAgo && receivedDate <= oneWeekLater)) {\n      errorMessages.push(\"Date is not within the allowed range (-1 week to +1 week).\");\n    }\n  }\n}\n\n// --- پایان اعتبارسنجی ---\n\n// 3. ساخت خروجی برای نود IF\nif (errorMessages.length > 0) {\n  // اگر خطایی وجود دارد\n  item.json.isValid = false;\n  // تمام پیام‌های خطا را به یک متن واحد تبدیل می‌کنیم\n  item.json.errorMessage = \"Validation failed: \" + errorMessages.join(\" \");\n} else {\n  // اگر همه چیز صحیح است\n  item.json.isValid = true;\n  item.json.errorMessage = null;\n}\n\n// آیتم پردازش شده را برای نود بعدی (IF) ارسال می‌کنیم\nreturn items;"
       },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
-        432,
-        288
+        -1024,
+        1104
       ],
-      "id": "daae1c60-85f2-4e38-a435-0506b2758594",
-      "name": "answered_by_cash",
-      "webhookId": "08ad198a-5fb8-4812-b902-ac0c369a6bc0",
-      "retryOnFail": true,
-      "executeOnce": true,
+      "id": "17368fb4-33e6-4334-a19f-be1b5ae974fd",
+      "name": "validation",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "https://zoro-calendar.ir/webhook/drdr/get-appointment/v2",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "p24_id",
+              "value": "={{ $('Webhook').item.json.query.id }}"
+            },
+            {
+              "name": "date",
+              "value": "={{ $('Webhook').item.json.query.date }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -992,
+        1344
+      ],
+      "id": "0c1c6c24-3082-4ec2-ad30-7ace9e63290b",
+      "name": "drdr"
+    },
+    {
+      "parameters": {
+        "url": "https://zoro-calendar.ir/webhook/doctoreto/get-appointment",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "date",
+              "value": "={{ $('Webhook').item.json.query.date }}"
+            },
+            {
+              "name": "=id",
+              "value": "={{ $('Webhook').item.json.query.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -992,
+        1536
+      ],
+      "id": "8c7b945d-e07f-4732-9bf4-16ef81d3662f",
+      "name": "doctoreto"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT *\nFROM doctors d\nJOIN doctor_platform_credentials c ON d.id = c.doctor_id\nWHERE d.p24_id = 155 AND c.is_valid = true;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -1056,
+        928
+      ],
+      "id": "22298298-e327-494a-821e-00d9758165f7",
+      "name": "find doctor id1",
+      "alwaysOutputData": true,
       "credentials": {
-        "telegramApi": {
-          "id": "oSZ0fo1NolfEmqVt",
-          "name": "calendar report bot"
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
         }
       }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "c5a67935-a782-45b9-8ea9-54cd8fb256fb",
-              "leftValue": "={{ $('Webhook').item.json.query.center_id }}",
-              "rightValue": "",
-              "operator": {
-                "type": "number",
-                "operation": "exists",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "looseTypeValidation": true,
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        1952,
-        464
-      ],
-      "id": "ff908df5-3330-4a8d-90a5-eb57ec4066e0",
-      "name": "If1"
-    },
-    {
-      "parameters": {
-        "respondWith": "allIncomingItems",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.4,
-      "position": [
-        2208,
-        592
-      ],
-      "id": "c5e4a6a2-1e72-4ef7-8b4f-7d56b4b7b50c",
-      "name": "Respond to Webhook"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "754fd104-4116-4175-9929-af47b0ca45e8",
-              "leftValue": "={{ $json.center.id }}",
-              "rightValue": "={{ $('Webhook').item.json.query.center_id }}",
-              "operator": {
-                "type": "string",
-                "operation": "equals"
-              }
-            }
-          ],
-          "combinator": "or"
-        },
-        "looseTypeValidation": true,
-        "options": {}
-      },
-      "type": "n8n-nodes-base.filter",
-      "typeVersion": 2.2,
-      "position": [
-        2208,
-        400
-      ],
-      "id": "dd14b400-de26-4b08-b55b-1c03b08f0b76",
-      "name": "Filter4",
-      "alwaysOutputData": true
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "loose",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "80e421f3-9c45-4961-a95d-b522edbbb693",
-              "leftValue": "={{ $json.id }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "exists",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "looseTypeValidation": true,
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        2432,
-        400
-      ],
-      "id": "7e2bf309-425c-4f46-a809-ab9088d70a2a",
-      "name": "If7"
-    },
-    {
-      "parameters": {
-        "respondWith": "noData",
-        "options": {
-          "responseCode": 204
-        }
-      },
-      "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.4,
-      "position": [
-        2656,
-        496
-      ],
-      "id": "45ca4721-8f58-4ce9-890d-c3880bc6b818",
-      "name": "Respond to Webhook8"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "6BpI0BlqfsNuKjZM",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/6BpI0BlqfsNuKjZM",
-          "cachedResultName": "calendar — drdr/get-appointment v3"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "date": "={{ $('Webhook').item.json.query.date }}",
-            "doctor_id": "={{ $('find doctor id').item.json.id }}"
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "doctor_id",
-              "displayName": "doctor_id",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "number",
-              "removed": false
-            },
-            {
-              "id": "date",
-              "displayName": "date",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {
-          "waitForSubWorkflow": true
-        }
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        1296,
-        -128
-      ],
-      "id": "c10166ff-ab12-42e3-a8ad-eaea1e7c5622",
-      "name": "drdr1"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "8ef0BKQShtB1JMvd",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/8ef0BKQShtB1JMvd",
-          "cachedResultName": "calendar — doctoreto/get-appointment V2"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "doctor_id": "={{ $json.doctor_id }}",
-            "date": "={{ $('Webhook').item.json.query.date }}"
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "doctor_id",
-              "displayName": "doctor_id",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "number",
-              "removed": false
-            },
-            {
-              "id": "date",
-              "displayName": "date",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        1312,
-        96
-      ],
-      "id": "e62fbad7-2d45-4ee7-86f5-65350b325453",
-      "name": "Call 'doctoreto/get-appointment V2'"
     }
   ],
   "connections": {
@@ -1222,35 +1280,6 @@
           },
           {
             "node": "check_for_request_peak",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "is input valid": {
-      "main": [
-        [
-          {
-            "node": "find doctor id",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "wrong data response",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "validation": {
-      "main": [
-        [
-          {
-            "node": "is input valid",
             "type": "main",
             "index": 0
           }
@@ -1330,7 +1359,7 @@
       "main": [
         [
           {
-            "node": "validation",
+            "node": "Edit Fields1",
             "type": "main",
             "index": 0
           }
@@ -1353,17 +1382,17 @@
       "main": [
         [
           {
-            "node": "If1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Execute Workflow4",
+            "node": "doctors_reading_log",
             "type": "main",
             "index": 0
           },
           {
             "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If1",
             "type": "main",
             "index": 0
           }
@@ -1399,21 +1428,11 @@
         ]
       ]
     },
-    "drdr": {
-      "main": [
-        []
-      ]
-    },
-    "doctoreto": {
-      "main": [
-        []
-      ]
-    },
     "Aggregate": {
       "main": [
         [
           {
-            "node": "Execute Workflow3",
+            "node": "insert_appointments_V2",
             "type": "main",
             "index": 0
           }
@@ -1554,18 +1573,52 @@
           }
         ]
       ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "find doctor id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is input valid": {
+      "main": [
+        [],
+        [
+          {
+            "node": "wrong data response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "validation": {
+      "main": [
+        [
+          {
+            "node": "is input valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
     "executionOrder": "v1"
   },
   "triggerCount": 1,
-  "versionId": "5bac4e92-fd20-4ea6-88f3-8037e30d79e0",
+  "versionId": "f0baf0c9-98c7-423e-952d-39f8896c187e",
   "owner": {
     "type": "team",
     "teamId": "pzvw8g7gyGnUF15Q",
     "teamName": "calendar"
   },
-  "parentFolderId": null,
+  "parentFolderId": "Gs5eGKvbfFckt56q",
   "isArchived": false
 }

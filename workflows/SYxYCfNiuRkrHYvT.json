@@ -1,0 +1,1742 @@
+{
+  "id": "SYxYCfNiuRkrHYvT",
+  "name": "doctoreto-keep_alive",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://api.doctoreto.com/api/web/doctor/v1/orders/turn-date/{{ $now.setZone('Asia/Tehran').toISODate() }}?search=[(type+!%3D+4)]&page=1 ",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9"
+            },
+            {
+              "name": "app-device",
+              "value": "dboJfdAxWU"
+            },
+            {
+              "name": "app-version",
+              "value": "2.1.1"
+            },
+            {
+              "name": "origin",
+              "value": "https://doctorpanel.doctoreto.com"
+            },
+            {
+              "name": "priority",
+              "value": "u=1, i"
+            },
+            {
+              "name": "referer",
+              "value": "https://doctorpanel.doctoreto.com/"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Not;A=Brand\";v=\"99\", \"Google Chrome\";v=\"139\", \"Chromium\";v=\"139\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?1"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Android\""
+            },
+            {
+              "name": "sec-fetch-dest",
+              "value": "empty"
+            },
+            {
+              "name": "sec-fetch-mode",
+              "value": "cors"
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-site"
+            },
+            {
+              "name": "user-agent",
+              "value": "={{ $('Call \\'random_user_agent\\'').item.json.userAgent }}"
+            },
+            {
+              "name": "cookie",
+              "value": "={{ $('When Executed by Another Workflow').item.json.access_token }}"
+            },
+            {
+              "name": "Cookie",
+              "value": "={{ $('When Executed by Another Workflow').item.json.access_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2496,
+        560
+      ],
+      "id": "b1f9e6bc-858d-49b4-a96d-bbba6f57a61e",
+      "name": "list ",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctor_platform_credentials",
+          "mode": "list",
+          "cachedResultName": "doctor_platform_credentials"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "access_token": "={{ $json.headers[\"set-cookie\"][0] }}",
+            "updated_at": "={{ new Date(Date.now() - 24*60*60*1000).toLocaleString(\"sv-SE\", { timeZone: \"Asia/Tehran\", hour12: false }).replace(\" \", \"T\") + \"+03:30\" }}",
+            "id": "={{ $('When Executed by Another Workflow').item.json.cridencial_id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "doctor_id",
+              "displayName": "doctor_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "platform_id",
+              "displayName": "platform_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "platform_doctor_id",
+              "displayName": "platform_doctor_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "client_id",
+              "displayName": "client_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "client_secret",
+              "displayName": "client_secret",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "access_token",
+              "displayName": "access_token",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "refresh_token",
+              "displayName": "refresh_token",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "expires_at",
+              "displayName": "expires_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "token_created",
+              "displayName": "token_created",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "phone_in_platform",
+              "displayName": "phone_in_platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "is_valid",
+              "displayName": "is_valid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2272,
+        488
+      ],
+      "id": "241aa8f8-4c69-40cb-b99c-b429fd69dace",
+      "name": "Insert or update rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.doctoreto.com/api/web/doctor/v1/accounts/status",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "accept-language",
+              "value": "en-US,en;q=0.9,fa;q=0.8,ar;q=0.7"
+            },
+            {
+              "name": "app-device",
+              "value": "LsHcvdVHXL"
+            },
+            {
+              "name": "app-version",
+              "value": "2.1.1"
+            },
+            {
+              "name": "origin",
+              "value": "https://doctorpanel.doctoreto.com"
+            },
+            {
+              "name": "priority",
+              "value": "u=1, i"
+            },
+            {
+              "name": "referer",
+              "value": "https://doctorpanel.doctoreto.com/"
+            },
+            {
+              "name": "sec-ch-ua",
+              "value": "\"Not;A=Brand\";v=\"99\", \"Microsoft Edge\";v=\"139\", \"Chromium\";v=\"139\""
+            },
+            {
+              "name": "sec-ch-ua-mobile",
+              "value": "?0"
+            },
+            {
+              "name": "sec-ch-ua-platform",
+              "value": "\"Windows\""
+            },
+            {
+              "name": "sec-fetch-site",
+              "value": "same-site"
+            },
+            {
+              "name": "user-agent",
+              "value": "={{ $json.userAgent }}"
+            },
+            {
+              "name": "Cookie",
+              "value": "={{ $('When Executed by Another Workflow').item.json.access_token }}"
+            },
+            {
+              "name": "cookie",
+              "value": "={{ $('When Executed by Another Workflow').item.json.access_token }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {
+          "redirect": {
+            "redirect": {}
+          },
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1600,
+        368
+      ],
+      "id": "29c3b5b1-2662-40b1-bf78-1a86f6068893",
+      "name": "refresh_token1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "47fd1bae-7d1d-42d1-8cd9-73e7176f167d",
+              "leftValue": "={{ $json.headers[\"set-cookie\"] }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2048,
+        560
+      ],
+      "id": "bb312b5a-7562-407c-aa40-0dfed693ef2b",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "❌doctoreto-keep_alive has error (http reqest for refresh)❌",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1824,
+        464
+      ],
+      "id": "6dcdd298-4a89-44d4-86c7-83ef9f1aa251",
+      "name": "Send a text message3",
+      "webhookId": "370b2ba6-fa65-4667-a1d5-f6910589b382",
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "❌doctoreto-keep_alive has error (http request)❌",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2720,
+        848
+      ],
+      "id": "0162e78b-0c05-4883-ad6d-9c4834af63b5",
+      "name": "Send a text message5",
+      "webhookId": "370b2ba6-fa65-4667-a1d5-f6910589b382",
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctor_platform_credentials",
+          "mode": "list",
+          "cachedResultName": "doctor_platform_credentials"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "is_valid": false,
+            "id": "={{ $('When Executed by Another Workflow').item.json.cridencial_id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "doctor_id",
+              "displayName": "doctor_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "platform_id",
+              "displayName": "platform_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "platform_doctor_id",
+              "displayName": "platform_doctor_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "client_id",
+              "displayName": "client_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "client_secret",
+              "displayName": "client_secret",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "access_token",
+              "displayName": "access_token",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "refresh_token",
+              "displayName": "refresh_token",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "expires_at",
+              "displayName": "expires_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "token_created",
+              "displayName": "token_created",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "phone_in_platform",
+              "displayName": "phone_in_platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "is_valid",
+              "displayName": "is_valid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2944,
+        656
+      ],
+      "id": "2f0f96c2-1da0-475d-8cbf-7f303dd72b73",
+      "name": "Update rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "04b4436d-7bc9-4023-9637-267c17b7c1eb",
+              "leftValue": "={{ $json.error.status }}",
+              "rightValue": 403,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2720,
+        656
+      ],
+      "id": "e98f0325-eadb-4842-9850-537d4498ef6f",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "❌doctoreto-keep-alive has error ( token is invalid)❌",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2048,
+        368
+      ],
+      "id": "0d636da8-0153-4a3e-8a69-b31b709dc75e",
+      "name": "Send a text message6",
+      "webhookId": "370b2ba6-fa65-4667-a1d5-f6910589b382",
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctor_platform_credentials",
+          "mode": "list",
+          "cachedResultName": "doctor_platform_credentials"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "is_valid": false,
+            "id": "={{ $('When Executed by Another Workflow').item.json.cridencial_id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "doctor_id",
+              "displayName": "doctor_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "platform_id",
+              "displayName": "platform_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "platform_doctor_id",
+              "displayName": "platform_doctor_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "client_id",
+              "displayName": "client_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "client_secret",
+              "displayName": "client_secret",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "access_token",
+              "displayName": "access_token",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "refresh_token",
+              "displayName": "refresh_token",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "expires_at",
+              "displayName": "expires_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "token_created",
+              "displayName": "token_created",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "phone_in_platform",
+              "displayName": "phone_in_platform",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "is_valid",
+              "displayName": "is_valid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2048,
+        176
+      ],
+      "id": "5eb189c7-7485-476a-8821-39ad58b3a9b7",
+      "name": "Update rows in a table1",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctors",
+          "mode": "list",
+          "cachedResultName": "doctors"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "last_read_time": "={{ $now.setZone('Asia/Tehran').toISO() }}",
+            "id": "={{ $('Execute a SQL query').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "full_name",
+              "displayName": "full_name",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "mobile",
+              "displayName": "mobile",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "medical_council_number",
+              "displayName": "medical_council_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "national_code",
+              "displayName": "national_code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "p24_id",
+              "displayName": "p24_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "temp_token",
+              "displayName": "temp_token",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "p24_user_id",
+              "displayName": "p24_user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "login_reminder_count",
+              "displayName": "login_reminder_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "last_read_time",
+              "displayName": "last_read_time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2720,
+        272
+      ],
+      "id": "ac41b966-7486-4727-92ac-bc62fb5f4a55",
+      "name": "Update rows in a table2",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7087e289-9db7-411d-ac81-4464b62820b5",
+              "leftValue": "={{ $json.body.items.isValid }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1824,
+        272
+      ],
+      "id": "841bc677-aa06-4ca8-ae8a-6d2d0aa04f7f",
+      "name": "is_invalid"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "1O1Ar7rp3nPechp1",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/1O1Ar7rp3nPechp1",
+          "cachedResultName": "calendar — p24_send_notification"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "doctor_id": "={{ $('When Executed by Another Workflow').item.json.dr_id }}",
+            "title": "تو همه پلتفرم هات لاگین نیستی!",
+            "description": "یک یا چندتا از پلتفرم های نوبت دهی ات نیاز به لاگین دوباره دارن. با کلیک روی همین پیام داخل اون پلتفرم ها دوباره لاگین کن تا همه نوبت هارو یکجا داشته باشی "
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "doctor_id",
+              "displayName": "doctor_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        2048,
+        -16
+      ],
+      "id": "09d2926b-85ea-4445-af88-402e95c1d5da",
+      "name": "send_notification"
+    },
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "dr_id",
+              "type": "number"
+            },
+            {
+              "name": "doctor_name"
+            },
+            {
+              "name": "doctor_num_id",
+              "type": "number"
+            },
+            {
+              "name": "cridencial_id",
+              "type": "number"
+            },
+            {
+              "name": "access_token"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        1152,
+        368
+      ],
+      "id": "638b72ea-7fe1-438e-a0b3-300af973a34d",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "xtwLYdZ55ENktJca",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/xtwLYdZ55ENktJca",
+          "cachedResultName": "calendar — random_user_agent"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1376,
+        368
+      ],
+      "id": "50832bc6-209b-4715-8f92-3a73b91661ec",
+      "name": "Call 'random_user_agent'"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        3616,
+        464
+      ],
+      "id": "7ce6b2c9-d3bc-4b60-aa34-a0b25cdf4aec",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "7UDDqPOQ84jw6Ccm",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/7UDDqPOQ84jw6Ccm",
+          "cachedResultName": "calendar — insert_appointment_V2"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "appointments": "={{ $json.data }}",
+            "date": "={{ $now.setZone('Asia/Tehran').toISODate() }}",
+            "doctor_id": "={{ $('When Executed by Another Workflow').item.json.dr_id }}",
+            "doctor_name": "={{ $('When Executed by Another Workflow').item.json.doctor_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "doctor_id",
+              "displayName": "doctor_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "doctor_name",
+              "displayName": "doctor_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            },
+            {
+              "id": "appointments",
+              "displayName": "appointments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "array"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        3840,
+        464
+      ],
+      "id": "30f51e7e-c04c-41a5-9858-e57f74c76917",
+      "name": "Execute Workflow3",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "items",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2944,
+        464
+      ],
+      "id": "39a2d141-a069-44cf-a823-dec22dfbe02a",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0e581cbf-63da-447f-a529-04f075eb7d51",
+              "name": "id",
+              "value": "={{ $json.appointment_id }}",
+              "type": "string"
+            },
+            {
+              "id": "10b3b3f8-871a-4001-ad7a-394a09fa63e7",
+              "name": "type",
+              "value": "={{ $json.type }}",
+              "type": "string"
+            },
+            {
+              "id": "242e5ad6-440b-4408-9bb5-d47d11d0a811",
+              "name": "type_id",
+              "value": "={{ $json.type_id }}",
+              "type": "string"
+            },
+            {
+              "id": "ae59be4e-def7-48fe-8229-fb99ba2aa129",
+              "name": "user_center_id",
+              "value": "=",
+              "type": "string"
+            },
+            {
+              "id": "e78dc91c-47d5-42d1-9a4d-6b6116b87f25",
+              "name": "book_status",
+              "value": "visited",
+              "type": "string"
+            },
+            {
+              "id": "3f3bae6f-e1f8-4798-b756-2997bb278ebb",
+              "name": "ref_id",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "abcccb4d-b597-4419-a1b6-b20d54bc7697",
+              "name": "from",
+              "value": "={{ $json.scheduled_from_timestamp }}",
+              "type": "string"
+            },
+            {
+              "id": "73c02c16-2f2c-4f0d-9d6f-5cdce6397393",
+              "name": "to",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "9131405c-0046-44b9-9e0b-dc1ed62343bc",
+              "name": "from_date",
+              "value": "={{ $json.scheduled_from_iso }}",
+              "type": "string"
+            },
+            {
+              "id": "f03a9eea-046e-4500-a598-45d7cd728b58",
+              "name": "to_date",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "624b10a3-4869-4746-a379-a6b8671e2847",
+              "name": "name",
+              "value": "={{ $json.firstname }}",
+              "type": "string"
+            },
+            {
+              "id": "7a1a1358-7ae0-4e92-a333-630f869f5476",
+              "name": "family",
+              "value": "={{ $json.lastname }}",
+              "type": "string"
+            },
+            {
+              "id": "b50235bb-c51b-478e-9f5c-68c9ece5a5f0",
+              "name": "display_name",
+              "value": "={{ $json.firstname }} {{ $json.lastname }}",
+              "type": "string"
+            },
+            {
+              "id": "b6d8980d-1f0e-44cb-a928-2b3b0120d1ad",
+              "name": "cell",
+              "value": "={{ $json.mobile }}",
+              "type": "string"
+            },
+            {
+              "id": "9676ded4-2327-4878-b43b-115fae97afd8",
+              "name": "national_code",
+              "value": "={{ $json.national_code }}",
+              "type": "string"
+            },
+            {
+              "id": "f3d56483-d199-4863-af0a-836609384b7c",
+              "name": "payment_status",
+              "value": "paid",
+              "type": "string"
+            },
+            {
+              "id": "a622b7c1-0136-4737-b9b2-07921170b163",
+              "name": "cost",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "0f8c52bb-96c1-4686-9651-77ce4245dc40",
+              "name": "insurance",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "ae2d6cc1-eda9-4254-a633-e38d2150c5a8",
+              "name": "platform.name",
+              "value": "doctoreto",
+              "type": "string"
+            },
+            {
+              "id": "fff1e543-a214-45cf-8582-e01ab3920289",
+              "name": "platform.p_name",
+              "value": "دکترتو",
+              "type": "string"
+            },
+            {
+              "id": "96551e2e-be18-457b-b537-d943431892ac",
+              "name": "platform.id",
+              "value": "2",
+              "type": "string"
+            },
+            {
+              "id": "467a0fbb-e64b-4488-bd20-8ede5ea58a01",
+              "name": "platform.icon",
+              "value": "https://zoro-icon.s3.ir-tbz-sh1.arvanstorage.ir/doctoreto.png",
+              "type": "string"
+            },
+            {
+              "id": "0959cc42-7db6-4ca3-a128-1f8e7084e212",
+              "name": "platform.link",
+              "value": "https://doctorpanel.doctoreto.com/",
+              "type": "string"
+            },
+            {
+              "id": "45d3356d-c55b-435e-9b53-59b8c0075df6",
+              "name": "center.id",
+              "value": "={{ $json.place_id }}",
+              "type": "string"
+            },
+            {
+              "id": "6c2b9a1f-b3aa-4b22-9b26-57eb0d0baa13",
+              "name": "center.name",
+              "value": "={{ $json.place_name }}",
+              "type": "string"
+            },
+            {
+              "id": "62b51991-0c6e-4ed2-bf73-1329b857f734",
+              "name": "center.address",
+              "value": "={{ $json.place_address }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": "={{ false }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3392,
+        464
+      ],
+      "id": "e3fe3589-8215-4700-9e2d-9b386834b2ad",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "// تابع تبدیل تاریخ شمسی به میلادی\nfunction jalaliToGregorian(j_y, j_m, j_d) {\n    var j_days_in_month = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];\n    var g_days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];\n    var gy, gm, gd;\n    var jy, jm, jd;\n    var g_day_no, j_day_no;\n    var leap;\n    var i;\n\n    jy = j_y - 979;\n    jm = j_m - 1;\n    jd = j_d - 1;\n\n    j_day_no = 365 * jy + parseInt(jy / 33) * 8 + parseInt((jy % 33 + 3) / 4);\n    for (i = 0; i < jm; ++i)\n        j_day_no += j_days_in_month[i];\n\n    j_day_no += jd;\n    g_day_no = j_day_no + 79;\n    gy = 1600 + 400 * parseInt(g_day_no / 146097);\n    g_day_no = g_day_no % 146097;\n    leap = 1;\n    if (g_day_no >= 36525) {\n        g_day_no--;\n        gy += 100 * parseInt(g_day_no / 36524);\n        g_day_no = g_day_no % 36524;\n        if (g_day_no >= 365)\n            g_day_no++;\n        else\n            leap = 0;\n    }\n    gy += 4 * parseInt(g_day_no / 1461);\n    g_day_no %= 1461;\n    if (g_day_no >= 366) {\n        leap = 0;\n        g_day_no--;\n        gy += parseInt(g_day_no / 365);\n        g_day_no = g_day_no % 365;\n    }\n    for (i = 0; g_day_no >= g_days_in_month[i] + (i == 1 && leap); i++)\n        g_day_no -= g_days_in_month[i] + (i == 1 && leap);\n    gm = i + 1;\n    gd = g_day_no + 1;\n    return [gy, gm, gd];\n}\n\n// ==========================================================\n// منطق اصلی برای پردازش هر آیتم\n// ==========================================================\n\nconst runAt = new Date().toISOString();\nconst defaultDoctorId = \"12061\";\n\nreturn items.map(it => {\n    const a = it.json;\n\n    // 1. استخراج اطلاعات اولیه\n    // [FIX]: استخراج تاریخ و زمان به صورت دقیق‌تر\n    const fullScheduledDate = a.context?.shamsi_turn_date || ''; // e.g., \"1404/08/14 12:00:00\"\n    const scheduledTime = a.context?.shamsi_turn_time || '';     // e.g., \"12:00:00\"\n    const scheduledDate = fullScheduledDate.split(' ')[0] || ''; // e.g., \"1404/08/14\"\n\n    let firstname = a.patient?.first_name || '';\n    let lastname = a.patient?.last_name || '';\n    if (a.customer?.full_name && a.customer.full_name !== a.patient?.full_name) {\n        const parts = a.customer.full_name.trim().split(' ');\n        firstname = parts[0] || firstname;\n        lastname = parts.slice(1).join(' ') || lastname;\n    }\n\n    // [FIX]: ساخت 'scheduled_from' از بخش‌های تاریخ و زمان تمیز شده\n    const scheduled_from = (scheduledDate && scheduledTime) ? `${scheduledDate} ${scheduledTime}` : '';\n\n    // 2. تبدیل تاریخ در صورت وجود\n    let isoDate = null;\n    let timestamp = null;\n\n    if (scheduled_from) {\n        try {\n            const parts = scheduled_from.split(' ');\n            const datePart = parts[0];\n            const timePart = parts[1];\n\n            const [jYear, jMonth, jDay] = datePart.split('/').map(Number);\n            const [hour, minute, second] = timePart.split(':').map(Number);\n\n            const [gYear, gMonth, gDay] = jalaliToGregorian(jYear, jMonth, jDay);\n            \n            const pad = (num) => String(num).padStart(2, '0');\n\n            isoDate = `${gYear}-${pad(gMonth)}-${pad(gDay)}T${pad(hour)}:${pad(minute)}:${pad(second)}+03:30`;\n            \n            const correctDate = new Date(isoDate);\n            timestamp = Math.floor(correctDate.getTime() / 1000);\n\n        } catch (error) {\n            console.error(\"Could not parse or convert date:\", scheduled_from, error);\n        }\n    }\n  let place_id = \"\";\n  let place_name = \"\";\n  let place_address = \"\";\n\n    // 3. ساخت خروجی نهایی\n    const output = {\n        run_at: runAt,\n        scheduled_date: scheduledDate, // [FIX]: 'scheduledDate' الان فقط تاریخ است\n        scheduled_time: scheduledTime,\n        appointment_id: a.id?.toString() || '', // تبدیل به رشته برای اطمینان\n        user_patient_id: a.patient?.id?.toString() || '', // تبدیل به رشته\n        firstname,\n        lastname,\n        mobile: a.patient?.user?.mobile?.toString() || a.customer?.mobile?.toString() || '',\n        national_code: a.customer?.national_code || a.patient?.national_code || '',\n        scheduled_from: scheduled_from,\n        \n        scheduled_from_iso: isoDate,\n        scheduled_from_timestamp: timestamp,\n\n        scheduled_to: '',\n        doctor_id: a.context?.doctor?.id?.toString() || defaultDoctorId, // تبدیل به رشته\n        source_page: '',\n        raw_json: JSON.stringify(a),\n        place_id,place_name,place_address,\n    };\n\n    // 👇 فقط وقتی type.value === 0 باشه\n    if (a.type && a.type.value === 0) {\n        output.type = \"in_person\";\n        output.type_id = 1;\n        \n        // [FIX]: اطلاعات 'place' باید از خود آیتم 'a' خوانده شود، نه از '$input.first()'\n        // از 'optional chaining' (?. ) برای جلوگیری از خطا در صورت null بودن مقادیر استفاده شده\n        output.place_id = a.context?.doctor?.doctor_place?.place?.id?.toString() || \"\";\n        output.place_name = a.context?.doctor?.doctor_place?.place?.name || \"\";\n        output.place_address = a.context?.doctor?.doctor_place?.place?.address || \"\";\n    }\n  if (a.type && a.type.value === 1) {\n        output.type = \"online\";\n        output.type_id = 2;\n        \n        // [FIX]: اطلاعات 'place' باید از خود آیتم 'a' خوانده شود، نه از '$input.first()'\n        // از 'optional chaining' (?. ) برای جلوگیری از خطا در صورت null بودن مقادیر استفاده شده\n        output.place_id = a.context?.doctor?.doctor_place?.place?.id?.toString() || \"\";\n        output.place_name = a.context?.doctor?.doctor_place?.place?.name || \"\";\n        output.place_address = a.context?.doctor?.doctor_place?.place?.address || \"\";\n    }\n\n    return { json: output };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3168,
+        464
+      ],
+      "id": "763517f1-6d60-474d-aed8-ed022c6aa8d8",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5ff880df-d894-4f6a-8b25-ac891b0538d0",
+              "leftValue": "={{ $json.items }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2720,
+        464
+      ],
+      "id": "b60059bb-7b90-4331-b09a-95affcf2dd1e",
+      "name": "If1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        1072
+      ],
+      "id": "f005b4ff-e07c-46b4-ae3e-ac61b2665923",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "❌doctoreto-keep-alive has error❌",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1376,
+        1072
+      ],
+      "id": "98e2d36d-793a-4d6c-b4ba-4f8ffcf0c3d9",
+      "name": "Send a text message",
+      "webhookId": "370b2ba6-fa65-4667-a1d5-f6910589b382",
+      "retryOnFail": true,
+      "credentials": {
+        "telegramApi": {
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "list ": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message5",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert or update rows in a table": {
+      "main": [
+        [
+          {
+            "node": "list ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "refresh_token1": {
+      "main": [
+        [
+          {
+            "node": "is_invalid",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Insert or update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "list ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "is_invalid": {
+      "main": [
+        [
+          {
+            "node": "Send a text message6",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update rows in a table1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "send_notification",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Call 'random_user_agent'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'random_user_agent'": {
+      "main": [
+        [
+          {
+            "node": "refresh_token1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Execute Workflow3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Tehran",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "triggerCount": 0,
+  "versionId": "993ebbd6-69c0-4622-87ee-f63ec2ecec12",
+  "owner": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  },
+  "parentFolderId": "u1ky7ueH61cKlVNe",
+  "isArchived": false
+}

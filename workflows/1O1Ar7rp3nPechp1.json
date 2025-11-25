@@ -11,8 +11,10 @@
               "type": "number"
             },
             {
-              "name": "platform_id",
-              "type": "number"
+              "name": "title"
+            },
+            {
+              "name": "description"
             }
           ]
         }
@@ -41,7 +43,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"user_id\": \"{{ $json.p24_user_id }}\",\n  \"title\": \"تو همه پلتفرم هات لاگین نیستی!\",\n  \"description\": \"یک یا چندتا از پلتفرم های نوبت دهی ات نیاز به لاگین دوباره دارن. با کلیک روی همین پیام داخل اون پلتفرم ها دوباره لاگین کن تا همه نوبت هارو یکجا داشته باشی \",\n  \"link\": \"https://www.paziresh24.com/_/zorocalandar/launcher/\",\n  \"action_button_text\": \"صفحه تقویم یکپارچه\",\n  \"display_at\": [\n    \"doctor_calendar\"\n  ]\n}",
+        "jsonBody": "={{\nJSON.stringify({\n  user_id: $json.p24_user_id,\n  title: $('When Executed by Another Workflow').item.json.title,\n  description: $('When Executed by Another Workflow').item.json.description,\n  link: \"https://www.paziresh24.com/_/zorocalandar/launcher/\",\n  action_button_text: \"صفحه تقویم یکپارچه\",\n  display_at: [\"doctor_calendar\"]\n})\n}}",
         "options": {
           "redirect": {
             "redirect": {}
@@ -125,12 +127,12 @@
     "executionOrder": "v1"
   },
   "triggerCount": 0,
-  "versionId": "08183dec-ab62-404a-ae9a-c25326ce2d23",
+  "versionId": "9d416671-eaf3-4933-bb8a-797cf91a5c1b",
   "owner": {
     "type": "team",
     "teamId": "pzvw8g7gyGnUF15Q",
     "teamName": "calendar"
   },
-  "parentFolderId": null,
+  "parentFolderId": "j4VbnUoJTCIIrckM",
   "isArchived": false
 }

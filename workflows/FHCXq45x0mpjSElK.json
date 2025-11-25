@@ -633,8 +633,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.4,
       "position": [
-        -2768,
-        544
+        -2176,
+        784
       ],
       "id": "1c8cce5f-66e0-4b66-86ec-6b60f1842e14",
       "name": "Respond to Webhook4"
@@ -650,8 +650,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -2768,
-        736
+        -2848,
+        784
       ],
       "id": "87c34203-eb57-4811-9e04-86578728304b",
       "name": "Send a text message1",
@@ -2162,6 +2162,106 @@
       "retryOnFail": false,
       "waitBetweenTries": 3000,
       "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "pCXAE2TS58t7LqKi",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/pCXAE2TS58t7LqKi",
+          "cachedResultName": "calendar — cache_checker"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "dr_id": "={{ $('find doctor id').item.json.id }}",
+            "date": "={{ $('Webhook').item.json.body.date }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "dr_id",
+              "displayName": "dr_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -2592,
+        800
+      ],
+      "id": "93ad55f9-cd3e-482b-ae49-c1098003cda8",
+      "name": "Call 'cache_checker'"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "87fd2044-e78f-4b9d-b7c0-56f7a9a7b4d9",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2384,
+        800
+      ],
+      "id": "8cd0430e-df66-45ee-914b-d6f9f2602a9f",
+      "name": "If8"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -2176,
+        640
+      ],
+      "id": "5e39e9ec-d9a7-43f6-94c9-dbe4c3b5744a",
+      "name": "Respond to Webhook10"
     }
   ],
   "connections": {
@@ -2175,11 +2275,6 @@
           }
         ],
         [
-          {
-            "node": "Respond to Webhook4",
-            "type": "main",
-            "index": 0
-          },
           {
             "node": "Send a text message1",
             "type": "main",
@@ -2758,9 +2853,37 @@
     },
     "appointments/search5": {
       "main": [
+        [],
+        []
+      ]
+    },
+    "Call 'cache_checker'": {
+      "main": [
         [
           {
-            "node": "If1",
+            "node": "If8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message1": {
+      "main": [
+        [
+          {
+            "node": "Call 'cache_checker'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If8": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook10",
             "type": "main",
             "index": 0
           }
@@ -2768,11 +2891,6 @@
         [
           {
             "node": "Respond to Webhook4",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Send a text message1",
             "type": "main",
             "index": 0
           }
@@ -2784,12 +2902,12 @@
     "executionOrder": "v1"
   },
   "triggerCount": 1,
-  "versionId": "87cbeb36-04a5-4f3c-b1fa-e0043e55d426",
+  "versionId": "df0da43f-398e-4e32-9b3b-4756c3654bf5",
   "owner": {
     "type": "team",
     "teamId": "pzvw8g7gyGnUF15Q",
     "teamName": "calendar"
   },
-  "parentFolderId": null,
+  "parentFolderId": "OiQGcrD2d87uYIBs",
   "isArchived": false
 }

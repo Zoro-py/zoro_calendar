@@ -383,7 +383,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -1200,
+        -992,
         256
       ],
       "id": "7f6703e0-f77b-4666-b4b9-afc27df4eb04",
@@ -396,7 +396,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2320,
+        -2112,
         352
       ],
       "id": "368034b3-c435-4bcc-862b-255ede6e3eed",
@@ -410,7 +410,7 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        -2096,
+        -1888,
         352
       ],
       "id": "c10476c1-4d95-42f4-ae39-880c9fa5020d",
@@ -424,7 +424,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1424,
+        -1216,
         256
       ],
       "id": "19bb507f-50d6-4b0a-930b-ea34be984f06",
@@ -459,7 +459,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -2768,
+        -2560,
         352
       ],
       "id": "d8e1fe7d-fb47-4af1-8408-66e7553365fc",
@@ -537,7 +537,7 @@
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.2,
       "position": [
-        -1872,
+        -1664,
         352
       ],
       "id": "8ef85888-1599-4140-ae16-a962b2832925",
@@ -573,7 +573,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -1648,
+        -1440,
         352
       ],
       "id": "778b1fed-9269-4255-903d-668cbdf9f734",
@@ -582,7 +582,7 @@
     {
       "parameters": {
         "chatId": "1999634605",
-        "text": "❌drdr/get-appointment has error V2 (http request)❌",
+        "text": "❌drdr/get-appointment has error V3 (http request)❌",
         "additionalFields": {
           "appendAttribution": false
         }
@@ -590,16 +590,16 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -2768,
-        736
+        -2800,
+        688
       ],
       "id": "70362575-249c-4cf5-8561-c8a5ad8a206a",
       "name": "Send a text message1",
       "webhookId": "4944642f-6861-48e9-b08f-092727ee8af7",
       "credentials": {
         "telegramApi": {
-          "id": "AcKnlUwXjcsQk1Cl",
-          "name": "widget"
+          "id": "3UN48Ejir4Oxfhcd",
+          "name": "calendar_bot"
         }
       }
     },
@@ -847,7 +847,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -2544,
+        -2336,
         256
       ],
       "id": "cf92c670-f9e0-412e-b75f-961db6f7c857",
@@ -1688,7 +1688,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -2320,
+        -2112,
         64
       ],
       "id": "28ef4639-0b2a-4a38-a304-4235af0607e0",
@@ -1702,7 +1702,7 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [
-        -2096,
+        -1888,
         64
       ],
       "id": "b71cb797-3ee8-47dc-8f13-fd71bb4e5598",
@@ -1737,7 +1737,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -1872,
+        -1664,
         64
       ],
       "id": "03f5a10c-4320-4bcd-bf20-195d22d97f82",
@@ -1753,7 +1753,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1424,
+        -1216,
         64
       ],
       "id": "58399c75-f403-4a06-aae7-564e92dface5",
@@ -1767,7 +1767,7 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        -1648,
+        -1440,
         64
       ],
       "id": "6e4b7409-3ffa-4227-8634-5976fe37c605",
@@ -1781,7 +1781,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -752,
+        -544,
         -32
       ],
       "id": "dfd77362-2285-4f34-8378-2850f16e9b8d",
@@ -1823,7 +1823,7 @@
       "type": "n8n-nodes-base.filter",
       "typeVersion": 2.2,
       "position": [
-        -1200,
+        -992,
         64
       ],
       "id": "4ae57bae-7312-43e4-9a79-4bcd1c252859",
@@ -1859,7 +1859,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -976,
+        -768,
         64
       ],
       "id": "42f3f813-b0ce-43b3-a13b-5a5568c4e76f",
@@ -2033,7 +2033,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -528,
+        -320,
         -32
       ],
       "id": "667a37cd-12dc-491c-8c09-e1ebee4c9b6f",
@@ -2105,7 +2105,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -768,
+        -560,
         160
       ],
       "id": "0d7e241e-d905-42c1-a59b-7628c84a933b",
@@ -2120,7 +2120,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -1472,
+        -1264,
         448
       ],
       "id": "62a8f60f-8fbe-473a-9225-e320a64396e6",
@@ -2135,7 +2135,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -2368,
+        -2160,
         528
       ],
       "id": "731e9c75-7847-4bca-b500-f8425c0928f0",
@@ -2150,11 +2150,97 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -2768,
-        544
+        -2192,
+        832
       ],
       "id": "75ea9dd1-7ec6-4b80-891c-6885678b1258",
       "name": "Edit Fields7"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "pCXAE2TS58t7LqKi",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/pCXAE2TS58t7LqKi",
+          "cachedResultName": "calendar — cache_checker"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "dr_id": "={{ $('When Executed by Another Workflow').item.json.doctor_id }}",
+            "date": "={{ $('When Executed by Another Workflow').item.json.date }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "dr_id",
+              "displayName": "dr_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -2576,
+        704
+      ],
+      "id": "c5d33c6d-435d-4bf0-b5da-115ce7a2120c",
+      "name": "Call 'cache_checker'"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "87fd2044-e78f-4b9d-b7c0-56f7a9a7b4d9",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2368,
+        704
+      ],
+      "id": "a4120ab4-4f85-44f5-ade6-6c512cdf7edb",
+      "name": "If8"
     }
   ],
   "connections": {
@@ -2170,11 +2256,6 @@
         [
           {
             "node": "Send a text message1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Edit Fields7",
             "type": "main",
             "index": 0
           }
@@ -2727,25 +2808,8 @@
     },
     "appointments/search5": {
       "main": [
-        [
-          {
-            "node": "If1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Send a text message1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Edit Fields7",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        [],
+        []
       ]
     },
     "When Executed by Another Workflow": {
@@ -2758,18 +2822,52 @@
           }
         ]
       ]
+    },
+    "Call 'cache_checker'": {
+      "main": [
+        [
+          {
+            "node": "If8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If8": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Edit Fields7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message1": {
+      "main": [
+        [
+          {
+            "node": "Call 'cache_checker'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
     "executionOrder": "v1"
   },
   "triggerCount": 1,
-  "versionId": "8e50fd03-15d9-4e0b-8dcb-3668bc2109c3",
+  "versionId": "3700933a-9033-483e-abca-588a45a2c4a3",
   "owner": {
     "type": "team",
     "teamId": "pzvw8g7gyGnUF15Q",
     "teamName": "calendar"
   },
-  "parentFolderId": null,
+  "parentFolderId": "OiQGcrD2d87uYIBs",
   "isArchived": false
 }

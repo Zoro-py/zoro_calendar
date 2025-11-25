@@ -379,18 +379,25 @@
       ],
       "id": "a8dea571-55de-46ec-9f73-34f541c27d19",
       "name": "create needed times"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        48,
+        -368
+      ],
+      "id": "dfbf857a-b55b-477e-99eb-aebdb571dc79",
+      "name": "When Executed by Another Workflow"
     }
   ],
   "connections": {
     "Schedule Trigger": {
       "main": [
-        [
-          {
-            "node": "select drdr cridencials",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Split Out": {
@@ -469,18 +476,29 @@
           }
         ]
       ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "select drdr cridencials",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
     "executionOrder": "v1"
   },
   "triggerCount": 1,
-  "versionId": "aa78d8ff-ef3a-4296-bd4c-c5f75dcd3e78",
+  "versionId": "75147de6-4836-4c09-b630-7b3d755b3196",
   "owner": {
     "type": "team",
     "teamId": "pzvw8g7gyGnUF15Q",
     "teamName": "calendar"
   },
-  "parentFolderId": null,
+  "parentFolderId": "OiQGcrD2d87uYIBs",
   "isArchived": false
 }

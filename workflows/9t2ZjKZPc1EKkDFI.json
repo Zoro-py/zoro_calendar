@@ -1,0 +1,452 @@
+{
+  "id": "9t2ZjKZPc1EKkDFI",
+  "name": "keep_logged_in",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctor_platform_credentials",
+          "mode": "list",
+          "cachedResultName": "doctor_platform_credentials"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "doctor_id",
+              "value": "={{ $json.id }}"
+            },
+            {
+              "column": "platform_id",
+              "value": "2"
+            },
+            {
+              "column": "is_valid",
+              "value": "true"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -672,
+        400
+      ],
+      "id": "917a74c3-a429-41c8-870a-7885d6704fba",
+      "name": "Select rows from a table1",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  *\nFROM\n  doctors\nWHERE\n  \"last_read_time\" < (NOW() AT TIME ZONE 'Asia/Tehran') - INTERVAL '24 hours'\n  OR \"last_read_time\" IS NULL;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -896,
+        400
+      ],
+      "id": "d25b8059-2d8a-487c-8add-ac225bd2ad73",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "doctor_platform_credentials",
+          "mode": "list",
+          "cachedResultName": "doctor_platform_credentials"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "doctor_id",
+              "value": "239"
+            },
+            {
+              "column": "platform_id",
+              "value": "2"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -672,
+        992
+      ],
+      "id": "471af559-6961-465f-8364-62812815ad9b",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -448,
+        800
+      ],
+      "id": "458b0f7c-16b6-4d63-ba9f-a713875794d1",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "one_loop has ended in doctoreto-keep_alive",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -224,
+        624
+      ],
+      "id": "9b5672e9-5472-442a-96fd-2f921f604d0f",
+      "name": "Send a text message",
+      "webhookId": "370b2ba6-fa65-4667-a1d5-f6910589b382",
+      "credentials": {
+        "telegramApi": {
+          "id": "oSZ0fo1NolfEmqVt",
+          "name": "calendar report bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.floor(Math.random() * (35 - 20 + 1) + 20) }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        816
+      ],
+      "id": "ff334460-64ae-4772-b866-181f2e0a8feb",
+      "name": "Wait",
+      "webhookId": "e2cfeaae-1f5c-4f0a-8261-6faa9fc0bedb"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8,
+              "triggerAtMinute": 34
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -896,
+        912
+      ],
+      "id": "58f0368c-c668-469b-9ef7-0dfd28d9aa56",
+      "name": "doctoreto"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "SYxYCfNiuRkrHYvT",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/SYxYCfNiuRkrHYvT",
+          "cachedResultName": "calendar — doctoreto-keep_alive"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "dr_id": "={{ $json.doctor_id }}",
+            "cridencial_id": "={{ $json.cridencial_id }}",
+            "access_token": "={{ $json.access_token }}",
+            "doctor_num_id": "={{ parseInt($json.doctor_num_id) }}",
+            "doctor_name": "={{ $json.doctor_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "dr_id",
+              "displayName": "dr_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "doctor_name",
+              "displayName": "doctor_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "doctor_num_id",
+              "displayName": "doctor_num_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "cridencial_id",
+              "displayName": "cridencial_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "access_token",
+              "displayName": "access_token",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -224,
+        816
+      ],
+      "id": "9d176a60-e76a-4273-8cad-ce395b9acf11",
+      "name": "Call 'doctoreto-keep_alive'",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n    d.id AS doctor_id,\n    d.p24_user_id AS doctor_num_id,\n    d.full_name AS doctor_name,\n    dpc.id AS cridencial_id,\n    dpc.platform_doctor_id,\n    dpc.access_token,\n    dpc.refresh_token,\n    dpc.client_id,\n    dpc.client_secret,\n    dpc.platform_id\nFROM\n    doctors d\nJOIN\n    doctor_platform_credentials dpc ON d.id = dpc.doctor_id\nWHERE\n    (\n        d.last_read_time < ((NOW() AT TIME ZONE 'UTC') AT TIME ZONE 'Asia/Tehran') - INTERVAL '24 hours' \n        OR \n        d.last_read_time IS NULL\n    )\n    AND dpc.platform_id = 2\n    AND dpc.is_valid = TRUE\nORDER BY\n    d.id ASC;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -672,
+        800
+      ],
+      "id": "322d9a36-44fc-4088-86ce-83b14fefaf4b",
+      "name": "Execute a SQL query1",
+      "credentials": {
+        "postgres": {
+          "id": "OGomr8J1QWL5ZbdV",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "triggerAtMinute": 38
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -864,
+        1312
+      ],
+      "id": "2e803a94-4e1a-49d3-8b3a-e128d75540fb",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "jWEIGqopcbWeF1uR",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/jWEIGqopcbWeF1uR",
+          "cachedResultName": "calendar — drdr-refresh_token"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -656,
+        1312
+      ],
+      "id": "97b6bd2e-68bf-4b7a-97c4-5b644514a8ab",
+      "name": "Call 'drdr-refresh_token'"
+    }
+  ],
+  "connections": {
+    "Select rows from a table1": {
+      "main": [
+        []
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'doctoreto-keep_alive'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "doctoreto": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Execute a SQL query1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'doctoreto-keep_alive'": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Call 'drdr-refresh_token'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Tehran",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "triggerCount": 2,
+  "versionId": "dabe4561-20af-4b96-9ae4-30ccfe74a958",
+  "owner": {
+    "type": "team",
+    "teamId": "pzvw8g7gyGnUF15Q",
+    "teamName": "calendar"
+  },
+  "parentFolderId": "Gs5eGKvbfFckt56q",
+  "isArchived": false
+}

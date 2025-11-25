@@ -800,7 +800,7 @@
             "phone_in_platform": "={{ $('Edit Fields1').item.json.body.mobile }}",
             "doctor_id": "={{ $('Select rows from a table1').item.json.id }}",
             "refresh_token": "={{ $('otp').item.json.result.token.refresh_token }}",
-            "platform_doctor_id": "={{ $('me').item.json.result.user.doctor.id }}",
+            "platform_doctor_id": "={{ $('me').item.json.result.user.doctor?.id || $('me').item.json.result.user.assistant?.doctors?.[0]?.id }}",
             "client_id": "c19f9c77-234f-4af6-a14e-78f76591f0b1",
             "client_secret": "cwxfEHPM0VNDqw3KiZTXG44B6ih56AojJoNeUOoA",
             "expires_at": "={{ $json.expires_at }}",
@@ -1428,12 +1428,12 @@
     "executionOrder": "v1"
   },
   "triggerCount": 2,
-  "versionId": "b48b390b-d087-403b-b53c-f121de7eee9b",
+  "versionId": "128d4f82-e271-4043-8b69-2489be3010a5",
   "owner": {
     "type": "team",
     "teamId": "pzvw8g7gyGnUF15Q",
     "teamName": "calendar"
   },
-  "parentFolderId": null,
+  "parentFolderId": "OiQGcrD2d87uYIBs",
   "isArchived": false
 }

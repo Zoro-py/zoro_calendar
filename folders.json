@@ -1,0 +1,44 @@
+{
+  "folders": [
+    {
+      "id": "u1ky7ueH61cKlVNe",
+      "name": "doctoreto",
+      "parentFolderId": null,
+      "homeProjectId": "pzvw8g7gyGnUF15Q",
+      "createdAt": "2025-11-19T15:07:36.968Z",
+      "updatedAt": "2025-11-19T15:07:36.968Z"
+    },
+    {
+      "id": "OiQGcrD2d87uYIBs",
+      "name": "drdr",
+      "parentFolderId": null,
+      "homeProjectId": "pzvw8g7gyGnUF15Q",
+      "createdAt": "2025-11-19T15:08:26.139Z",
+      "updatedAt": "2025-11-19T15:08:26.139Z"
+    },
+    {
+      "id": "j4VbnUoJTCIIrckM",
+      "name": "p24",
+      "parentFolderId": null,
+      "homeProjectId": "pzvw8g7gyGnUF15Q",
+      "createdAt": "2025-11-19T15:09:22.078Z",
+      "updatedAt": "2025-11-19T15:09:22.078Z"
+    },
+    {
+      "id": "Gs5eGKvbfFckt56q",
+      "name": "main_flows",
+      "parentFolderId": null,
+      "homeProjectId": "pzvw8g7gyGnUF15Q",
+      "createdAt": "2025-11-19T15:10:26.700Z",
+      "updatedAt": "2025-11-19T16:58:50.000Z"
+    },
+    {
+      "id": "ruJFVfN0WrYKoCru",
+      "name": "dr_next",
+      "parentFolderId": null,
+      "homeProjectId": "pzvw8g7gyGnUF15Q",
+      "createdAt": "2025-11-19T15:12:32.867Z",
+      "updatedAt": "2025-11-19T15:12:32.867Z"
+    }
+  ]
+}

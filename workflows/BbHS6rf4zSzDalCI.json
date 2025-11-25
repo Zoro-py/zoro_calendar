@@ -394,6 +394,28 @@
       ],
       "id": "b4a321dc-0760-470b-8e85-fa0625427da7",
       "name": "If1"
+    },
+    {
+      "parameters": {
+        "chatId": "1999634605",
+        "text": "rr",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1104,
+        96
+      ],
+      "id": "1e397890-e289-4d3c-a3fe-7469453c9ffc",
+      "name": "Send a text message3",
+      "webhookId": "78d624a9-3080-4878-8f69-8b1522b56fc1",
+      "credentials": {
+        "telegramApi": {
+          "id": "oSZ0fo1NolfEmqVt",
+          "name": "calendar report bot"
+        }
+      }
     }
   ],
   "connections": {
@@ -564,15 +586,18 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "timezone": "Asia/Tehran",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
   },
   "triggerCount": 2,
-  "versionId": "fb20e9bc-fa2b-41e3-bfef-dcecac4703f8",
+  "versionId": "a9901a16-746f-4b43-b99d-0e31a810a956",
   "owner": {
     "type": "team",
     "teamId": "pzvw8g7gyGnUF15Q",
     "teamName": "calendar"
   },
-  "parentFolderId": null,
+  "parentFolderId": "Gs5eGKvbfFckt56q",
   "isArchived": false
 }
