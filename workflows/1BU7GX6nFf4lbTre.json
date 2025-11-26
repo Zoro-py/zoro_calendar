@@ -503,8 +503,9 @@
             "phone_in_platform": "={{ $('Edit Fields1').item.json.body.mobile }}",
             "platform_id": 2,
             "doctor_id": "={{ $('Select rows from a table1').item.json.id }}",
-            "token_created": "={{ new Date(Date.now() - 24*60*60*1000).toLocaleString(\"sv-SE\", { timeZone: \"Asia/Tehran\", hour12: false }).replace(\" \", \"T\") + \"+03:30\" }}\n",
-            "is_valid": true
+            "token_created": "={{ new Date(Date.now() - 24*60*60*1000).toLocaleString(\"sv-SE\", { timeZone: \"Asia/Tehran\", hour12: false }).replace(\" \", \"T\") + \"+03:30\" }}",
+            "is_valid": true,
+            "updated_at": "={{ new Date(Date.now() - 24*60*60*1000).toLocaleString(\"sv-SE\", { timeZone: \"Asia/Tehran\", hour12: false }).replace(\" \", \"T\") + \"+03:30\" }}"
           },
           "matchingColumns": [
             "doctor_id",
@@ -619,7 +620,7 @@
               "display": true,
               "type": "dateTime",
               "canBeUsedToMatch": false,
-              "removed": true
+              "removed": false
             },
             {
               "id": "phone_in_platform",
@@ -994,7 +995,7 @@
     "executionOrder": "v1"
   },
   "triggerCount": 2,
-  "versionId": "4f8829ec-83c3-4223-987a-411bc40ec4b8",
+  "versionId": "e95a3d95-7dbb-4589-a02e-120d3125e4f3",
   "owner": {
     "type": "team",
     "teamId": "pzvw8g7gyGnUF15Q",

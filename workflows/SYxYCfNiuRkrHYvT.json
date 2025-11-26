@@ -111,10 +111,12 @@
           "value": {
             "access_token": "={{ $json.headers[\"set-cookie\"][0] }}",
             "updated_at": "={{ new Date(Date.now() - 24*60*60*1000).toLocaleString(\"sv-SE\", { timeZone: \"Asia/Tehran\", hour12: false }).replace(\" \", \"T\") + \"+03:30\" }}",
-            "id": "={{ $('When Executed by Another Workflow').item.json.cridencial_id }}"
+            "doctor_id": "={{ $('When Executed by Another Workflow').item.json.dr_id }}",
+            "platform_id": 2
           },
           "matchingColumns": [
-            "id"
+            "doctor_id",
+            "platform_id"
           ],
           "schema": [
             {
@@ -125,7 +127,7 @@
               "display": true,
               "type": "number",
               "canBeUsedToMatch": true,
-              "removed": false
+              "removed": true
             },
             {
               "id": "doctor_id",
@@ -135,7 +137,7 @@
               "display": true,
               "type": "number",
               "canBeUsedToMatch": true,
-              "removed": true
+              "removed": false
             },
             {
               "id": "platform_id",
@@ -145,7 +147,7 @@
               "display": true,
               "type": "number",
               "canBeUsedToMatch": true,
-              "removed": true
+              "removed": false
             },
             {
               "id": "platform_doctor_id",
@@ -257,7 +259,7 @@
       "typeVersion": 2.6,
       "position": [
         2272,
-        488
+        496
       ],
       "id": "241aa8f8-4c69-40cb-b99c-b429fd69dace",
       "name": "Insert or update rows in a table",
@@ -1731,7 +1733,7 @@
     "availableInMCP": false
   },
   "triggerCount": 0,
-  "versionId": "993ebbd6-69c0-4622-87ee-f63ec2ecec12",
+  "versionId": "fd5ff183-4a36-4830-b2d0-84d83fae0c49",
   "owner": {
     "type": "team",
     "teamId": "pzvw8g7gyGnUF15Q",
